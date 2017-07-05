@@ -25,6 +25,21 @@
 // oversampling factor = 16
 #define CLOCKS_PER_BIT 16
 
+
+#define Tx_IDLE 0
+#define Tx_START_BIT 1
+#define Tx_DATA_BIT_0 2
+#define Tx_DATA_BIT_1 3
+#define Tx_DATA_BIT_2 4
+#define Tx_DATA_BIT_3 5
+#define Tx_DATA_BIT_4 6
+#define Tx_DATA_BIT_5 7
+#define Tx_DATA_BIT_6 8
+#define Tx_DATA_BIT_7 9
+#define Tx_PARITY_BIT 10
+#define Tx_STOP_BIT 11
+
+
 VTx_top *uut;                     // Instantiation of module VTx_top (for capturing all the top-level signals defined in the top-level verilog design file, Tx_top.v )
 VerilatedVcdC* tfp = NULL;	// Instantiation of module VerilatedVcdC (for vcd waveform)
 
@@ -34,7 +49,7 @@ double time_ps = 0;       	// Current simulation time in picoseconds
 bool result_is_correct = false;	// indicates if Rx receives all characters correctly according to UART protocol
 bool is_data_bit = false;
 bool start_bit_detected = false;	// for decoding data bits and parity bit
-unsigned int number_of_baud_clocks_passed = 0;
+//unsigned int number_of_baud_clocks_passed = 0;
 unsigned int number_of_sampling_clocks_passed = 0;
 
 
@@ -102,7 +117,7 @@ class UART_receiver {
 		rx_decoded_data.insert(0, to_string(received_bit)); // reconstructing the received data into read-able format
 	    	//cout << "rx_decoded_data = " << rx_decoded_data << endl;
 		//cout << "to_string(uut->i_data) = " << std::bitset<8>(uut->i_data).to_string() << endl;
-	    	if (index == 8) assert(rx_decoded_data == std::bitset<8>(uut->i_data).to_string());   // just to double confirm. In principle, Rx device does not have knowledge about Tx device's input data for transmission (uut->i_data)
+	    	if (index == 8) assert(rx_decoded_data == std::bitset<8>(uut->i_data).to_string());   // just to double confirm that device Rx had received correctly the entire data intended to be transmitted by device Tx. In principle, Rx device does not have knowledge about Tx device's input data for transmission (uut->i_data)
 
 		parity_value = parity_value ^ received_bit;  // even parity calculation
 	    }
@@ -178,25 +193,16 @@ int main(int argc, char** argv)
     unsigned int bit_index = 0;
     unsigned int rx_state = 0;
 
-#define Tx_IDLE 0
-#define Tx_START_BIT 1
-#define Tx_DATA_BIT_0 2
-#define Tx_DATA_BIT_1 3
-#define Tx_DATA_BIT_2 4
-#define Tx_DATA_BIT_3 5
-#define Tx_DATA_BIT_4 6
-#define Tx_DATA_BIT_5 7
-#define Tx_DATA_BIT_6 8
-#define Tx_DATA_BIT_7 9
-#define Tx_PARITY_BIT 10
-#define Tx_STOP_BIT 11
-
     while (!Verilated::gotFinish())   
     {
-	number_of_baud_clocks_passed = time_ps/BAUD_OUT_PERIOD;
+	if (time_ps > 2000000000) break;    // since this is a UART demonstration, we detach UART rx after finished decoding the given character
+
+	//number_of_baud_clocks_passed = time_ps/BAUD_OUT_PERIOD;
 	number_of_sampling_clocks_passed = time_ps/RX_SAMPLING_PERIOD;
 
-	uut->start = (number_of_baud_clocks_passed == 3) ? 1 : 0;  // start signal is only HIGH for 1 baud_out cycle which is (BAUD_OUT_PERIOD/1000)ns or (BAUD_OUT_PERIOD)ps
+	uut->start = ((time_ps > 360000000) && (time_ps < 370000000)) ? 1 : 0;  // start signal is an active HIGH pulse between time_ps = 360000000 and time_ps = 370000000
+
+	//uut->start = (number_of_baud_clocks_passed == 3) ? 1 : 0;  // start signal is only HIGH for 1 baud_out cycle which is (BAUD_OUT_PERIOD/1000)ns or (BAUD_OUT_PERIOD)ps
 
 	update_clk();  // for dumping undivided clk signals on vcd waveform
 
