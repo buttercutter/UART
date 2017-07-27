@@ -1,4 +1,4 @@
-`define Tx_IDLE 		 4'b0
+`define Tx_IDLE       4'b0000
 `define Tx_START_BIT  4'b0001
 `define Tx_DATA_BIT_0 4'b0010
 `define Tx_DATA_BIT_1 4'b0011
@@ -23,15 +23,15 @@ reg start_tx = 0;
 
 always @(posedge clk)   
 begin
-    if ((enable == 1) && (state == `Tx_IDLE))  	
-		start_tx <= 1; 	// 'baud_clk' changes according to 9600Hz , while 'enable' changes according to  (500ms timer for simulation and hardware testing)
-								// So, start_tx *must* be held high until the clock cycle where both 'baud_clk and !enable'
+    if (enable)  	
+	start_tx <= 1; 	// 'baud_clk' changes according to 9600Hz , while 'enable' changes according to  (500ms timer for simulation and hardware testing)
+	// So, start_tx *must* be held high until the clock cycle where both 'baud_clk and !enable'
     else if (state == `Tx_START_BIT)	start_tx <= 0;
 end
 
-always @(posedge baud_clk)
+always @(posedge clk)
 begin
-
+    if (baud_clk) begin
     case(state)
 	`Tx_IDLE 	: state <= (start_tx) ?  `Tx_START_BIT : `Tx_IDLE;
 
@@ -52,6 +52,7 @@ begin
 
 	default      	: state <= `Tx_IDLE;
     endcase
+    end
 end
 
 assign o_busy = !(state == `Tx_IDLE);  // Tx is busy transmitting when not idling
