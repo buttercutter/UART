@@ -12,11 +12,12 @@
 #include <math.h>
 #include <bitset>
 
-// We could modify message to be sent to device Rx "HELLO_WORLD !!\r\n"    
-#define MESSAGE		"HELLO_WORLD !!DE"
-#define debug_time	(time_ps > 9.0069e+15) && (time_ps <= 9.0082e+15)
+// We could modify message to be sent to device Rx ("HELLO_WORLD !!\r\n")    
+#define MESSAGE		"ABCDEFGHIJKLMNOP"
+#define debug_time	(time_ps > 9.0071e+15) && (time_ps <= 9.0082e+15)
 #define	TRACE_POSEDGE	if ((tfp != NULL) && debug_time) tfp->dump(time_ps*10)
 #define	TRACE_NEGEDGE	if ((tfp != NULL) && debug_time) tfp->dump(time_ps*10)
+#define	TRACE_FLUSH	if ((tfp != NULL) && debug_time) tfp->flush()
 #define	TRACE_CLOSE	if (tfp != NULL) tfp->close()
 
 // HALF_48MHz_PERIOD = 10416.7ps or 10.4167ns is half of clock period for 48MHz
@@ -53,7 +54,7 @@ double time_ps = 0; //2.30679e+15;       	// Current simulation time in picoseco
 bool result_is_correct = false;	// indicates if Rx receives all characters correctly according to UART protocol
 bool is_data_bit = false;
 bool start_bit_detected = false;	// for decoding data bits and parity bit
-unsigned int number_of_baud_clocks_passed;
+
 unsigned int number_of_sampling_clocks_passed;
 
 
@@ -130,6 +131,7 @@ class UART_receiver {
 		if ( (index == NUM_OF_DATA_BITS) && ((char)rx_decoded_data != uut->i_data) ) 
 		{
 		    cout << "rx_decoded_data = " << (char)rx_decoded_data << endl;
+		    cout << "uut->i_data = " << uut->i_data << endl;
 		    cout << "time_ps = " << time_ps << endl; 
 		}
 	    	if (index == NUM_OF_DATA_BITS) assert((char)rx_decoded_data == uut->i_data);   // just to double confirm that device Rx had received correctly one character transmitted by device Tx. In principle, Rx device does not have knowledge about Tx device's input data for transmission (uut->i_data)
@@ -221,6 +223,8 @@ void update_clk(void) {
 	TRACE_NEGEDGE; 
 
 	time_ps = time_ps + HALF_48MHz_PERIOD/2;
+
+	TRACE_FLUSH;
 }
 
 int main(int argc, char** argv)
@@ -431,15 +435,10 @@ int main(int argc, char** argv)
 
 /***************************************** UART Transmitter Code *************************************************/
 
-	number_of_baud_clocks_passed = static_cast<unsigned int>(time_ps/BAUD_OUT_PERIOD);
-	
-	HALF_BAUD = time_ps - (double)number_of_baud_clocks_passed * (double)BAUD_OUT_PERIOD;
-	//cout << "HALF_BAUD is " << HALF_BAUD << endl;
-	//cout << "((HALF_BAUD <= HALF_BAUD_UPPER_LIMIT) && (HALF_BAUD >= HALF_BAUD_LOWER_LIMIT)) is " << ((HALF_BAUD <= HALF_BAUD_UPPER_LIMIT) && (HALF_BAUD >= HALF_BAUD_LOWER_LIMIT)) << endl;
-	if ( (((number_of_baud_clocks_passed-3)%12) == 0) && ((HALF_BAUD <= HALF_BAUD_UPPER_LIMIT) && (HALF_BAUD >= HALF_BAUD_LOWER_LIMIT)) ) {  // repeating for (every 12 baud clock cycles, i.e. after transmitting a character) && (at approximate center between two rising edges of baud clock )
+	if ( !(uut->o_busy) )	// not busy which means ready to accept next data for transmission
+	{
 	    if (debug_time){ 
-		cout << "number_of_baud_clocks_passed = " << number_of_baud_clocks_passed;
-		printf("\t, time_ps = %.14f\n", time_ps);
+		printf("time_ps = %.14f\n", time_ps);
 		cout << "HALF_BAUD = " << HALF_BAUD << endl;
 		cout << "HALF_BAUD_UPPER_LIMIT = " << HALF_BAUD_UPPER_LIMIT << endl;
 		cout << "HALF_BAUD_LOWER_LIMIT = " << HALF_BAUD_LOWER_LIMIT << endl;	
@@ -450,8 +449,7 @@ int main(int argc, char** argv)
 
 	    	uut->start = 1;  // start signal is an active HIGH pulse
 		message_index = message_index + 1;
-	    }
-	    //uut->start = (number_of_baud_clocks_passed == 3) ? 1 : 0;  // start signal is only HIGH for 1 baud_out cycle which is (BAUD_OUT_PERIOD/1000)ns or (BAUD_OUT_PERIOD)ps	    
+	    }  	
 	}
     }
 

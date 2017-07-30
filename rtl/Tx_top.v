@@ -7,7 +7,7 @@ module Tx_top
 `ifdef SIMULATION
 	start, i_data,
 `endif
-serial_out);   // UART transmitter :  parallel input, serial output (PISO)
+o_busy, serial_out);   // UART transmitter :  parallel input, serial output (PISO)
 
 input clk;  // 48MHz
 // input reset;  // will be added later to clear various registers
@@ -39,10 +39,10 @@ input clk;  // 48MHz
 `endif
 
 output serial_out;  // serial output from serializer (TxUART)
+output o_busy;	// busy transmitting bits
 
 wire baud_clk;  // 9600bps baudrate clock
 wire enable;   	// starts transmission or not
-wire o_busy;	// busy transmitting bits
 wire start_tx, parity_bit;
 
 TxUART tx (.clk(clk), .baud_clk(baud_clk), .enable(enable), .i_data(i_data), .o_busy(o_busy), .start_tx(start_tx));
@@ -55,7 +55,7 @@ baud_generator bg (.clk(clk), .baud_clk(baud_clk));	// to derive the desired bau
 	enable_generator eg (.clk(clk), .en_out(enable), .index(index));   // transmission is enabled/repeated every 500ms
 `endif
 	
-shift_register PISO (.clk(baud_clk), .valid(start_tx), .tx_busy(o_busy), .data_in({parity_bit, i_data}), .data_out(serial_out)); // .data_in({parity_bit, i_data  --> transmit LSB first
+shift_register PISO (.clk(baud_clk), .valid(start_tx), .data_in({parity_bit, i_data}), .data_out(serial_out)); // .data_in({parity_bit, i_data  --> transmit LSB first
 
 // FIFO tx_fifo (clk, reset, enqueue, dequeue, flush, i_value, almost_full, almost_empty, o_value);
 
