@@ -55,13 +55,13 @@ bool result_is_correct = false;	// indicates if Rx receives all characters corre
 bool is_data_bit = false;
 bool start_bit_detected = false;	// for decoding data bits and parity bit
 
-unsigned int number_of_sampling_clocks_passed;
+unsigned int number_of_sampling_clocks_passed = 0;
 
-
+/*
 double sc_time_stamp () {       // Called by $time in Verilog
     return (double)time_ps;        // converts to double, to match
     // what SystemC does
-}
+}*/
 
 void cout_debug_msg(void) {
     cout << " clk = " << (int)uut->clk ;
@@ -301,12 +301,12 @@ int main(int argc, char** argv)
 	    // since this is a UART demonstration, we retransmit the same message by setting (message_index = 0 and number_of_characters_received = 0) and clearing (received_data and data_received) after finished decoding all the (14+1) given characters correctly, in this case "HELLO_WORLD !!" plus the NULL terminating character
 	}
 
-	number_of_sampling_clocks_passed = static_cast<unsigned int>(time_ps/RX_SAMPLING_PERIOD);
+	if ( (time_ps >= time_sampling + RX_SAMPLING_PERIOD) && debug_time ) cout << "time_ps = " << time_ps << "\ttime_sampling = " << time_sampling << endl;
 
-	//if ( (double)number_of_sampling_clocks_passed*(double)RX_SAMPLING_PERIOD - time_sampling >= (double)RX_SAMPLING_PERIOD && debug_time ) cout << "number_of_sampling_clocks_passed*RX_SAMPLING_PERIOD - time_sampling = " << (double)number_of_sampling_clocks_passed*(double)RX_SAMPLING_PERIOD - time_sampling << "\tnumber_of_sampling_clocks_passed = " << number_of_sampling_clocks_passed << endl;
+	if ( time_ps >= time_sampling + RX_SAMPLING_PERIOD ) {  // always @(posedge sampling_clock) 
+		time_sampling = time_sampling + RX_SAMPLING_PERIOD; // to emulate /*time_ps is exact multiples of RX_SAMPLING_PERIOD*/)
+		number_of_sampling_clocks_passed++; 
 
-	if ( (double)number_of_sampling_clocks_passed*(double)RX_SAMPLING_PERIOD - time_sampling >= (double)RX_SAMPLING_PERIOD ) {  // always @(posedge sampling_clock) 
-		time_sampling = (double)number_of_sampling_clocks_passed*(double)RX_SAMPLING_PERIOD;  // to emulate /*time_ps is exact multiples of RX_SAMPLING_PERIOD*/)
 		//cout << "time_sampling = " << time_sampling << "\tnumber_of_sampling_clocks_passed = " << number_of_sampling_clocks_passed << endl;
 		
 		//cout << "rx_state = " << rx_state << endl;
