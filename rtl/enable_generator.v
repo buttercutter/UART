@@ -16,6 +16,6 @@ always @(posedge clk)
 assign en_out = ck_stb;
 
 always @(posedge en_out)
-	 index <= index + 1;
+	 index <= index + 1'b1;
 
 endmodule
