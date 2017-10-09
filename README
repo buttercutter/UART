@@ -1,8 +1,0 @@
-This is a UART softcore.
-
-For now, I only have implemented UART transmitter without FIFO
-
-Instruction to use this softcore:
-1. Modify baud_generator.v such that your system clock will divide nicely into your desired baudrate
-2. Modify 'i_data' to whatever data you want to send
-3. When o_busy signal is LOW, feed in 'i_data', system 'clock' and 'i_start' signals
