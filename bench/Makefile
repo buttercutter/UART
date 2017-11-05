@@ -3,17 +3,17 @@ TARGET=Tx
 RTLSRC=../rtl
 all: $(TARGET)
 
-DESIGN_FILES=$(TARGET)_top.v TxUART.v baud_generator.v shift_register.v
-LDFLAGS=
-CFLAGS=-g -O3
+DESIGN_FILES = $(wildcard $(RTLSRC)/*.v) $(wildcard $(RTLSRC)/*/*.v)
 
-DEBUG_ON = --debug --trace-dups --gdbbt
-VALGRIND_ON = $(DEBUG_ON) --gdb "valgrind -v --leak-check=yes"
+$(TARGET): $(TARGET).smt2
+	yosys-smtbmc --dump-vcd $(TARGET).vcd -g -t 20010 $(TARGET).smt2
+	yosys-smtbmc --dump-vcd $(TARGET)_i.vcd -i -g -t 110 $(TARGET).smt2
 
-$(TARGET):
-	$(PERL) verilator -Wno-fatal -I$(RTLSRC)/ --cc $(DESIGN_FILES) --trace --exe ../$(@).cpp  -Mdir $(@) -CFLAGS "$(CFLAGS)"
-	make -C $(@) -f V$(@)_top.mk
-clean:: 
-	rm -rf *.o $(TARGET)
-distclean:: clean
-	rm -rf *~ *.txt *.vcd *.mif *.orig
+$(TARGET).smt2: $(DESIGN_FILES)
+	yosys -ql $(TARGET).yslog \
+		-p 'read_verilog -formal $(DESIGN_FILES)' \
+		-p 'prep -top $(TARGET)_top -nordff' \
+		-p 'write_smt2 -wires $(TARGET).smt2'
+
+clean::
+	rm -rf *~ *.yslog *.smt2 *.vcd
