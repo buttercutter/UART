@@ -1,0 +1,38 @@
+[phung@archlinux bench]$ cat Makefile 
+TARGET=Tx
+.PHONY: $(TARGET)
+RTLSRC=../rtl
+all: $(TARGET)
+
+DESIGN_FILES = $(wildcard $(RTLSRC)/*.v) $(wildcard $(RTLSRC)/*/*.v)
+
+$(TARGET): $(TARGET).smt2
+	yosys-smtbmc -s yices -g -t 20010 $(TARGET).smt2
+	yosys-smtbmc -s yices -i -g -t 110 $(TARGET).smt2
+
+$(TARGET).smt2: $(DESIGN_FILES)
+	yosys -ql $(TARGET).yslog \
+		-p 'read_verilog -formal $(DESIGN_FILES)' \
+		-p 'prep -top $(TARGET)_top -nordff' \
+		-p 'write_smt2 -wires $(TARGET).smt2'
+
+clean::
+	rm -rf *~ *.yslog *.smt2 *.vcd
+[phung@archlinux bench]$ sudo ln -s /usr/bin/yices /usr/bin/yices-smt2 
+[phung@archlinux bench]$ make
+yosys-smtbmc -s yices -g -t 20010 Tx.smt2
+##      0   0:00:00  Solver: yices
+##      0   0:00:00  Solving for step 0..
+Traceback (most recent call last):
+  File "/usr/bin/yosys-smtbmc", line 1271, in <module>
+    if smt.check_sat() != "sat":
+  File "/usr/bin/../share/yosys/python3/smtio.py", line 537, in check_sat
+    result = self.read()
+  File "/usr/bin/../share/yosys/python3/smtio.py", line 461, in read
+    line = self.p_read().strip()
+  File "/usr/bin/../share/yosys/python3/smtio.py", line 237, in p_read
+    assert self.p_running
+AssertionError
+make: *** [Makefile:9: Tx] Error 1
+[phung@archlinux bench]$ 
+

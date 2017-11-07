@@ -23,7 +23,7 @@ reg start_tx = 0;
 
 always @(posedge clk)   
 begin
-    if (enable)  	
+    if (!o_busy && enable)  	
 	start_tx <= 1; 	// 'baud_clk' changes according to 9600Hz , while 'enable' changes according to  (500ms timer for simulation and hardware testing)
 	// So, start_tx *must* be held high until the clock cycle where both 'baud_clk and !enable'
     else if (state == `Tx_START_BIT)	start_tx <= 0;
