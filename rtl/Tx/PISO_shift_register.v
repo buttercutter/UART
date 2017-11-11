@@ -1,4 +1,4 @@
-module PISO_shift_register(clk, valid, data_in, data_out);   // PISO shift register specificaly for UART Tx
+module PISO_shift_register(clk, valid, data_in, data_out);   // PISO shift register specifically for UART Tx
 
 input clk, valid;	// clock, data is valid, tx is not in idle state
 input [8:0] data_in;   // parallel input, 8-bits data + 1-bit parity

@@ -146,9 +146,9 @@ Removing unused module `\enable_generator'.
 Removed 2 unused modules.
 Module Tx_top directly or indirectly contains $assert cells -> setting "keep" attribute.
 Module baud_generator directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module TxUART directly or indirectly contains $assert cells -> setting "keep" attribute.
 Module UART directly or indirectly contains $assert cells -> setting "keep" attribute.
 Module test_UART directly or indirectly contains $assert cells -> setting "keep" attribute.
-Warning: Resizing cell port UART.tx.i_data from 1 bits to 8 bits.
 
 17.2. Executing PROC pass (convert processes to netlists).
 
@@ -159,255 +159,268 @@ Cleaned up 0 empty switches.
 Removed a total of 0 dead cases.
 
 17.2.3. Executing PROC_INIT pass (extract init attributes).
-Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:8$97'.
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:8$103'.
   Set init value: \state = 4'0000
-Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:6$96'.
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:6$102'.
   Set init value: \is_parity_stage = 1'0
-Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:5$95'.
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:5$101'.
   Set init value: \data_is_valid = 1'0
-Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:4$94'.
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:4$100'.
   Set init value: \data_is_available = 1'0
-Found init rule in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:8$83'.
-  Set init value: \counter = 13'0000000000000
-Found init rule in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$82'.
+Found init rule in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:12$89'.
+  Set init value: \counter = 3'000
+Found init rule in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$88'.
   Set init value: \sampling_strobe = 1'0
-Found init rule in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$112'.
+Found init rule in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$118'.
   Set init value: \previously_idle = 1'1
-Found init rule in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$111'.
+Found init rule in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$117'.
   Set init value: \start_detected = 1'0
-Found init rule in `\check_parity.$proc$../rtl/Rx/check_parity.v:5$104'.
+Found init rule in `\check_parity.$proc$../rtl/Rx/check_parity.v:5$110'.
   Set init value: \rx_error = 1'0
-Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$60'.
-  Set init value: $formal$../rtl/Tx/baud_generator.v:29$47_EN = 1'0
-Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:22$59'.
-  Set init value: \cnt = 13'0000000000000
-Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:9$58'.
-  Set init value: \counter = 0
-Found init rule in `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:8$46'.
+Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:34$64'.
+  Set init value: $formal$../rtl/Tx/baud_generator.v:34$51_EN = 1'0
+Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:27$63'.
+  Set init value: \cnt = 3'000
+Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:11$62'.
+  Set init value: \counter = 4'0000
+Found init rule in `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:8$50'.
   Set init value: \data_out = 1'1
 Found init rule in `\TxUART.$proc$../rtl/Tx/TxUART.v:22$43'.
   Set init value: \start_tx = 1'0
-Found init rule in `\test_UART.$proc$../rtl/test_UART.v:36$31'.
-  Set init value: $formal$../rtl/test_UART.v:36$5_EN = 1'0
-Found init rule in `\test_UART.$proc$../rtl/test_UART.v:33$29'.
-  Set init value: $formal$../rtl/test_UART.v:33$4_EN = 1'0
-Found init rule in `\test_UART.$proc$../rtl/test_UART.v:28$27'.
-  Set init value: $formal$../rtl/test_UART.v:28$3_EN = 1'0
+Found init rule in `\test_UART.$proc$../rtl/test_UART.v:31$28'.
+  Set init value: $formal$../rtl/test_UART.v:31$6_EN = 1'0
+Found init rule in `\test_UART.$proc$../rtl/test_UART.v:28$26'.
+  Set init value: $formal$../rtl/test_UART.v:28$5_EN = 1'0
 
 17.2.4. Executing PROC_ARST pass (detect async resets in processes).
 
 17.2.5. Executing PROC_MUX pass (convert decision trees to multiplexers).
-Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:8$97'.
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:8$103'.
      1/1: $1\state[3:0]
-Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:6$96'.
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:6$102'.
      1/1: $1\is_parity_stage[0:0]
-Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:5$95'.
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:5$101'.
      1/1: $1\data_is_valid[0:0]
-Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:4$94'.
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:4$100'.
      1/1: $1\data_is_available[0:0]
-Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:30$91'.
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
      1/1: $0\state[3:0]
-Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$85'.
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
      1/3: $0\data_is_available[0:0]
      2/3: $0\is_parity_stage[0:0]
      3/3: $0\data_is_valid[0:0]
-Creating decoders for process `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$84'.
+Creating decoders for process `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
      1/1: $0\received_data[7:0]
-Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:8$83'.
-     1/1: $1\counter[12:0]
-Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$82'.
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:12$89'.
+     1/1: $1\counter[2:0]
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$88'.
      1/1: $1\sampling_strobe[0:0]
-Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:21$80'.
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$86'.
      1/1: $0\sampling_strobe[0:0]
-Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:10$77'.
-     1/1: $0\counter[12:0]
-Creating decoders for process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$76'.
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$83'.
+     1/1: $0\counter[2:0]
+Creating decoders for process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
      1/2: $0\serial_in_synced[0:0]
      2/2: $0\serial_in_reg[0:0]
-Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$112'.
-     1/1: $1\previously_idle[0:0]
-Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$111'.
-     1/1: $1\start_detected[0:0]
-Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$110'.
-     1/1: $0\previously_idle[0:0]
-Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$105'.
-     1/1: $0\start_detected[0:0]
-Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:5$104'.
-     1/1: $1\rx_error[0:0]
-Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:21$101'.
+Creating decoders for process `\Rx_top.$proc$../rtl/Rx/Rx_top.v:5$81'.
+     1/1: $0\data_is_valid[0:0]
+Creating decoders for process `\Rx_top.$proc$../rtl/Rx/Rx_top.v:4$80'.
      1/1: $0\rx_error[0:0]
-Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:15$100'.
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$118'.
+     1/1: $1\previously_idle[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$117'.
+     1/1: $1\start_detected[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+     1/1: $0\previously_idle[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+     1/1: $0\start_detected[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:5$110'.
+     1/1: $1\rx_error[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+     1/1: $0\rx_error[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
      1/1: $0\parity_bit[0:0]
-Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:10$98'.
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:10$104'.
      1/1: $0\parity_value[0:0]
-Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$60'.
-     1/1: $0$formal$../rtl/Tx/baud_generator.v:29$47_EN[0:0]$61
-Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:22$59'.
-     1/1: $1\cnt[12:0]
-Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:9$58'.
-     1/1: $1\counter[31:0]
-Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:24$50'.
-     1/3: $0\cnt[12:0]
-     2/3: $0$formal$../rtl/Tx/baud_generator.v:29$47_EN[0:0]$52
-     3/3: $0$formal$../rtl/Tx/baud_generator.v:29$47_CHECK[0:0]$51
-Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:13$48'.
-     1/1: { $0\ck_stb[0:0] $0\counter[31:0] }
-Creating decoders for process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:8$46'.
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:34$64'.
+     1/1: $0$formal$../rtl/Tx/baud_generator.v:34$51_EN[0:0]$65
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:27$63'.
+     1/1: $1\cnt[2:0]
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:11$62'.
+     1/1: $1\counter[3:0]
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$54'.
+     1/3: $0\cnt[2:0]
+     2/3: $0$formal$../rtl/Tx/baud_generator.v:34$51_EN[0:0]$56
+     3/3: $0$formal$../rtl/Tx/baud_generator.v:34$51_CHECK[0:0]$55
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:18$52'.
+     1/1: { $0\ck_stb[0:0] $0\counter[3:0] }
+Creating decoders for process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:8$50'.
      1/1: $1\data_out[0:0]
-Creating decoders for process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$45'.
+Creating decoders for process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$49'.
      1/1: $0\data_out[0:0]
-Creating decoders for process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$44'.
+Creating decoders for process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$48'.
      1/1: $0\data_shift_reg[8:0]
+Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:61$44'.
+     1/2: $0$formal$../rtl/Tx/TxUART.v:61$30_EN[0:0]$46
+     2/2: $0$formal$../rtl/Tx/TxUART.v:61$30_CHECK[0:0]$45
 Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:22$43'.
      1/1: $1\start_tx[0:0]
-Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:32$37'.
+Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:32$36'.
      1/1: $0\state[3:0]
-Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:24$33'.
+Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:24$32'.
      1/1: $0\start_tx[0:0]
-Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:36$31'.
-     1/1: $0$formal$../rtl/test_UART.v:36$5_EN[0:0]$32
-Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:33$29'.
-     1/1: $0$formal$../rtl/test_UART.v:33$4_EN[0:0]$30
-Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:28$27'.
-     1/1: $0$formal$../rtl/test_UART.v:28$3_EN[0:0]$28
-Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:24$23'.
-     1/2: $0$formal$../rtl/test_UART.v:24$1_EN[0:0]$25
-     2/2: $0$formal$../rtl/test_UART.v:24$1_CHECK[0:0]$24
-Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:31$12'.
-     1/4: $0$formal$../rtl/test_UART.v:33$4_EN[0:0]$14
-     2/4: $0$formal$../rtl/test_UART.v:33$4_CHECK[0:0]$13
-     3/4: $0$formal$../rtl/test_UART.v:36$5_EN[0:0]$16
-     4/4: $0$formal$../rtl/test_UART.v:36$5_CHECK[0:0]$15
-Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:26$6'.
-     1/2: $0$formal$../rtl/test_UART.v:28$3_EN[0:0]$8
-     2/2: $0$formal$../rtl/test_UART.v:28$3_CHECK[0:0]$7
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:31$28'.
+     1/1: $0$formal$../rtl/test_UART.v:31$6_EN[0:0]$29
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:28$26'.
+     1/1: $0$formal$../rtl/test_UART.v:28$5_EN[0:0]$27
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:24$22'.
+     1/2: $0$formal$../rtl/test_UART.v:24$3_EN[0:0]$24
+     2/2: $0$formal$../rtl/test_UART.v:24$3_CHECK[0:0]$23
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:23$18'.
+     1/2: $0$formal$../rtl/test_UART.v:23$1_EN[0:0]$20
+     2/2: $0$formal$../rtl/test_UART.v:23$1_CHECK[0:0]$19
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:26$7'.
+     1/4: $0$formal$../rtl/test_UART.v:28$5_EN[0:0]$9
+     2/4: $0$formal$../rtl/test_UART.v:28$5_CHECK[0:0]$8
+     3/4: $0$formal$../rtl/test_UART.v:31$6_EN[0:0]$11
+     4/4: $0$formal$../rtl/test_UART.v:31$6_CHECK[0:0]$10
 
 17.2.6. Executing PROC_DLATCH pass (convert process syncs to latches).
-No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:24$1_CHECK' from process `\test_UART.$proc$../rtl/test_UART.v:24$23'.
-No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:24$1_EN' from process `\test_UART.$proc$../rtl/test_UART.v:24$23'.
+No latch inferred for signal `\Rx_top.\data_is_valid' from process `\Rx_top.$proc$../rtl/Rx/Rx_top.v:5$81'.
+No latch inferred for signal `\Rx_top.\rx_error' from process `\Rx_top.$proc$../rtl/Rx/Rx_top.v:4$80'.
+No latch inferred for signal `\TxUART.$formal$../rtl/Tx/TxUART.v:61$30_CHECK' from process `\TxUART.$proc$../rtl/Tx/TxUART.v:61$44'.
+No latch inferred for signal `\TxUART.$formal$../rtl/Tx/TxUART.v:61$30_EN' from process `\TxUART.$proc$../rtl/Tx/TxUART.v:61$44'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:24$3_CHECK' from process `\test_UART.$proc$../rtl/test_UART.v:24$22'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:24$3_EN' from process `\test_UART.$proc$../rtl/test_UART.v:24$22'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:23$1_CHECK' from process `\test_UART.$proc$../rtl/test_UART.v:23$18'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:23$1_EN' from process `\test_UART.$proc$../rtl/test_UART.v:23$18'.
 
 17.2.7. Executing PROC_DFF pass (convert process syncs to FFs).
-Creating register for signal `\rx_state.\state' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:30$91'.
-  created $dff cell `$procdff$184' with positive edge clock.
-Creating register for signal `\rx_state.\data_is_valid' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$85'.
-  created $dff cell `$procdff$185' with positive edge clock.
-Creating register for signal `\rx_state.\data_is_available' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$85'.
-  created $dff cell `$procdff$186' with positive edge clock.
-Creating register for signal `\rx_state.\is_parity_stage' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$85'.
-  created $dff cell `$procdff$187' with positive edge clock.
-Creating register for signal `\SIPO_shift_register.\received_data' using process `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$84'.
-  created $dff cell `$procdff$188' with positive edge clock.
-Creating register for signal `\sampling_strobe_generator.\sampling_strobe' using process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:21$80'.
-  created $dff cell `$procdff$189' with positive edge clock.
-Creating register for signal `\sampling_strobe_generator.\counter' using process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:10$77'.
+Creating register for signal `\rx_state.\state' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
   created $dff cell `$procdff$190' with positive edge clock.
-Creating register for signal `\synchronizer.\serial_in_synced' using process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$76'.
+Creating register for signal `\rx_state.\data_is_valid' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
   created $dff cell `$procdff$191' with positive edge clock.
-Creating register for signal `\synchronizer.\serial_in_reg' using process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$76'.
+Creating register for signal `\rx_state.\data_is_available' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
   created $dff cell `$procdff$192' with positive edge clock.
-Creating register for signal `\detect_start_bit.\previously_idle' using process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$110'.
+Creating register for signal `\rx_state.\is_parity_stage' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
   created $dff cell `$procdff$193' with positive edge clock.
-Creating register for signal `\detect_start_bit.\start_detected' using process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$105'.
+Creating register for signal `\SIPO_shift_register.\received_data' using process `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
   created $dff cell `$procdff$194' with positive edge clock.
-Creating register for signal `\check_parity.\rx_error' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:21$101'.
+Creating register for signal `\sampling_strobe_generator.\sampling_strobe' using process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$86'.
   created $dff cell `$procdff$195' with positive edge clock.
-Creating register for signal `\check_parity.\parity_bit' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:15$100'.
+Creating register for signal `\sampling_strobe_generator.\counter' using process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$83'.
   created $dff cell `$procdff$196' with positive edge clock.
-Creating register for signal `\check_parity.\parity_value' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:10$98'.
+Creating register for signal `\synchronizer.\serial_in_synced' using process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
   created $dff cell `$procdff$197' with positive edge clock.
-Creating register for signal `\baud_generator.\cnt' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:24$50'.
+Creating register for signal `\synchronizer.\serial_in_reg' using process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
   created $dff cell `$procdff$198' with positive edge clock.
-Creating register for signal `\baud_generator.$formal$../rtl/Tx/baud_generator.v:29$47_CHECK' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:24$50'.
+Creating register for signal `\detect_start_bit.\previously_idle' using process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
   created $dff cell `$procdff$199' with positive edge clock.
-Creating register for signal `\baud_generator.$formal$../rtl/Tx/baud_generator.v:29$47_EN' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:24$50'.
+Creating register for signal `\detect_start_bit.\start_detected' using process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
   created $dff cell `$procdff$200' with positive edge clock.
-Creating register for signal `\baud_generator.\ck_stb' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:13$48'.
+Creating register for signal `\check_parity.\rx_error' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
   created $dff cell `$procdff$201' with positive edge clock.
-Creating register for signal `\baud_generator.\counter' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:13$48'.
+Creating register for signal `\check_parity.\parity_bit' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
   created $dff cell `$procdff$202' with positive edge clock.
-Creating register for signal `\PISO_shift_register.\data_out' using process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$45'.
+Creating register for signal `\check_parity.\parity_value' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:10$104'.
   created $dff cell `$procdff$203' with positive edge clock.
-Creating register for signal `\PISO_shift_register.\data_shift_reg' using process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$44'.
+Creating register for signal `\baud_generator.\cnt' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$54'.
   created $dff cell `$procdff$204' with positive edge clock.
-Creating register for signal `\TxUART.\state' using process `\TxUART.$proc$../rtl/Tx/TxUART.v:32$37'.
+Creating register for signal `\baud_generator.$formal$../rtl/Tx/baud_generator.v:34$51_CHECK' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$54'.
   created $dff cell `$procdff$205' with positive edge clock.
-Creating register for signal `\TxUART.\start_tx' using process `\TxUART.$proc$../rtl/Tx/TxUART.v:24$33'.
+Creating register for signal `\baud_generator.$formal$../rtl/Tx/baud_generator.v:34$51_EN' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$54'.
   created $dff cell `$procdff$206' with positive edge clock.
-Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:33$4_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:31$12'.
+Creating register for signal `\baud_generator.\ck_stb' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:18$52'.
   created $dff cell `$procdff$207' with positive edge clock.
-Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:33$4_EN' using process `\test_UART.$proc$../rtl/test_UART.v:31$12'.
+Creating register for signal `\baud_generator.\counter' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:18$52'.
   created $dff cell `$procdff$208' with positive edge clock.
-Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:36$5_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:31$12'.
+Creating register for signal `\PISO_shift_register.\data_out' using process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$49'.
   created $dff cell `$procdff$209' with positive edge clock.
-Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:36$5_EN' using process `\test_UART.$proc$../rtl/test_UART.v:31$12'.
+Creating register for signal `\PISO_shift_register.\data_shift_reg' using process `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$48'.
   created $dff cell `$procdff$210' with positive edge clock.
-Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:28$3_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:26$6'.
+Creating register for signal `\TxUART.\state' using process `\TxUART.$proc$../rtl/Tx/TxUART.v:32$36'.
   created $dff cell `$procdff$211' with positive edge clock.
-Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:28$3_EN' using process `\test_UART.$proc$../rtl/test_UART.v:26$6'.
+Creating register for signal `\TxUART.\start_tx' using process `\TxUART.$proc$../rtl/Tx/TxUART.v:24$32'.
   created $dff cell `$procdff$212' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:28$5_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:26$7'.
+  created $dff cell `$procdff$213' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:28$5_EN' using process `\test_UART.$proc$../rtl/test_UART.v:26$7'.
+  created $dff cell `$procdff$214' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:31$6_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:26$7'.
+  created $dff cell `$procdff$215' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:31$6_EN' using process `\test_UART.$proc$../rtl/test_UART.v:26$7'.
+  created $dff cell `$procdff$216' with positive edge clock.
 
 17.2.8. Executing PROC_CLEAN pass (remove empty switches from decision trees).
-Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:8$97'.
-Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:6$96'.
-Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:5$95'.
-Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:4$94'.
-Found and cleaned up 2 empty switches in `\rx_state.$proc$../rtl/Rx/rx_state.v:30$91'.
-Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:30$91'.
-Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:23$85'.
-Found and cleaned up 1 empty switch in `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$84'.
-Removing empty process `SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$84'.
-Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:8$83'.
-Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$82'.
-Found and cleaned up 1 empty switch in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:21$80'.
-Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:21$80'.
-Found and cleaned up 2 empty switches in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:10$77'.
-Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:10$77'.
-Removing empty process `synchronizer.$proc$../rtl/Rx/synchronizer.v:8$76'.
-Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$112'.
-Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$111'.
-Found and cleaned up 1 empty switch in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$110'.
-Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$110'.
-Found and cleaned up 1 empty switch in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$105'.
-Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$105'.
-Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:5$104'.
-Found and cleaned up 1 empty switch in `\check_parity.$proc$../rtl/Rx/check_parity.v:21$101'.
-Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:21$101'.
-Found and cleaned up 1 empty switch in `\check_parity.$proc$../rtl/Rx/check_parity.v:15$100'.
-Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:15$100'.
-Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:10$98'.
-Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:29$60'.
-Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:22$59'.
-Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:9$58'.
-Found and cleaned up 1 empty switch in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:24$50'.
-Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:24$50'.
-Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:13$48'.
-Removing empty process `PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:8$46'.
-Found and cleaned up 1 empty switch in `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$45'.
-Removing empty process `PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$45'.
-Found and cleaned up 1 empty switch in `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$44'.
-Removing empty process `PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$44'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:8$103'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:6$102'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:5$101'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:4$100'.
+Found and cleaned up 2 empty switches in `\rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
+Found and cleaned up 1 empty switch in `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
+Removing empty process `SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:12$89'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$88'.
+Found and cleaned up 1 empty switch in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$86'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$86'.
+Found and cleaned up 2 empty switches in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$83'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$83'.
+Removing empty process `synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
+Removing empty process `Rx_top.$proc$../rtl/Rx/Rx_top.v:5$81'.
+Removing empty process `Rx_top.$proc$../rtl/Rx/Rx_top.v:4$80'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$118'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$117'.
+Found and cleaned up 1 empty switch in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+Found and cleaned up 1 empty switch in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:5$110'.
+Found and cleaned up 1 empty switch in `\check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+Found and cleaned up 1 empty switch in `\check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:10$104'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:34$64'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:27$63'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:11$62'.
+Found and cleaned up 1 empty switch in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$54'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:29$54'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:18$52'.
+Removing empty process `PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:8$50'.
+Found and cleaned up 1 empty switch in `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$49'.
+Removing empty process `PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:18$49'.
+Found and cleaned up 1 empty switch in `\PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$48'.
+Removing empty process `PISO_shift_register.$proc$../rtl/Tx/PISO_shift_register.v:10$48'.
+Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:61$44'.
 Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:22$43'.
-Found and cleaned up 2 empty switches in `\TxUART.$proc$../rtl/Tx/TxUART.v:32$37'.
-Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:32$37'.
-Found and cleaned up 2 empty switches in `\TxUART.$proc$../rtl/Tx/TxUART.v:24$33'.
-Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:24$33'.
-Removing empty process `test_UART.$proc$../rtl/test_UART.v:36$31'.
-Removing empty process `test_UART.$proc$../rtl/test_UART.v:33$29'.
-Removing empty process `test_UART.$proc$../rtl/test_UART.v:28$27'.
-Removing empty process `test_UART.$proc$../rtl/test_UART.v:24$23'.
-Found and cleaned up 1 empty switch in `\test_UART.$proc$../rtl/test_UART.v:31$12'.
-Removing empty process `test_UART.$proc$../rtl/test_UART.v:31$12'.
-Removing empty process `test_UART.$proc$../rtl/test_UART.v:26$6'.
+Found and cleaned up 2 empty switches in `\TxUART.$proc$../rtl/Tx/TxUART.v:32$36'.
+Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:32$36'.
+Found and cleaned up 2 empty switches in `\TxUART.$proc$../rtl/Tx/TxUART.v:24$32'.
+Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:24$32'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:31$28'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:28$26'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:24$22'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:23$18'.
+Found and cleaned up 1 empty switch in `\test_UART.$proc$../rtl/test_UART.v:26$7'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:26$7'.
 Cleaned up 18 empty switches.
 
 17.3. Executing OPT_EXPR pass (perform const folding).
-Replacing $eq cell `$procmux$120_CMP0' in module `rx_state' with $logic_not.
-Replacing $mux cell `$procmux$154' (0) in module `\baud_generator' with constant driver `$procmux$154_Y = 1'x'.
-Replacing $mux cell `$procmux$148' (0) in module `\baud_generator' with constant driver `$procmux$148_Y = $add$../rtl/Tx/baud_generator.v:26$53_Y [12:0]'.
-Replacing $mux cell `$procmux$151' (0) in module `\baud_generator' with constant driver `$procmux$151_Y = 1'0'.
-Replacing $eq cell `$eq$../rtl/Tx/TxUART.v:58$40' in module `TxUART' with $logic_not.
-Replacing $eq cell `$procmux$169_CMP0' in module `TxUART' with $logic_not.
-Replacing $eq cell `$eq$../rtl/test_UART.v:24$26' in module `test_UART' with inverter.
+Replacing $eq cell `$procmux$126_CMP0' in module `rx_state' with $logic_not.
+Replacing $eq cell `$eq$../rtl/Rx/sampling_strobe_generator.v:19$84' (isneq) in module `\sampling_strobe_generator' with constant driver `$eq$../rtl/Rx/sampling_strobe_generator.v:19$84_Y = 1'0'.
+Replacing $mux cell `$procmux$139' (0) in module `\sampling_strobe_generator' with constant driver `$procmux$139_Y = $add$../rtl/Rx/sampling_strobe_generator.v:22$85_Y [2:0]'.
+Replacing $eq cell `$eq$../rtl/Rx/sampling_strobe_generator.v:27$87' (isneq) in module `\sampling_strobe_generator' with constant driver `$eq$../rtl/Rx/sampling_strobe_generator.v:27$87_Y = 1'0'.
+Replacing $mux cell `$procmux$133' (0) in module `\sampling_strobe_generator' with constant driver `$procmux$133_Y = 1'0'.
+Replacing $mux cell `$procmux$160' (0) in module `\baud_generator' with constant driver `$procmux$160_Y = 1'x'.
+Replacing $mux cell `$procmux$154' (0) in module `\baud_generator' with constant driver `$procmux$154_Y = $add$../rtl/Tx/baud_generator.v:31$57_Y [2:0]'.
+Replacing $mux cell `$procmux$157' (0) in module `\baud_generator' with constant driver `$procmux$157_Y = 1'0'.
+Replacing $eq cell `$eq$../rtl/Tx/TxUART.v:58$39' in module `TxUART' with $logic_not.
+Replacing $eq cell `$eq$../rtl/Tx/TxUART.v:61$47' in module `TxUART' with $logic_not.
+Replacing $eq cell `$procmux$175_CMP0' in module `TxUART' with $logic_not.
+Replacing $eq cell `$eq$../rtl/test_UART.v:23$21' in module `test_UART' with inverter.
+Replacing $eq cell `$eq$../rtl/test_UART.v:24$25' in module `test_UART' with inverter.
 
 17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \rx_state..
@@ -415,12 +428,17 @@ Finding unused cells or wires in module \rx_state..
 Finding unused cells or wires in module \SIPO_shift_register..
   removed 2 unused temporary wires.
 Finding unused cells or wires in module \sampling_strobe_generator..
-  removing unused `$mux' cell `$procmux$130'.
-  removed 8 unused temporary wires.
+  removing unused `$mux' cell `$procmux$136'.
+  removing unused `$add' cell `$add$../rtl/Rx/sampling_strobe_generator.v:22$85'.
+  removing unused `$dff' cell `$procdff$196'.
+  removing unused non-port wire \counter.
+  removed 14 unused temporary wires.
 Finding unused cells or wires in module \RxUART..
 Finding unused cells or wires in module \synchronizer..
   removed 2 unused temporary wires.
 Finding unused cells or wires in module \Rx_top..
+  removing unused `\check_parity' cell `\cp'.
+  removed 2 unused temporary wires.
 Finding unused cells or wires in module \detect_start_bit..
   removed 6 unused temporary wires.
 Finding unused cells or wires in module \check_parity..
@@ -428,14 +446,14 @@ Finding unused cells or wires in module \check_parity..
 Finding unused cells or wires in module \Tx_top..
   removed 1 unused temporary wires.
 Finding unused cells or wires in module \baud_generator..
-  removing unused `$add' cell `$add$../rtl/Tx/baud_generator.v:14$49'.
-  removing unused `$add' cell `$add$../rtl/Tx/baud_generator.v:26$53'.
-  removing unused `$ge' cell `$ge$../rtl/Tx/baud_generator.v:29$54'.
-  removing unused `$le' cell `$le$../rtl/Tx/baud_generator.v:29$55'.
-  removing unused `$logic_and' cell `$logic_and$../rtl/Tx/baud_generator.v:29$56'.
-  removing unused `$dff' cell `$procdff$198'.
-  removing unused `$dff' cell `$procdff$201'.
-  removing unused `$dff' cell `$procdff$202'.
+  removing unused `$add' cell `$add$../rtl/Tx/baud_generator.v:19$53'.
+  removing unused `$add' cell `$add$../rtl/Tx/baud_generator.v:31$57'.
+  removing unused `$ge' cell `$ge$../rtl/Tx/baud_generator.v:34$58'.
+  removing unused `$le' cell `$le$../rtl/Tx/baud_generator.v:34$59'.
+  removing unused `$logic_and' cell `$logic_and$../rtl/Tx/baud_generator.v:34$60'.
+  removing unused `$dff' cell `$procdff$204'.
+  removing unused `$dff' cell `$procdff$207'.
+  removing unused `$dff' cell `$procdff$208'.
   removing unused non-port wire \cnt.
   removing unused non-port wire \counter.
   removing unused non-port wire \ck_stb.
@@ -443,11 +461,11 @@ Finding unused cells or wires in module \baud_generator..
 Finding unused cells or wires in module \PISO_shift_register..
   removed 5 unused temporary wires.
 Finding unused cells or wires in module \TxUART..
-  removed 7 unused temporary wires.
+  removed 11 unused temporary wires.
 Finding unused cells or wires in module \UART..
 Finding unused cells or wires in module \test_UART..
-  removed 15 unused temporary wires.
-Removed 9 unused cells and 83 unused wires.
+  removed 16 unused temporary wires.
+Removed 12 unused cells and 96 unused wires.
 
 17.5. Executing CHECK pass (checking for obvious problems).
 checking module PISO_shift_register..
@@ -457,7 +475,6 @@ checking module SIPO_shift_register..
 checking module TxUART..
 checking module Tx_top..
 checking module UART..
-Warning: Wire UART.\o_busy is used but has no driver.
 checking module baud_generator..
 checking module check_parity..
 checking module detect_start_bit..
@@ -465,11 +482,7 @@ checking module rx_state..
 checking module sampling_strobe_generator..
 checking module synchronizer..
 checking module test_UART..
-Warning: multiple conflicting drivers for test_UART.\serial_in:
-    port serial_out[0] of cell uart (UART)
-    module input serial_in[0]
-Warning: Wire test_UART.\start is used but has no driver.
-found and reported 3 problems.
+found and reported 0 problems.
 
 17.6. Executing OPT pass (performing simple optimizations).
 
@@ -481,38 +494,38 @@ Finding identical cells in module `\RxUART'.
 Finding identical cells in module `\Rx_top'.
 Finding identical cells in module `\SIPO_shift_register'.
 Finding identical cells in module `\TxUART'.
-  Cell `$procmux$168_CMP0' is identical to cell `$eq$../rtl/Tx/TxUART.v:29$36'.
-    Redirecting output \Y: $procmux$168_CMP = $eq$../rtl/Tx/TxUART.v:29$36_Y
-    Removing $eq cell `$procmux$168_CMP0' from module `\TxUART'.
-  Cell `$procmux$169_CMP0' is identical to cell `$eq$../rtl/Tx/TxUART.v:58$40'.
-    Redirecting output \Y: $procmux$169_CMP = $eq$../rtl/Tx/TxUART.v:58$40_Y
-    Removing $logic_not cell `$procmux$169_CMP0' from module `\TxUART'.
+  Cell `$eq$../rtl/Tx/TxUART.v:61$47' is identical to cell `$eq$../rtl/Tx/TxUART.v:58$39'.
+    Redirecting output \Y: $0$formal$../rtl/Tx/TxUART.v:61$30_CHECK[0:0]$45 = $eq$../rtl/Tx/TxUART.v:58$39_Y
+    Removing $logic_not cell `$eq$../rtl/Tx/TxUART.v:61$47' from module `\TxUART'.
+  Cell `$procmux$174_CMP0' is identical to cell `$eq$../rtl/Tx/TxUART.v:29$35'.
+    Redirecting output \Y: $procmux$174_CMP = $eq$../rtl/Tx/TxUART.v:29$35_Y
+    Removing $eq cell `$procmux$174_CMP0' from module `\TxUART'.
+  Cell `$procmux$175_CMP0' is identical to cell `$eq$../rtl/Tx/TxUART.v:58$39'.
+    Redirecting output \Y: $procmux$175_CMP = $eq$../rtl/Tx/TxUART.v:58$39_Y
+    Removing $logic_not cell `$procmux$175_CMP0' from module `\TxUART'.
 Finding identical cells in module `\Tx_top'.
 Finding identical cells in module `\UART'.
 Finding identical cells in module `\baud_generator'.
 Finding identical cells in module `\check_parity'.
 Finding identical cells in module `\detect_start_bit'.
 Finding identical cells in module `\rx_state'.
-  Cell `$procmux$117_CMP0' is identical to cell `$eq$../rtl/Rx/rx_state.v:26$87'.
-    Redirecting output \Y: $procmux$117_CMP = $0\is_parity_stage[0:0]
-    Removing $eq cell `$procmux$117_CMP0' from module `\rx_state'.
+  Cell `$procmux$123_CMP0' is identical to cell `$eq$../rtl/Rx/rx_state.v:26$93'.
+    Redirecting output \Y: $procmux$123_CMP = $0\is_parity_stage[0:0]
+    Removing $eq cell `$procmux$123_CMP0' from module `\rx_state'.
 Finding identical cells in module `\sampling_strobe_generator'.
-  Cell `$eq$../rtl/Rx/sampling_strobe_generator.v:23$81' is identical to cell `$eq$../rtl/Rx/sampling_strobe_generator.v:15$78'.
-    Redirecting output \Y: $eq$../rtl/Rx/sampling_strobe_generator.v:23$81_Y = $eq$../rtl/Rx/sampling_strobe_generator.v:15$78_Y
-    Removing $eq cell `$eq$../rtl/Rx/sampling_strobe_generator.v:23$81' from module `\sampling_strobe_generator'.
 Finding identical cells in module `\synchronizer'.
 Finding identical cells in module `\test_UART'.
-  Cell `$procdff$212' is identical to cell `$procdff$208'.
-    Redirecting output \Q: $formal$../rtl/test_UART.v:28$3_EN = $formal$../rtl/test_UART.v:33$4_EN
-    Removing $dff cell `$procdff$212' from module `\test_UART'.
+  Cell `$initstate$4' is identical to cell `$initstate$2'.
+    Redirecting output \Y: $0$formal$../rtl/test_UART.v:24$3_EN[0:0]$24 = $0$formal$../rtl/test_UART.v:23$1_EN[0:0]$20
+    Removing $initstate cell `$initstate$4' from module `\test_UART'.
 Removed a total of 5 cells.
 
 17.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
 Running muxtree optimizer on module \PISO_shift_register..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$157 (pure)
-    Root of a mux tree: $procmux$160 (pure)
+    Root of a mux tree: $procmux$163 (pure)
+    Root of a mux tree: $procmux$166 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \RxUART..
   Creating internal representation of mux trees.
@@ -523,13 +536,13 @@ Running muxtree optimizer on module \Rx_top..
 Running muxtree optimizer on module \SIPO_shift_register..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$124 (pure)
+    Root of a mux tree: $procmux$130 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \TxUART..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$170 (pure)
     Root of a mux tree: $procmux$176 (pure)
+    Root of a mux tree: $procmux$182 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \Tx_top..
   Creating internal representation of mux trees.
@@ -543,34 +556,31 @@ Running muxtree optimizer on module \baud_generator..
 Running muxtree optimizer on module \check_parity..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$142 (pure)
-    Root of a mux tree: $procmux$145 (pure)
+    Root of a mux tree: $procmux$148 (pure)
+    Root of a mux tree: $procmux$151 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \detect_start_bit..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$136 (pure)
-    Root of a mux tree: $procmux$139 (pure)
+    Root of a mux tree: $procmux$142 (pure)
+    Root of a mux tree: $procmux$145 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \rx_state..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$121 (pure)
+    Root of a mux tree: $procmux$127 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \sampling_strobe_generator..
   Creating internal representation of mux trees.
-  Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$127 (pure)
-    Root of a mux tree: $procmux$133 (pure)
-  Analyzing evaluation results.
+  No muxes found in this module.
 Running muxtree optimizer on module \synchronizer..
   Creating internal representation of mux trees.
   No muxes found in this module.
 Running muxtree optimizer on module \test_UART..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$179 (pure)
-    Root of a mux tree: $procmux$182 (pure)
+    Root of a mux tree: $procmux$185 (pure)
+    Root of a mux tree: $procmux$188 (pure)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -580,7 +590,7 @@ Removed 0 multiplexer ports.
   Optimizing cells in module \Rx_top.
   Optimizing cells in module \SIPO_shift_register.
   Optimizing cells in module \TxUART.
-    New input vector for $reduce_or cell $procmux$167_ANY: { $procmux$167_CMP [0] $procmux$167_CMP [1] $procmux$167_CMP [2] $procmux$167_CMP [3] $procmux$167_CMP [4] $procmux$167_CMP [5] $procmux$167_CMP [6] $procmux$167_CMP [7] }
+    New input vector for $reduce_or cell $procmux$173_ANY: { $procmux$173_CMP [0] $procmux$173_CMP [1] $procmux$173_CMP [2] $procmux$173_CMP [3] $procmux$173_CMP [4] $procmux$173_CMP [5] $procmux$173_CMP [6] $procmux$173_CMP [7] }
   Optimizing cells in module \TxUART.
   Optimizing cells in module \Tx_top.
   Optimizing cells in module \UART.
@@ -588,7 +598,7 @@ Removed 0 multiplexer ports.
   Optimizing cells in module \check_parity.
   Optimizing cells in module \detect_start_bit.
   Optimizing cells in module \rx_state.
-    New input vector for $reduce_or cell $procmux$118_ANY: { $procmux$118_CMP [0] $procmux$118_CMP [1] $procmux$118_CMP [2] $procmux$118_CMP [3] $procmux$118_CMP [4] $procmux$118_CMP [5] $procmux$118_CMP [6] $procmux$118_CMP [7] }
+    New input vector for $reduce_or cell $procmux$124_ANY: { $procmux$124_CMP [0] $procmux$124_CMP [1] $procmux$124_CMP [2] $procmux$124_CMP [3] $procmux$124_CMP [4] $procmux$124_CMP [5] $procmux$124_CMP [6] $procmux$124_CMP [7] }
   Optimizing cells in module \rx_state.
   Optimizing cells in module \sampling_strobe_generator.
   Optimizing cells in module \synchronizer.
@@ -613,9 +623,10 @@ Finding identical cells in module `\test_UART'.
 Removed a total of 0 cells.
 
 17.6.6. Executing OPT_RMDFF pass (remove dff with constant values).
-Removing $procdff$199 ($dff) from module baud_generator.
-Removing $procdff$200 ($dff) from module baud_generator.
-Replaced 2 DFF cells.
+Removing $procdff$205 ($dff) from module baud_generator.
+Removing $procdff$206 ($dff) from module baud_generator.
+Removing $procdff$195 ($dff) from module sampling_strobe_generator.
+Replaced 3 DFF cells.
 
 17.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \PISO_shift_register..
@@ -623,7 +634,7 @@ Finding unused cells or wires in module \RxUART..
 Finding unused cells or wires in module \Rx_top..
 Finding unused cells or wires in module \SIPO_shift_register..
 Finding unused cells or wires in module \TxUART..
-  removed 2 unused temporary wires.
+  removed 3 unused temporary wires.
 Finding unused cells or wires in module \Tx_top..
 Finding unused cells or wires in module \UART..
 Finding unused cells or wires in module \baud_generator..
@@ -633,12 +644,10 @@ Finding unused cells or wires in module \detect_start_bit..
 Finding unused cells or wires in module \rx_state..
   removed 1 unused temporary wires.
 Finding unused cells or wires in module \sampling_strobe_generator..
-  removed 1 unused temporary wires.
 Finding unused cells or wires in module \synchronizer..
 Finding unused cells or wires in module \test_UART..
-  removing redundant init attribute on $formal$../rtl/test_UART.v:33$4_EN.
   removed 1 unused temporary wires.
-Removed 9 unused cells and 90 unused wires.
+Removed 12 unused cells and 103 unused wires.
 
 17.6.8. Executing OPT_EXPR pass (perform const folding).
 
@@ -648,8 +657,8 @@ Removed 9 unused cells and 90 unused wires.
 Running muxtree optimizer on module \PISO_shift_register..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$157 (pure)
-    Root of a mux tree: $procmux$160 (pure)
+    Root of a mux tree: $procmux$163 (pure)
+    Root of a mux tree: $procmux$166 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \RxUART..
   Creating internal representation of mux trees.
@@ -660,13 +669,13 @@ Running muxtree optimizer on module \Rx_top..
 Running muxtree optimizer on module \SIPO_shift_register..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$124 (pure)
+    Root of a mux tree: $procmux$130 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \TxUART..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$170 (pure)
     Root of a mux tree: $procmux$176 (pure)
+    Root of a mux tree: $procmux$182 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \Tx_top..
   Creating internal representation of mux trees.
@@ -680,34 +689,31 @@ Running muxtree optimizer on module \baud_generator..
 Running muxtree optimizer on module \check_parity..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$142 (pure)
-    Root of a mux tree: $procmux$145 (pure)
+    Root of a mux tree: $procmux$148 (pure)
+    Root of a mux tree: $procmux$151 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \detect_start_bit..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$136 (pure)
-    Root of a mux tree: $procmux$139 (pure)
+    Root of a mux tree: $procmux$142 (pure)
+    Root of a mux tree: $procmux$145 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \rx_state..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$121 (pure)
+    Root of a mux tree: $procmux$127 (pure)
   Analyzing evaluation results.
 Running muxtree optimizer on module \sampling_strobe_generator..
   Creating internal representation of mux trees.
-  Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$127 (pure)
-    Root of a mux tree: $procmux$133 (pure)
-  Analyzing evaluation results.
+  No muxes found in this module.
 Running muxtree optimizer on module \synchronizer..
   Creating internal representation of mux trees.
   No muxes found in this module.
 Running muxtree optimizer on module \test_UART..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
-    Root of a mux tree: $procmux$179 (pure)
-    Root of a mux tree: $procmux$182 (pure)
+    Root of a mux tree: $procmux$185 (pure)
+    Root of a mux tree: $procmux$188 (pure)
   Analyzing evaluation results.
 Removed 0 multiplexer ports.
 
@@ -762,36 +768,33 @@ Finding unused cells or wires in module \rx_state..
 Finding unused cells or wires in module \sampling_strobe_generator..
 Finding unused cells or wires in module \synchronizer..
 Finding unused cells or wires in module \test_UART..
-Removed 9 unused cells and 90 unused wires.
+Removed 12 unused cells and 103 unused wires.
 
 17.6.15. Executing OPT_EXPR pass (perform const folding).
 
 17.6.16. Finished OPT passes. (There is nothing left to do.)
 
 17.7. Executing WREDUCE pass (reducing word size of cells).
-Removed top 3 bits (of 4) from port B of cell TxUART.$eq$../rtl/Tx/TxUART.v:29$36 ($eq).
-Removed top 3 bits (of 4) from mux cell TxUART.$ternary$../rtl/Tx/TxUART.v:36$38 ($mux).
-Removed top 2 bits (of 4) from port B of cell TxUART.$procmux$167_CMP0 ($eq).
-Removed top 2 bits (of 4) from port B of cell TxUART.$procmux$167_CMP1 ($eq).
-Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$167_CMP2 ($eq).
-Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$167_CMP3 ($eq).
-Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$167_CMP4 ($eq).
-Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$167_CMP5 ($eq).
-Removed top 3 bits (of 4) from wire TxUART.$ternary$../rtl/Tx/TxUART.v:36$38_Y.
-Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$118_CMP3 ($eq).
-Removed top 2 bits (of 4) from port B of cell rx_state.$procmux$118_CMP0 ($eq).
-Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$118_CMP2 ($eq).
-Removed top 2 bits (of 4) from port B of cell rx_state.$procmux$118_CMP1 ($eq).
-Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$118_CMP5 ($eq).
-Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$118_CMP4 ($eq).
-Removed top 3 bits (of 4) from port B of cell rx_state.$procmux$119_CMP0 ($eq).
-Removed top 2 bits (of 4) from port B of cell rx_state.$ge$../rtl/Rx/rx_state.v:27$88 ($ge).
-Removed top 3 bits (of 4) from mux cell rx_state.$ternary$../rtl/Rx/rx_state.v:34$92 ($mux).
-Removed top 3 bits (of 4) from wire rx_state.$ternary$../rtl/Rx/rx_state.v:34$92_Y.
-Removed top 31 bits (of 32) from port B of cell sampling_strobe_generator.$add$../rtl/Rx/sampling_strobe_generator.v:18$79 ($add).
-Removed top 19 bits (of 32) from port Y of cell sampling_strobe_generator.$add$../rtl/Rx/sampling_strobe_generator.v:18$79 ($add).
-Removed top 19 bits (of 32) from wire sampling_strobe_generator.$add$../rtl/Rx/sampling_strobe_generator.v:18$79_Y.
-Removed cell test_UART.$procmux$182 ($mux).
+Removed top 3 bits (of 4) from port B of cell TxUART.$eq$../rtl/Tx/TxUART.v:29$35 ($eq).
+Removed top 3 bits (of 4) from mux cell TxUART.$ternary$../rtl/Tx/TxUART.v:36$37 ($mux).
+Removed top 2 bits (of 4) from port B of cell TxUART.$procmux$173_CMP0 ($eq).
+Removed top 2 bits (of 4) from port B of cell TxUART.$procmux$173_CMP1 ($eq).
+Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$173_CMP2 ($eq).
+Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$173_CMP3 ($eq).
+Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$173_CMP4 ($eq).
+Removed top 1 bits (of 4) from port B of cell TxUART.$procmux$173_CMP5 ($eq).
+Removed top 3 bits (of 4) from wire TxUART.$ternary$../rtl/Tx/TxUART.v:36$37_Y.
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$124_CMP3 ($eq).
+Removed top 2 bits (of 4) from port B of cell rx_state.$procmux$124_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$124_CMP2 ($eq).
+Removed top 2 bits (of 4) from port B of cell rx_state.$procmux$124_CMP1 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$124_CMP5 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$124_CMP4 ($eq).
+Removed top 3 bits (of 4) from port B of cell rx_state.$procmux$125_CMP0 ($eq).
+Removed top 2 bits (of 4) from port B of cell rx_state.$ge$../rtl/Rx/rx_state.v:27$94 ($ge).
+Removed top 3 bits (of 4) from mux cell rx_state.$ternary$../rtl/Rx/rx_state.v:34$98 ($mux).
+Removed top 3 bits (of 4) from wire rx_state.$ternary$../rtl/Rx/rx_state.v:34$98_Y.
+Removed cell test_UART.$procmux$188 ($mux).
 
 17.8. Executing MEMORY_DFF pass (merging $dff cells to $memrd and $memwr).
 
@@ -810,11 +813,10 @@ Finding unused cells or wires in module \detect_start_bit..
 Finding unused cells or wires in module \rx_state..
   removed 1 unused temporary wires.
 Finding unused cells or wires in module \sampling_strobe_generator..
-  removed 1 unused temporary wires.
 Finding unused cells or wires in module \synchronizer..
 Finding unused cells or wires in module \test_UART..
   removed 1 unused temporary wires.
-Removed 9 unused cells and 94 unused wires.
+Removed 12 unused cells and 106 unused wires.
 
 17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
 
@@ -856,7 +858,7 @@ Finding unused cells or wires in module \rx_state..
 Finding unused cells or wires in module \sampling_strobe_generator..
 Finding unused cells or wires in module \synchronizer..
 Finding unused cells or wires in module \test_UART..
-Removed 9 unused cells and 94 unused wires.
+Removed 12 unused cells and 106 unused wires.
 
 17.11.5. Finished fast OPT passes.
 
@@ -898,10 +900,9 @@ Removed 9 unused cells and 94 unused wires.
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                  4
+   Number of cells:                  3
      RxUART                          1
      SIPO_shift_register             1
-     check_parity                    1
      synchronizer                    1
 
 === SIPO_shift_register ===
@@ -919,17 +920,19 @@ Removed 9 unused cells and 94 unused wires.
 
 === TxUART ===
 
-   Number of wires:                 21
-   Number of wire bits:             50
+   Number of wires:                 22
+   Number of wire bits:             51
    Number of public wires:           7
    Number of public wire bits:      17
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                 24
+   Number of cells:                 26
      $add                            1
+     $assume                         1
      $dff                            2
      $eq                            10
+     $initstate                      1
      $logic_and                      1
      $logic_not                      3
      $mux                            4
@@ -1031,18 +1034,14 @@ Removed 9 unused cells and 94 unused wires.
 
 === sampling_strobe_generator ===
 
-   Number of wires:                  8
-   Number of wire bits:             44
-   Number of public wires:           4
-   Number of public wire bits:      16
+   Number of wires:                  3
+   Number of wire bits:              3
+   Number of public wires:           3
+   Number of public wire bits:       3
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                  6
-     $add                            1
-     $dff                            2
-     $eq                             1
-     $mux                            2
+   Number of cells:                  0
 
 === synchronizer ===
 
@@ -1058,23 +1057,22 @@ Removed 9 unused cells and 94 unused wires.
 
 === test_UART ===
 
-   Number of wires:                 23
-   Number of wire bits:             37
-   Number of public wires:          10
-   Number of public wire bits:      24
+   Number of wires:                 19
+   Number of wire bits:             33
+   Number of public wires:           9
+   Number of public wire bits:      23
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                 18
+   Number of cells:                 15
      $assert                         2
      $assume                         2
-     $dff                            5
-     $eq                             2
+     $dff                            4
+     $eq                             1
      $initstate                      1
-     $logic_and                      1
-     $logic_not                      2
+     $logic_not                      1
      $mux                            1
-     $not                            1
+     $not                            2
      UART                            1
 
 === design hierarchy ===
@@ -1087,38 +1085,36 @@ Removed 9 unused cells and 94 unused wires.
            rx_state                  1
            sampling_strobe_generator      1
          SIPO_shift_register         1
-         check_parity                1
          synchronizer                1
        Tx_top                        1
          PISO_shift_register         1
          TxUART                      1
          baud_generator              1
 
-   Number of wires:                145
-   Number of wire bits:            319
-   Number of public wires:          87
-   Number of public wire bits:     184
+   Number of wires:                124
+   Number of wire bits:            255
+   Number of public wires:          77
+   Number of public wire bits:     155
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:                 97
-     $add                            3
+   Number of cells:                 82
+     $add                            2
      $assert                         3
-     $assume                         2
-     $dff                           23
-     $eq                            24
+     $assume                         3
+     $dff                           17
+     $eq                            22
      $ge                             1
-     $initstate                      1
+     $initstate                      2
      $le                             1
-     $logic_and                      6
-     $logic_not                      8
-     $mux                           16
-     $ne                             1
-     $not                            1
+     $logic_and                      4
+     $logic_not                      7
+     $mux                           12
+     $not                            2
      $or                             1
      $pmux                           2
      $reduce_or                      2
-     $reduce_xor                     2
+     $reduce_xor                     1
 
 17.13. Executing CHECK pass (checking for obvious problems).
 checking module PISO_shift_register..
@@ -1128,7 +1124,6 @@ checking module SIPO_shift_register..
 checking module TxUART..
 checking module Tx_top..
 checking module UART..
-Warning: Wire UART.\o_busy is used but has no driver.
 checking module baud_generator..
 checking module check_parity..
 checking module detect_start_bit..
@@ -1136,23 +1131,19 @@ checking module rx_state..
 checking module sampling_strobe_generator..
 checking module synchronizer..
 checking module test_UART..
-Warning: multiple conflicting drivers for test_UART.\serial_in:
-    port serial_out[0] of cell uart (UART)
-    module input serial_in[0]
-Warning: Wire test_UART.\start is used but has no driver.
-found and reported 3 problems.
+found and reported 0 problems.
 
 -- Running command `write_smt2 -wires UART.smt2' --
 
 18. Executing SMT2 backend.
 Creating SMT-LIBv2 representation of module TxUART.
-Creating SMT-LIBv2 representation of module baud_generator.
-Creating SMT-LIBv2 representation of module PISO_shift_register.
 Creating SMT-LIBv2 representation of module synchronizer.
+Creating SMT-LIBv2 representation of module PISO_shift_register.
+Creating SMT-LIBv2 representation of module baud_generator.
 Creating SMT-LIBv2 representation of module SIPO_shift_register.
+Creating SMT-LIBv2 representation of module detect_start_bit.
 Creating SMT-LIBv2 representation of module sampling_strobe_generator.
 Creating SMT-LIBv2 representation of module rx_state.
-Creating SMT-LIBv2 representation of module detect_start_bit.
 Creating SMT-LIBv2 representation of module check_parity.
 Creating SMT-LIBv2 representation of module Tx_top.
 Creating SMT-LIBv2 representation of module RxUART.
@@ -1160,7 +1151,7 @@ Creating SMT-LIBv2 representation of module Rx_top.
 Creating SMT-LIBv2 representation of module UART.
 Creating SMT-LIBv2 representation of module test_UART.
 
-End of script. Logfile hash: 0cf1ffcb25
-CPU: user 0.12s system 0.00s, MEM: 38.59 MB total, 9.09 MB resident
+End of script. Logfile hash: e201a7fce8
+CPU: user 0.15s system 0.00s, MEM: 38.60 MB total, 9.43 MB resident
 Yosys 0.7+365 (git sha1 4f31cb6d, gcc 7.2.0 -march=x86-64 -mtune=generic -O2 -fstack-protector-strong -fPIC -Os)
-Time spent: 25% 5x opt_expr (0 sec), 14% 4x opt_merge (0 sec), ...
+Time spent: 28% 17x read_verilog (0 sec), 20% 5x opt_expr (0 sec), ...

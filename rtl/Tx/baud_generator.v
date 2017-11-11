@@ -6,9 +6,14 @@ input clk;
 output baud_clk = 0;
 
 reg ck_stb;
-reg[31:0] counter = 0;
 
-localparam INCREMENT = 858993; // (2^32)/5000 ~= 858993
+`ifdef FORMAL
+    reg[3:0] counter = 0;
+    localparam INCREMENT = 2; // (2^4)/8 ~= 2
+`else
+    reg[31:0] counter = 0;
+    localparam INCREMENT = 858993; // (2^32)/5000 ~= 858993
+`endif
 
 always @(posedge clk)
     {ck_stb, counter} <= counter + INCREMENT;  // actual baudrate = 9599.9949bps
@@ -17,7 +22,7 @@ assign baud_clk = ck_stb;
 
 `ifdef FORMAL
 
-localparam DIVIDE_FACTOR = 5000;
+localparam DIVIDE_FACTOR = 8;
 
 reg[($clog2(DIVIDE_FACTOR)-1) : 0] cnt = 0;
 

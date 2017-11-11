@@ -6,9 +6,9 @@ all: $(TARGET)
 DESIGN_FILES = $(wildcard $(RTLSRC)/*.v) $(wildcard $(RTLSRC)/*/*.v)
 
 $(TARGET): $(TARGET).smt2
-	yosys-smtbmc -s yices --dump-vcd $(TARGET).vcd -g -t 10 $(TARGET).smt2
-	yosys-smtbmc -s yices -t 200010 $(TARGET).smt2
-	yosys-smtbmc -s yices -i -t 1100 $(TARGET).smt2
+	yosys-smtbmc -s yices --dump-vcd $(TARGET).vcd -g -t 30 $(TARGET).smt2
+	yosys-smtbmc -s yices --dump-vcd $(TARGET)_induction.vcd -i -t 100 $(TARGET).smt2
+	yosys-smtbmc -s yices -t 2000 $(TARGET).smt2
 
 $(TARGET).smt2: $(DESIGN_FILES)
 	yosys -ql $(TARGET).yslog \

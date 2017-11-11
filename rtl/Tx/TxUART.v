@@ -57,4 +57,8 @@ end
 
 assign o_busy = !(state == `Tx_IDLE) | start_tx;  // (Tx is busy transmitting when not idling) OR (data is waiting to be transmitted)
 
+`ifdef FORMAL
+    initial assume(state == `Tx_IDLE);
+`endif
+
 endmodule

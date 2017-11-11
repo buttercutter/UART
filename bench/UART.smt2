@@ -21,8 +21,8 @@
 ; yosys-smt2-output o_busy 1
 ; yosys-smt2-wire o_busy 1
 (declare-fun |TxUART#4| (|TxUART_s|) (_ BitVec 4)) ; \state
-(define-fun |TxUART#5| ((state |TxUART_s|)) Bool (not (or  (= ((_ extract 0 0) (|TxUART#4| state)) #b1) (= ((_ extract 1 1) (|TxUART#4| state)) #b1) (= ((_ extract 2 2) (|TxUART#4| state)) #b1) (= ((_ extract 3 3) (|TxUART#4| state)) #b1)))) ; $eq$../rtl/Tx/TxUART.v:58$40_Y
-(define-fun |TxUART#6| ((state |TxUART_s|)) Bool (not (or  (|TxUART#5| state) false))) ; $logic_not$../rtl/Tx/TxUART.v:58$41_Y
+(define-fun |TxUART#5| ((state |TxUART_s|)) Bool (not (or  (= ((_ extract 0 0) (|TxUART#4| state)) #b1) (= ((_ extract 1 1) (|TxUART#4| state)) #b1) (= ((_ extract 2 2) (|TxUART#4| state)) #b1) (= ((_ extract 3 3) (|TxUART#4| state)) #b1)))) ; $0$formal$../rtl/Tx/TxUART.v:61$30_CHECK[0:0]$45
+(define-fun |TxUART#6| ((state |TxUART_s|)) Bool (not (or  (|TxUART#5| state) false))) ; $logic_not$../rtl/Tx/TxUART.v:58$40_Y
 (declare-fun |TxUART#7| (|TxUART_s|) (_ BitVec 1)) ; \start_tx
 (define-fun |TxUART#8| ((state |TxUART_s|)) (_ BitVec 1) (bvor (ite (|TxUART#6| state) #b1 #b0) (|TxUART#7| state))) ; \o_busy
 (define-fun |TxUART_n o_busy| ((state |TxUART_s|)) Bool (= ((_ extract 0 0) (|TxUART#8| state)) #b1))
@@ -33,54 +33,68 @@
 ; yosys-smt2-register state 4
 ; yosys-smt2-wire state 4
 (define-fun |TxUART_n state| ((state |TxUART_s|)) (_ BitVec 4) (|TxUART#4| state))
-(define-fun |TxUART#9| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0001)) ; $eq$../rtl/Tx/TxUART.v:29$36_Y
-(define-fun |TxUART#10| ((state |TxUART_s|)) (_ BitVec 1) (ite (|TxUART#9| state) #b0 (|TxUART#7| state))) ; $procmux$173_Y
-(define-fun |TxUART#11| ((state |TxUART_s|)) Bool (not (or  (= ((_ extract 0 0) (|TxUART#8| state)) #b1) false))) ; $logic_not$../rtl/Tx/TxUART.v:26$34_Y
-(define-fun |TxUART#12| ((state |TxUART_s|)) Bool (and (or  (|TxUART#11| state) false) (or  (|TxUART#2| state) false))) ; $logic_and$../rtl/Tx/TxUART.v:26$35_Y
-(define-fun |TxUART#13| ((state |TxUART_s|)) (_ BitVec 1) (ite (|TxUART#12| state) #b1 (|TxUART#10| state))) ; $0\start_tx[0:0]
-(define-fun |TxUART#14| ((state |TxUART_s|)) (_ BitVec 4) (bvadd (|TxUART#4| state) #b0001)) ; $add$../rtl/Tx/TxUART.v:47$39_Y
-(define-fun |TxUART#15| ((state |TxUART_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|TxUART#7| state)) #b1) #b1 #b0)) ; $auto$wreduce.cc:347:run$213 [0]
-(define-fun |TxUART#16| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b1010)) ; $procmux$166_CMP
-(define-fun |TxUART#17| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b1001)) ; $procmux$167_CMP [7]
-(define-fun |TxUART#18| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b1000)) ; $procmux$167_CMP [6]
-(define-fun |TxUART#19| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0111)) ; $procmux$167_CMP [5]
-(define-fun |TxUART#20| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0110)) ; $procmux$167_CMP [4]
-(define-fun |TxUART#21| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0101)) ; $procmux$167_CMP [3]
-(define-fun |TxUART#22| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0100)) ; $procmux$167_CMP [2]
-(define-fun |TxUART#23| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0011)) ; $procmux$167_CMP [1]
-(define-fun |TxUART#24| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0010)) ; $procmux$167_CMP [0]
-(define-fun |TxUART#25| ((state |TxUART_s|)) Bool (or  (|TxUART#17| state) (|TxUART#18| state) (|TxUART#19| state) (|TxUART#20| state) (|TxUART#21| state) (|TxUART#22| state) (|TxUART#23| state) (|TxUART#24| state))) ; $procmux$167_CTRL
-(define-fun |TxUART#26| ((state |TxUART_s|)) (_ BitVec 4) (ite (|TxUART#5| state) (concat #b000 (|TxUART#15| state)) (ite (|TxUART#9| state) #b0010 (ite (|TxUART#25| state) (|TxUART#14| state) (ite (|TxUART#16| state) #b1011 #b0000))))) ; $procmux$165_Y
-(define-fun |TxUART#27| ((state |TxUART_s|)) (_ BitVec 4) (ite (|TxUART#0| state) (|TxUART#26| state) (|TxUART#4| state))) ; $0\state[3:0]
+(define-fun |TxUART#9| ((state |TxUART_s|)) Bool (|TxUART_is| state)) ; $0$formal$../rtl/Tx/TxUART.v:61$30_EN[0:0]$46
+; yosys-smt2-assume 0 ../rtl/Tx/TxUART.v:61
+(define-fun |TxUART_u 0| ((state |TxUART_s|)) Bool (or (|TxUART#5| state) (not (|TxUART#9| state)))) ; $assume$../rtl/Tx/TxUART.v:61$42
+(define-fun |TxUART#10| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0001)) ; $eq$../rtl/Tx/TxUART.v:29$35_Y
+(define-fun |TxUART#11| ((state |TxUART_s|)) (_ BitVec 1) (ite (|TxUART#10| state) #b0 (|TxUART#7| state))) ; $procmux$179_Y
+(define-fun |TxUART#12| ((state |TxUART_s|)) Bool (not (or  (= ((_ extract 0 0) (|TxUART#8| state)) #b1) false))) ; $logic_not$../rtl/Tx/TxUART.v:26$33_Y
+(define-fun |TxUART#13| ((state |TxUART_s|)) Bool (and (or  (|TxUART#12| state) false) (or  (|TxUART#2| state) false))) ; $logic_and$../rtl/Tx/TxUART.v:26$34_Y
+(define-fun |TxUART#14| ((state |TxUART_s|)) (_ BitVec 1) (ite (|TxUART#13| state) #b1 (|TxUART#11| state))) ; $0\start_tx[0:0]
+(define-fun |TxUART#15| ((state |TxUART_s|)) (_ BitVec 4) (bvadd (|TxUART#4| state) #b0001)) ; $add$../rtl/Tx/TxUART.v:47$38_Y
+(define-fun |TxUART#16| ((state |TxUART_s|)) (_ BitVec 1) (ite (= ((_ extract 0 0) (|TxUART#7| state)) #b1) #b1 #b0)) ; $auto$wreduce.cc:347:run$217 [0]
+(define-fun |TxUART#17| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b1010)) ; $procmux$172_CMP
+(define-fun |TxUART#18| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b1001)) ; $procmux$173_CMP [7]
+(define-fun |TxUART#19| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b1000)) ; $procmux$173_CMP [6]
+(define-fun |TxUART#20| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0111)) ; $procmux$173_CMP [5]
+(define-fun |TxUART#21| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0110)) ; $procmux$173_CMP [4]
+(define-fun |TxUART#22| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0101)) ; $procmux$173_CMP [3]
+(define-fun |TxUART#23| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0100)) ; $procmux$173_CMP [2]
+(define-fun |TxUART#24| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0011)) ; $procmux$173_CMP [1]
+(define-fun |TxUART#25| ((state |TxUART_s|)) Bool (= (|TxUART#4| state) #b0010)) ; $procmux$173_CMP [0]
+(define-fun |TxUART#26| ((state |TxUART_s|)) Bool (or  (|TxUART#18| state) (|TxUART#19| state) (|TxUART#20| state) (|TxUART#21| state) (|TxUART#22| state) (|TxUART#23| state) (|TxUART#24| state) (|TxUART#25| state))) ; $procmux$173_CTRL
+(define-fun |TxUART#27| ((state |TxUART_s|)) (_ BitVec 4) (ite (|TxUART#5| state) (concat #b000 (|TxUART#16| state)) (ite (|TxUART#10| state) #b0010 (ite (|TxUART#26| state) (|TxUART#15| state) (ite (|TxUART#17| state) #b1011 #b0000))))) ; $procmux$171_Y
+(define-fun |TxUART#28| ((state |TxUART_s|)) (_ BitVec 4) (ite (|TxUART#0| state) (|TxUART#27| state) (|TxUART#4| state))) ; $0\state[3:0]
 (define-fun |TxUART_a| ((state |TxUART_s|)) Bool true)
-(define-fun |TxUART_u| ((state |TxUART_s|)) Bool true)
+(define-fun |TxUART_u| ((state |TxUART_s|)) Bool 
+  (|TxUART_u 0| state)
+)
 (define-fun |TxUART_i| ((state |TxUART_s|)) Bool 
   (= (= ((_ extract 0 0) (|TxUART#7| state)) #b1) false) ; start_tx
 )
 (define-fun |TxUART_h| ((state |TxUART_s|)) Bool true)
 (define-fun |TxUART_t| ((state |TxUART_s|) (next_state |TxUART_s|)) Bool (and
-  (= (|TxUART#13| state) (|TxUART#7| next_state)) ; $procdff$206 \start_tx
-  (= (|TxUART#27| state) (|TxUART#4| next_state)) ; $procdff$205 \state
+  (= (|TxUART#14| state) (|TxUART#7| next_state)) ; $procdff$212 \start_tx
+  (= (|TxUART#28| state) (|TxUART#4| next_state)) ; $procdff$211 \state
 )) ; end of module TxUART
-; yosys-smt2-module baud_generator
-(declare-sort |baud_generator_s| 0)
-(declare-fun |baud_generator_is| (|baud_generator_s|) Bool)
-; yosys-smt2-output baud_clk 1
-; yosys-smt2-wire baud_clk 1
-(define-fun |baud_generator_n baud_clk| ((state |baud_generator_s|)) Bool false)
+; yosys-smt2-module synchronizer
+(declare-sort |synchronizer_s| 0)
+(declare-fun |synchronizer_is| (|synchronizer_s|) Bool)
 ; yosys-smt2-input clk 1
 ; yosys-smt2-wire clk 1
-(declare-fun |baud_generator#0| (|baud_generator_s|) Bool) ; \clk
-(define-fun |baud_generator_n clk| ((state |baud_generator_s|)) Bool (|baud_generator#0| state))
-; yosys-smt2-assert 0 ../rtl/Tx/baud_generator.v:29
-(define-fun |baud_generator_a 0| ((state |baud_generator_s|)) Bool (or false (not false))) ; $assert$../rtl/Tx/baud_generator.v:29$57
-(define-fun |baud_generator_a| ((state |baud_generator_s|)) Bool 
-  (|baud_generator_a 0| state)
-)
-(define-fun |baud_generator_u| ((state |baud_generator_s|)) Bool true)
-(define-fun |baud_generator_i| ((state |baud_generator_s|)) Bool true)
-(define-fun |baud_generator_h| ((state |baud_generator_s|)) Bool true)
-(define-fun |baud_generator_t| ((state |baud_generator_s|) (next_state |baud_generator_s|)) Bool true) ; end of module baud_generator
+(declare-fun |synchronizer#0| (|synchronizer_s|) Bool) ; \clk
+(define-fun |synchronizer_n clk| ((state |synchronizer_s|)) Bool (|synchronizer#0| state))
+; yosys-smt2-input serial_in 1
+; yosys-smt2-wire serial_in 1
+(declare-fun |synchronizer#1| (|synchronizer_s|) Bool) ; \serial_in
+(define-fun |synchronizer_n serial_in| ((state |synchronizer_s|)) Bool (|synchronizer#1| state))
+; yosys-smt2-register serial_in_reg 1
+; yosys-smt2-wire serial_in_reg 1
+(declare-fun |synchronizer#2| (|synchronizer_s|) (_ BitVec 1)) ; \serial_in_reg
+(define-fun |synchronizer_n serial_in_reg| ((state |synchronizer_s|)) Bool (= ((_ extract 0 0) (|synchronizer#2| state)) #b1))
+; yosys-smt2-output serial_in_synced 1
+; yosys-smt2-register serial_in_synced 1
+; yosys-smt2-wire serial_in_synced 1
+(declare-fun |synchronizer#3| (|synchronizer_s|) (_ BitVec 1)) ; \serial_in_synced
+(define-fun |synchronizer_n serial_in_synced| ((state |synchronizer_s|)) Bool (= ((_ extract 0 0) (|synchronizer#3| state)) #b1))
+(define-fun |synchronizer_a| ((state |synchronizer_s|)) Bool true)
+(define-fun |synchronizer_u| ((state |synchronizer_s|)) Bool true)
+(define-fun |synchronizer_i| ((state |synchronizer_s|)) Bool true)
+(define-fun |synchronizer_h| ((state |synchronizer_s|)) Bool true)
+(define-fun |synchronizer_t| ((state |synchronizer_s|) (next_state |synchronizer_s|)) Bool (and
+  (= (|synchronizer#2| state) (|synchronizer#3| next_state)) ; $procdff$197 \serial_in_synced
+  (= (ite (|synchronizer#1| state) #b1 #b0) (|synchronizer#2| next_state)) ; $procdff$198 \serial_in_reg
+)) ; end of module synchronizer
 ; yosys-smt2-module PISO_shift_register
 (declare-sort |PISO_shift_register_s| 0)
 (declare-fun |PISO_shift_register_is| (|PISO_shift_register_s|) Bool)
@@ -114,37 +128,28 @@
 )
 (define-fun |PISO_shift_register_h| ((state |PISO_shift_register_s|)) Bool true)
 (define-fun |PISO_shift_register_t| ((state |PISO_shift_register_s|) (next_state |PISO_shift_register_s|)) Bool (and
-  (= (|PISO_shift_register#5| state) (|PISO_shift_register#3| next_state)) ; $procdff$204 \data_shift_reg
-  (= (|PISO_shift_register#6| state) (|PISO_shift_register#2| next_state)) ; $procdff$203 \data_out
+  (= (|PISO_shift_register#5| state) (|PISO_shift_register#3| next_state)) ; $procdff$210 \data_shift_reg
+  (= (|PISO_shift_register#6| state) (|PISO_shift_register#2| next_state)) ; $procdff$209 \data_out
 )) ; end of module PISO_shift_register
-; yosys-smt2-module synchronizer
-(declare-sort |synchronizer_s| 0)
-(declare-fun |synchronizer_is| (|synchronizer_s|) Bool)
+; yosys-smt2-module baud_generator
+(declare-sort |baud_generator_s| 0)
+(declare-fun |baud_generator_is| (|baud_generator_s|) Bool)
+; yosys-smt2-output baud_clk 1
+; yosys-smt2-wire baud_clk 1
+(define-fun |baud_generator_n baud_clk| ((state |baud_generator_s|)) Bool false)
 ; yosys-smt2-input clk 1
 ; yosys-smt2-wire clk 1
-(declare-fun |synchronizer#0| (|synchronizer_s|) Bool) ; \clk
-(define-fun |synchronizer_n clk| ((state |synchronizer_s|)) Bool (|synchronizer#0| state))
-; yosys-smt2-input serial_in 1
-; yosys-smt2-wire serial_in 1
-(declare-fun |synchronizer#1| (|synchronizer_s|) Bool) ; \serial_in
-(define-fun |synchronizer_n serial_in| ((state |synchronizer_s|)) Bool (|synchronizer#1| state))
-; yosys-smt2-register serial_in_reg 1
-; yosys-smt2-wire serial_in_reg 1
-(declare-fun |synchronizer#2| (|synchronizer_s|) (_ BitVec 1)) ; \serial_in_reg
-(define-fun |synchronizer_n serial_in_reg| ((state |synchronizer_s|)) Bool (= ((_ extract 0 0) (|synchronizer#2| state)) #b1))
-; yosys-smt2-output serial_in_synced 1
-; yosys-smt2-register serial_in_synced 1
-; yosys-smt2-wire serial_in_synced 1
-(declare-fun |synchronizer#3| (|synchronizer_s|) (_ BitVec 1)) ; \serial_in_synced
-(define-fun |synchronizer_n serial_in_synced| ((state |synchronizer_s|)) Bool (= ((_ extract 0 0) (|synchronizer#3| state)) #b1))
-(define-fun |synchronizer_a| ((state |synchronizer_s|)) Bool true)
-(define-fun |synchronizer_u| ((state |synchronizer_s|)) Bool true)
-(define-fun |synchronizer_i| ((state |synchronizer_s|)) Bool true)
-(define-fun |synchronizer_h| ((state |synchronizer_s|)) Bool true)
-(define-fun |synchronizer_t| ((state |synchronizer_s|) (next_state |synchronizer_s|)) Bool (and
-  (= (|synchronizer#2| state) (|synchronizer#3| next_state)) ; $procdff$191 \serial_in_synced
-  (= (ite (|synchronizer#1| state) #b1 #b0) (|synchronizer#2| next_state)) ; $procdff$192 \serial_in_reg
-)) ; end of module synchronizer
+(declare-fun |baud_generator#0| (|baud_generator_s|) Bool) ; \clk
+(define-fun |baud_generator_n clk| ((state |baud_generator_s|)) Bool (|baud_generator#0| state))
+; yosys-smt2-assert 0 ../rtl/Tx/baud_generator.v:34
+(define-fun |baud_generator_a 0| ((state |baud_generator_s|)) Bool (or false (not false))) ; $assert$../rtl/Tx/baud_generator.v:34$61
+(define-fun |baud_generator_a| ((state |baud_generator_s|)) Bool 
+  (|baud_generator_a 0| state)
+)
+(define-fun |baud_generator_u| ((state |baud_generator_s|)) Bool true)
+(define-fun |baud_generator_i| ((state |baud_generator_s|)) Bool true)
+(define-fun |baud_generator_h| ((state |baud_generator_s|)) Bool true)
+(define-fun |baud_generator_t| ((state |baud_generator_s|) (next_state |baud_generator_s|)) Bool true) ; end of module baud_generator
 ; yosys-smt2-module SIPO_shift_register
 (declare-sort |SIPO_shift_register_s| 0)
 (declare-fun |SIPO_shift_register_is| (|SIPO_shift_register_s|) Bool)
@@ -171,8 +176,45 @@
 (define-fun |SIPO_shift_register_i| ((state |SIPO_shift_register_s|)) Bool true)
 (define-fun |SIPO_shift_register_h| ((state |SIPO_shift_register_s|)) Bool true)
 (define-fun |SIPO_shift_register_t| ((state |SIPO_shift_register_s|) (next_state |SIPO_shift_register_s|)) Bool 
-  (= (|SIPO_shift_register#4| state) (|SIPO_shift_register#2| next_state)) ; $procdff$188 \received_data
+  (= (|SIPO_shift_register#4| state) (|SIPO_shift_register#2| next_state)) ; $procdff$194 \received_data
 ) ; end of module SIPO_shift_register
+; yosys-smt2-module detect_start_bit
+(declare-sort |detect_start_bit_s| 0)
+(declare-fun |detect_start_bit_is| (|detect_start_bit_s|) Bool)
+; yosys-smt2-input clk 1
+; yosys-smt2-wire clk 1
+(declare-fun |detect_start_bit#0| (|detect_start_bit_s|) Bool) ; \clk
+(define-fun |detect_start_bit_n clk| ((state |detect_start_bit_s|)) Bool (|detect_start_bit#0| state))
+; yosys-smt2-register previously_idle 1
+; yosys-smt2-wire previously_idle 1
+(declare-fun |detect_start_bit#1| (|detect_start_bit_s|) (_ BitVec 1)) ; \previously_idle
+(define-fun |detect_start_bit_n previously_idle| ((state |detect_start_bit_s|)) Bool (= ((_ extract 0 0) (|detect_start_bit#1| state)) #b1))
+; yosys-smt2-input serial_in 1
+; yosys-smt2-wire serial_in 1
+(declare-fun |detect_start_bit#2| (|detect_start_bit_s|) Bool) ; \serial_in
+(define-fun |detect_start_bit_n serial_in| ((state |detect_start_bit_s|)) Bool (|detect_start_bit#2| state))
+; yosys-smt2-output start_detected 1
+; yosys-smt2-register start_detected 1
+; yosys-smt2-wire start_detected 1
+(declare-fun |detect_start_bit#3| (|detect_start_bit_s|) (_ BitVec 1)) ; \start_detected
+(define-fun |detect_start_bit_n start_detected| ((state |detect_start_bit_s|)) Bool (= ((_ extract 0 0) (|detect_start_bit#3| state)) #b1))
+(define-fun |detect_start_bit#4| ((state |detect_start_bit_s|)) Bool (not (or  (|detect_start_bit#2| state) false))) ; $logic_not$../rtl/Rx/detect_start_bit.v:10$112_Y
+(define-fun |detect_start_bit#5| ((state |detect_start_bit_s|)) Bool (and (or  (|detect_start_bit#4| state) false) (or  (= ((_ extract 0 0) (|detect_start_bit#1| state)) #b1) false))) ; $logic_and$../rtl/Rx/detect_start_bit.v:10$113_Y
+(define-fun |detect_start_bit#6| ((state |detect_start_bit_s|)) Bool (not (or  (= ((_ extract 0 0) (|detect_start_bit#3| state)) #b1) false))) ; $logic_not$../rtl/Rx/detect_start_bit.v:10$114_Y
+(define-fun |detect_start_bit#7| ((state |detect_start_bit_s|)) Bool (and (or  (|detect_start_bit#5| state) false) (or  (|detect_start_bit#6| state) false))) ; $logic_and$../rtl/Rx/detect_start_bit.v:10$115_Y
+(define-fun |detect_start_bit#8| ((state |detect_start_bit_s|)) (_ BitVec 1) (ite (|detect_start_bit#7| state) #b1 #b0)) ; $0\start_detected[0:0]
+(define-fun |detect_start_bit#9| ((state |detect_start_bit_s|)) (_ BitVec 1) (ite (|detect_start_bit#2| state) #b1 #b0)) ; $0\previously_idle[0:0]
+(define-fun |detect_start_bit_a| ((state |detect_start_bit_s|)) Bool true)
+(define-fun |detect_start_bit_u| ((state |detect_start_bit_s|)) Bool true)
+(define-fun |detect_start_bit_i| ((state |detect_start_bit_s|)) Bool (and
+  (= (= ((_ extract 0 0) (|detect_start_bit#1| state)) #b1) true) ; previously_idle
+  (= (= ((_ extract 0 0) (|detect_start_bit#3| state)) #b1) false) ; start_detected
+))
+(define-fun |detect_start_bit_h| ((state |detect_start_bit_s|)) Bool true)
+(define-fun |detect_start_bit_t| ((state |detect_start_bit_s|) (next_state |detect_start_bit_s|)) Bool (and
+  (= (|detect_start_bit#8| state) (|detect_start_bit#3| next_state)) ; $procdff$200 \start_detected
+  (= (|detect_start_bit#9| state) (|detect_start_bit#1| next_state)) ; $procdff$199 \previously_idle
+)) ; end of module detect_start_bit
 ; yosys-smt2-module sampling_strobe_generator
 (declare-sort |sampling_strobe_generator_s| 0)
 (declare-fun |sampling_strobe_generator_is| (|sampling_strobe_generator_s|) Bool)
@@ -180,34 +222,18 @@
 ; yosys-smt2-wire clk 1
 (declare-fun |sampling_strobe_generator#0| (|sampling_strobe_generator_s|) Bool) ; \clk
 (define-fun |sampling_strobe_generator_n clk| ((state |sampling_strobe_generator_s|)) Bool (|sampling_strobe_generator#0| state))
-; yosys-smt2-register counter 13
-; yosys-smt2-wire counter 13
-(declare-fun |sampling_strobe_generator#1| (|sampling_strobe_generator_s|) (_ BitVec 13)) ; \counter
-(define-fun |sampling_strobe_generator_n counter| ((state |sampling_strobe_generator_s|)) (_ BitVec 13) (|sampling_strobe_generator#1| state))
 ; yosys-smt2-output sampling_strobe 1
-; yosys-smt2-register sampling_strobe 1
 ; yosys-smt2-wire sampling_strobe 1
-(declare-fun |sampling_strobe_generator#2| (|sampling_strobe_generator_s|) (_ BitVec 1)) ; \sampling_strobe
-(define-fun |sampling_strobe_generator_n sampling_strobe| ((state |sampling_strobe_generator_s|)) Bool (= ((_ extract 0 0) (|sampling_strobe_generator#2| state)) #b1))
+(define-fun |sampling_strobe_generator_n sampling_strobe| ((state |sampling_strobe_generator_s|)) Bool false)
 ; yosys-smt2-input start_detected 1
 ; yosys-smt2-wire start_detected 1
-(declare-fun |sampling_strobe_generator#3| (|sampling_strobe_generator_s|) Bool) ; \start_detected
-(define-fun |sampling_strobe_generator_n start_detected| ((state |sampling_strobe_generator_s|)) Bool (|sampling_strobe_generator#3| state))
-(define-fun |sampling_strobe_generator#4| ((state |sampling_strobe_generator_s|)) Bool (= (|sampling_strobe_generator#1| state) #b1001110001000)) ; $eq$../rtl/Rx/sampling_strobe_generator.v:15$78_Y
-(define-fun |sampling_strobe_generator#5| ((state |sampling_strobe_generator_s|)) (_ BitVec 1) (ite (|sampling_strobe_generator#4| state) #b1 #b0)) ; $0\sampling_strobe[0:0]
-(define-fun |sampling_strobe_generator#6| ((state |sampling_strobe_generator_s|)) (_ BitVec 13) (bvadd (|sampling_strobe_generator#1| state) #b0000000000001)) ; $add$../rtl/Rx/sampling_strobe_generator.v:18$79_Y
-(define-fun |sampling_strobe_generator#7| ((state |sampling_strobe_generator_s|)) (_ BitVec 13) (ite (|sampling_strobe_generator#4| state) #b0000000000000 (|sampling_strobe_generator#6| state))) ; $0\counter[12:0]
+(declare-fun |sampling_strobe_generator#1| (|sampling_strobe_generator_s|) Bool) ; \start_detected
+(define-fun |sampling_strobe_generator_n start_detected| ((state |sampling_strobe_generator_s|)) Bool (|sampling_strobe_generator#1| state))
 (define-fun |sampling_strobe_generator_a| ((state |sampling_strobe_generator_s|)) Bool true)
 (define-fun |sampling_strobe_generator_u| ((state |sampling_strobe_generator_s|)) Bool true)
-(define-fun |sampling_strobe_generator_i| ((state |sampling_strobe_generator_s|)) Bool (and
-  (= (|sampling_strobe_generator#1| state) #b0000000000000) ; counter
-  (= (= ((_ extract 0 0) (|sampling_strobe_generator#2| state)) #b1) false) ; sampling_strobe
-))
+(define-fun |sampling_strobe_generator_i| ((state |sampling_strobe_generator_s|)) Bool true)
 (define-fun |sampling_strobe_generator_h| ((state |sampling_strobe_generator_s|)) Bool true)
-(define-fun |sampling_strobe_generator_t| ((state |sampling_strobe_generator_s|) (next_state |sampling_strobe_generator_s|)) Bool (and
-  (= (|sampling_strobe_generator#5| state) (|sampling_strobe_generator#2| next_state)) ; $procdff$189 \sampling_strobe
-  (= (|sampling_strobe_generator#7| state) (|sampling_strobe_generator#1| next_state)) ; $procdff$190 \counter
-)) ; end of module sampling_strobe_generator
+(define-fun |sampling_strobe_generator_t| ((state |sampling_strobe_generator_s|) (next_state |sampling_strobe_generator_s|)) Bool true) ; end of module sampling_strobe_generator
 ; yosys-smt2-module rx_state
 (declare-sort |rx_state_s| 0)
 (declare-fun |rx_state_is| (|rx_state_s|) Bool)
@@ -242,25 +268,25 @@
 ; yosys-smt2-wire state 4
 (declare-fun |rx_state#6| (|rx_state_s|) (_ BitVec 4)) ; \state
 (define-fun |rx_state_n state| ((state |rx_state_s|)) (_ BitVec 4) (|rx_state#6| state))
-(define-fun |rx_state#7| ((state |rx_state_s|)) (_ BitVec 4) (bvadd (|rx_state#6| state) #b0001)) ; $add$../rtl/Rx/rx_state.v:45$93_Y
-(define-fun |rx_state#8| ((state |rx_state_s|)) (_ BitVec 1) (ite (|rx_state#5| state) #b1 #b0)) ; $auto$wreduce.cc:347:run$214 [0]
+(define-fun |rx_state#7| ((state |rx_state_s|)) (_ BitVec 4) (bvadd (|rx_state#6| state) #b0001)) ; $add$../rtl/Rx/rx_state.v:45$99_Y
+(define-fun |rx_state#8| ((state |rx_state_s|)) (_ BitVec 1) (ite (|rx_state#5| state) #b1 #b0)) ; $auto$wreduce.cc:347:run$218 [0]
 (define-fun |rx_state#9| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b1010)) ; $0\is_parity_stage[0:0]
-(define-fun |rx_state#10| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b1001)) ; $procmux$118_CMP [7]
-(define-fun |rx_state#11| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b1000)) ; $procmux$118_CMP [6]
-(define-fun |rx_state#12| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0111)) ; $procmux$118_CMP [5]
-(define-fun |rx_state#13| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0110)) ; $procmux$118_CMP [4]
-(define-fun |rx_state#14| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0101)) ; $procmux$118_CMP [3]
-(define-fun |rx_state#15| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0100)) ; $procmux$118_CMP [2]
-(define-fun |rx_state#16| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0011)) ; $procmux$118_CMP [1]
-(define-fun |rx_state#17| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0010)) ; $procmux$118_CMP [0]
-(define-fun |rx_state#18| ((state |rx_state_s|)) Bool (or  (|rx_state#10| state) (|rx_state#11| state) (|rx_state#12| state) (|rx_state#13| state) (|rx_state#14| state) (|rx_state#15| state) (|rx_state#16| state) (|rx_state#17| state))) ; $procmux$118_CTRL
-(define-fun |rx_state#19| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0001)) ; $procmux$119_CMP
-(define-fun |rx_state#20| ((state |rx_state_s|)) Bool (not (or  (= ((_ extract 0 0) (|rx_state#6| state)) #b1) (= ((_ extract 1 1) (|rx_state#6| state)) #b1) (= ((_ extract 2 2) (|rx_state#6| state)) #b1) (= ((_ extract 3 3) (|rx_state#6| state)) #b1)))) ; $procmux$120_CMP
-(define-fun |rx_state#21| ((state |rx_state_s|)) (_ BitVec 4) (ite (|rx_state#20| state) (concat #b000 (|rx_state#8| state)) (ite (|rx_state#19| state) #b0010 (ite (|rx_state#18| state) (|rx_state#7| state) (ite (|rx_state#9| state) #b1011 #b0000))))) ; $procmux$116_Y
+(define-fun |rx_state#10| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b1001)) ; $procmux$124_CMP [7]
+(define-fun |rx_state#11| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b1000)) ; $procmux$124_CMP [6]
+(define-fun |rx_state#12| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0111)) ; $procmux$124_CMP [5]
+(define-fun |rx_state#13| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0110)) ; $procmux$124_CMP [4]
+(define-fun |rx_state#14| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0101)) ; $procmux$124_CMP [3]
+(define-fun |rx_state#15| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0100)) ; $procmux$124_CMP [2]
+(define-fun |rx_state#16| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0011)) ; $procmux$124_CMP [1]
+(define-fun |rx_state#17| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0010)) ; $procmux$124_CMP [0]
+(define-fun |rx_state#18| ((state |rx_state_s|)) Bool (or  (|rx_state#10| state) (|rx_state#11| state) (|rx_state#12| state) (|rx_state#13| state) (|rx_state#14| state) (|rx_state#15| state) (|rx_state#16| state) (|rx_state#17| state))) ; $procmux$124_CTRL
+(define-fun |rx_state#19| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b0001)) ; $procmux$125_CMP
+(define-fun |rx_state#20| ((state |rx_state_s|)) Bool (not (or  (= ((_ extract 0 0) (|rx_state#6| state)) #b1) (= ((_ extract 1 1) (|rx_state#6| state)) #b1) (= ((_ extract 2 2) (|rx_state#6| state)) #b1) (= ((_ extract 3 3) (|rx_state#6| state)) #b1)))) ; $procmux$126_CMP
+(define-fun |rx_state#21| ((state |rx_state_s|)) (_ BitVec 4) (ite (|rx_state#20| state) (concat #b000 (|rx_state#8| state)) (ite (|rx_state#19| state) #b0010 (ite (|rx_state#18| state) (|rx_state#7| state) (ite (|rx_state#9| state) #b1011 #b0000))))) ; $procmux$122_Y
 (define-fun |rx_state#22| ((state |rx_state_s|)) (_ BitVec 4) (ite (|rx_state#4| state) (|rx_state#21| state) (|rx_state#6| state))) ; $0\state[3:0]
 (define-fun |rx_state#23| ((state |rx_state_s|)) Bool (= (|rx_state#6| state) #b1011)) ; $0\data_is_valid[0:0]
-(define-fun |rx_state#24| ((state |rx_state_s|)) Bool (bvuge (|rx_state#6| state) #b0010)) ; $ge$../rtl/Rx/rx_state.v:27$88_Y
-(define-fun |rx_state#25| ((state |rx_state_s|)) Bool (bvule (|rx_state#6| state) #b1001)) ; $le$../rtl/Rx/rx_state.v:27$89_Y
+(define-fun |rx_state#24| ((state |rx_state_s|)) Bool (bvuge (|rx_state#6| state) #b0010)) ; $ge$../rtl/Rx/rx_state.v:27$94_Y
+(define-fun |rx_state#25| ((state |rx_state_s|)) Bool (bvule (|rx_state#6| state) #b1001)) ; $le$../rtl/Rx/rx_state.v:27$95_Y
 (define-fun |rx_state#26| ((state |rx_state_s|)) Bool (and (or  (|rx_state#24| state) false) (or  (|rx_state#25| state) false))) ; $0\data_is_available[0:0]
 (define-fun |rx_state_a| ((state |rx_state_s|)) Bool true)
 (define-fun |rx_state_u| ((state |rx_state_s|)) Bool true)
@@ -272,48 +298,11 @@
 ))
 (define-fun |rx_state_h| ((state |rx_state_s|)) Bool true)
 (define-fun |rx_state_t| ((state |rx_state_s|) (next_state |rx_state_s|)) Bool (and
-  (= (|rx_state#22| state) (|rx_state#6| next_state)) ; $procdff$184 \state
-  (= (ite (|rx_state#9| state) #b1 #b0) (|rx_state#3| next_state)) ; $procdff$187 \is_parity_stage
-  (= (ite (|rx_state#23| state) #b1 #b0) (|rx_state#2| next_state)) ; $procdff$185 \data_is_valid
-  (= (ite (|rx_state#26| state) #b1 #b0) (|rx_state#1| next_state)) ; $procdff$186 \data_is_available
+  (= (|rx_state#22| state) (|rx_state#6| next_state)) ; $procdff$190 \state
+  (= (ite (|rx_state#9| state) #b1 #b0) (|rx_state#3| next_state)) ; $procdff$193 \is_parity_stage
+  (= (ite (|rx_state#23| state) #b1 #b0) (|rx_state#2| next_state)) ; $procdff$191 \data_is_valid
+  (= (ite (|rx_state#26| state) #b1 #b0) (|rx_state#1| next_state)) ; $procdff$192 \data_is_available
 )) ; end of module rx_state
-; yosys-smt2-module detect_start_bit
-(declare-sort |detect_start_bit_s| 0)
-(declare-fun |detect_start_bit_is| (|detect_start_bit_s|) Bool)
-; yosys-smt2-input clk 1
-; yosys-smt2-wire clk 1
-(declare-fun |detect_start_bit#0| (|detect_start_bit_s|) Bool) ; \clk
-(define-fun |detect_start_bit_n clk| ((state |detect_start_bit_s|)) Bool (|detect_start_bit#0| state))
-; yosys-smt2-register previously_idle 1
-; yosys-smt2-wire previously_idle 1
-(declare-fun |detect_start_bit#1| (|detect_start_bit_s|) (_ BitVec 1)) ; \previously_idle
-(define-fun |detect_start_bit_n previously_idle| ((state |detect_start_bit_s|)) Bool (= ((_ extract 0 0) (|detect_start_bit#1| state)) #b1))
-; yosys-smt2-input serial_in 1
-; yosys-smt2-wire serial_in 1
-(declare-fun |detect_start_bit#2| (|detect_start_bit_s|) Bool) ; \serial_in
-(define-fun |detect_start_bit_n serial_in| ((state |detect_start_bit_s|)) Bool (|detect_start_bit#2| state))
-; yosys-smt2-output start_detected 1
-; yosys-smt2-register start_detected 1
-; yosys-smt2-wire start_detected 1
-(declare-fun |detect_start_bit#3| (|detect_start_bit_s|) (_ BitVec 1)) ; \start_detected
-(define-fun |detect_start_bit_n start_detected| ((state |detect_start_bit_s|)) Bool (= ((_ extract 0 0) (|detect_start_bit#3| state)) #b1))
-(define-fun |detect_start_bit#4| ((state |detect_start_bit_s|)) Bool (not (or  (|detect_start_bit#2| state) false))) ; $logic_not$../rtl/Rx/detect_start_bit.v:10$106_Y
-(define-fun |detect_start_bit#5| ((state |detect_start_bit_s|)) Bool (and (or  (|detect_start_bit#4| state) false) (or  (= ((_ extract 0 0) (|detect_start_bit#1| state)) #b1) false))) ; $logic_and$../rtl/Rx/detect_start_bit.v:10$107_Y
-(define-fun |detect_start_bit#6| ((state |detect_start_bit_s|)) Bool (not (or  (= ((_ extract 0 0) (|detect_start_bit#3| state)) #b1) false))) ; $logic_not$../rtl/Rx/detect_start_bit.v:10$108_Y
-(define-fun |detect_start_bit#7| ((state |detect_start_bit_s|)) Bool (and (or  (|detect_start_bit#5| state) false) (or  (|detect_start_bit#6| state) false))) ; $logic_and$../rtl/Rx/detect_start_bit.v:10$109_Y
-(define-fun |detect_start_bit#8| ((state |detect_start_bit_s|)) (_ BitVec 1) (ite (|detect_start_bit#7| state) #b1 #b0)) ; $0\start_detected[0:0]
-(define-fun |detect_start_bit#9| ((state |detect_start_bit_s|)) (_ BitVec 1) (ite (|detect_start_bit#2| state) #b1 #b0)) ; $0\previously_idle[0:0]
-(define-fun |detect_start_bit_a| ((state |detect_start_bit_s|)) Bool true)
-(define-fun |detect_start_bit_u| ((state |detect_start_bit_s|)) Bool true)
-(define-fun |detect_start_bit_i| ((state |detect_start_bit_s|)) Bool (and
-  (= (= ((_ extract 0 0) (|detect_start_bit#1| state)) #b1) true) ; previously_idle
-  (= (= ((_ extract 0 0) (|detect_start_bit#3| state)) #b1) false) ; start_detected
-))
-(define-fun |detect_start_bit_h| ((state |detect_start_bit_s|)) Bool true)
-(define-fun |detect_start_bit_t| ((state |detect_start_bit_s|) (next_state |detect_start_bit_s|)) Bool (and
-  (= (|detect_start_bit#8| state) (|detect_start_bit#3| next_state)) ; $procdff$194 \start_detected
-  (= (|detect_start_bit#9| state) (|detect_start_bit#1| next_state)) ; $procdff$193 \previously_idle
-)) ; end of module detect_start_bit
 ; yosys-smt2-module check_parity
 (declare-sort |check_parity_s| 0)
 (declare-fun |check_parity_is| (|check_parity_s|) Bool)
@@ -350,8 +339,8 @@
 ; yosys-smt2-wire serial_in 1
 (declare-fun |check_parity#7| (|check_parity_s|) Bool) ; \serial_in
 (define-fun |check_parity_n serial_in| ((state |check_parity_s|)) Bool (|check_parity#7| state))
-(define-fun |check_parity#8| ((state |check_parity_s|)) Bool (distinct (|check_parity#3| state) (|check_parity#4| state))) ; $ne$../rtl/Rx/check_parity.v:23$102_Y
-(define-fun |check_parity#9| ((state |check_parity_s|)) Bool (and (or  (|check_parity#1| state) false) (or  (|check_parity#8| state) false))) ; $logic_and$../rtl/Rx/check_parity.v:23$103_Y
+(define-fun |check_parity#8| ((state |check_parity_s|)) Bool (distinct (|check_parity#3| state) (|check_parity#4| state))) ; $ne$../rtl/Rx/check_parity.v:23$108_Y
+(define-fun |check_parity#9| ((state |check_parity_s|)) Bool (and (or  (|check_parity#1| state) false) (or  (|check_parity#8| state) false))) ; $logic_and$../rtl/Rx/check_parity.v:23$109_Y
 (define-fun |check_parity#10| ((state |check_parity_s|)) (_ BitVec 1) (ite (|check_parity#9| state) #b1 (|check_parity#6| state))) ; $0\rx_error[0:0]
 (define-fun |check_parity#11| ((state |check_parity_s|)) Bool (xor  (= ((_ extract 0 0) (|check_parity#5| state)) #b1) (= ((_ extract 1 1) (|check_parity#5| state)) #b1) (= ((_ extract 2 2) (|check_parity#5| state)) #b1) (= ((_ extract 3 3) (|check_parity#5| state)) #b1) (= ((_ extract 4 4) (|check_parity#5| state)) #b1) (= ((_ extract 5 5) (|check_parity#5| state)) #b1) (= ((_ extract 6 6) (|check_parity#5| state)) #b1) (= ((_ extract 7 7) (|check_parity#5| state)) #b1))) ; $0\parity_value[0:0]
 (define-fun |check_parity#12| ((state |check_parity_s|)) (_ BitVec 1) (ite (|check_parity#2| state) (ite (|check_parity#7| state) #b1 #b0) (|check_parity#3| state))) ; $0\parity_bit[0:0]
@@ -362,9 +351,9 @@
 )
 (define-fun |check_parity_h| ((state |check_parity_s|)) Bool true)
 (define-fun |check_parity_t| ((state |check_parity_s|) (next_state |check_parity_s|)) Bool (and
-  (= (|check_parity#10| state) (|check_parity#6| next_state)) ; $procdff$195 \rx_error
-  (= (ite (|check_parity#11| state) #b1 #b0) (|check_parity#4| next_state)) ; $procdff$197 \parity_value
-  (= (|check_parity#12| state) (|check_parity#3| next_state)) ; $procdff$196 \parity_bit
+  (= (|check_parity#10| state) (|check_parity#6| next_state)) ; $procdff$201 \rx_error
+  (= (ite (|check_parity#11| state) #b1 #b0) (|check_parity#4| next_state)) ; $procdff$203 \parity_value
+  (= (|check_parity#12| state) (|check_parity#3| next_state)) ; $procdff$202 \parity_bit
 )) ; end of module check_parity
 ; yosys-smt2-module Tx_top
 (declare-sort |Tx_top_s| 0)
@@ -530,12 +519,12 @@
 ; yosys-smt2-wire data_is_available 1
 ; yosys-smt2-cell RxUART rx
 (declare-fun |Rx_top#1| (|Rx_top_s|) Bool) ; \data_is_available
-(declare-fun |Rx_top#2| (|Rx_top_s|) Bool) ; \data_is_valid
+(declare-fun |Rx_top#2| (|Rx_top_s|) Bool) ; 1'0
 (declare-fun |Rx_top_h rx| (|Rx_top_s|) |RxUART_s|)
 (define-fun |Rx_top_n data_is_available| ((state |Rx_top_s|)) Bool (|Rx_top#1| state))
 ; yosys-smt2-output data_is_valid 1
 ; yosys-smt2-wire data_is_valid 1
-(define-fun |Rx_top_n data_is_valid| ((state |Rx_top_s|)) Bool (|Rx_top#2| state))
+(define-fun |Rx_top_n data_is_valid| ((state |Rx_top_s|)) Bool false)
 ; yosys-smt2-output received_data 8
 ; yosys-smt2-wire received_data 8
 ; yosys-smt2-cell SIPO_shift_register SIPO
@@ -544,67 +533,54 @@
 (define-fun |Rx_top_n received_data| ((state |Rx_top_s|)) (_ BitVec 8) (|Rx_top#3| state))
 ; yosys-smt2-output rx_error 1
 ; yosys-smt2-wire rx_error 1
-; yosys-smt2-cell check_parity cp
-(declare-fun |Rx_top#4| (|Rx_top_s|) Bool) ; \rx_error
-(declare-fun |Rx_top_h cp| (|Rx_top_s|) |check_parity_s|)
-(define-fun |Rx_top_n rx_error| ((state |Rx_top_s|)) Bool (|Rx_top#4| state))
+(define-fun |Rx_top_n rx_error| ((state |Rx_top_s|)) Bool false)
 ; yosys-smt2-input serial_in 1
 ; yosys-smt2-wire serial_in 1
-(declare-fun |Rx_top#5| (|Rx_top_s|) Bool) ; \serial_in
-(define-fun |Rx_top_n serial_in| ((state |Rx_top_s|)) Bool (|Rx_top#5| state))
+(declare-fun |Rx_top#4| (|Rx_top_s|) Bool) ; \serial_in
+(define-fun |Rx_top_n serial_in| ((state |Rx_top_s|)) Bool (|Rx_top#4| state))
 ; yosys-smt2-wire serial_in_synced 1
 ; yosys-smt2-cell synchronizer sync
-(declare-fun |Rx_top#6| (|Rx_top_s|) Bool) ; \serial_in_synced
+(declare-fun |Rx_top#5| (|Rx_top_s|) Bool) ; \serial_in_synced
 (declare-fun |Rx_top_h sync| (|Rx_top_s|) |synchronizer_s|)
-(define-fun |Rx_top_n serial_in_synced| ((state |Rx_top_s|)) Bool (|Rx_top#6| state))
+(define-fun |Rx_top_n serial_in_synced| ((state |Rx_top_s|)) Bool (|Rx_top#5| state))
 (define-fun |Rx_top_a| ((state |Rx_top_s|)) Bool (and
-  (|check_parity_a| (|Rx_top_h cp| state))
-  (|synchronizer_a| (|Rx_top_h sync| state))
   (|RxUART_a| (|Rx_top_h rx| state))
   (|SIPO_shift_register_a| (|Rx_top_h SIPO| state))
+  (|synchronizer_a| (|Rx_top_h sync| state))
 ))
 (define-fun |Rx_top_u| ((state |Rx_top_s|)) Bool (and
-  (|check_parity_u| (|Rx_top_h cp| state))
-  (|synchronizer_u| (|Rx_top_h sync| state))
   (|RxUART_u| (|Rx_top_h rx| state))
   (|SIPO_shift_register_u| (|Rx_top_h SIPO| state))
+  (|synchronizer_u| (|Rx_top_h sync| state))
 ))
 (define-fun |Rx_top_i| ((state |Rx_top_s|)) Bool (and
-  (|check_parity_i| (|Rx_top_h cp| state))
-  (|synchronizer_i| (|Rx_top_h sync| state))
   (|RxUART_i| (|Rx_top_h rx| state))
   (|SIPO_shift_register_i| (|Rx_top_h SIPO| state))
+  (|synchronizer_i| (|Rx_top_h sync| state))
 ))
 (define-fun |Rx_top_h| ((state |Rx_top_s|)) Bool (and
-  (= (|Rx_top_is| state) (|check_parity_is| (|Rx_top_h cp| state)))
-  (= (|Rx_top#0| state) (|check_parity_n clk| (|Rx_top_h cp| state))) ; check_parity.clk
-  (= (|Rx_top#2| state) (|check_parity_n data_is_valid| (|Rx_top_h cp| state))) ; check_parity.data_is_valid
-  (= (|Rx_top#4| state) (|check_parity_n rx_error| (|Rx_top_h cp| state))) ; check_parity.rx_error
-  (= (|Rx_top#6| state) (|check_parity_n serial_in| (|Rx_top_h cp| state))) ; check_parity.serial_in
-  (= (|Rx_top_is| state) (|synchronizer_is| (|Rx_top_h sync| state)))
-  (= (|Rx_top#0| state) (|synchronizer_n clk| (|Rx_top_h sync| state))) ; synchronizer.clk
-  (= (|Rx_top#5| state) (|synchronizer_n serial_in| (|Rx_top_h sync| state))) ; synchronizer.serial_in
-  (= (|Rx_top#6| state) (|synchronizer_n serial_in_synced| (|Rx_top_h sync| state))) ; synchronizer.serial_in_synced
   (= (|Rx_top_is| state) (|RxUART_is| (|Rx_top_h rx| state)))
   (= (|Rx_top#0| state) (|RxUART_n clk| (|Rx_top_h rx| state))) ; RxUART.clk
   (= (|Rx_top#1| state) (|RxUART_n data_is_available| (|Rx_top_h rx| state))) ; RxUART.data_is_available
-  (= (|Rx_top#2| state) (|RxUART_n data_is_valid| (|Rx_top_h rx| state))) ; RxUART.data_is_valid
-  (= (|Rx_top#6| state) (|RxUART_n serial_in| (|Rx_top_h rx| state))) ; RxUART.serial_in
+  (= false (|RxUART_n data_is_valid| (|Rx_top_h rx| state))) ; RxUART.data_is_valid
+  (= (|Rx_top#5| state) (|RxUART_n serial_in| (|Rx_top_h rx| state))) ; RxUART.serial_in
   (= (|Rx_top_is| state) (|SIPO_shift_register_is| (|Rx_top_h SIPO| state)))
   (= (|Rx_top#0| state) (|SIPO_shift_register_n clk| (|Rx_top_h SIPO| state))) ; SIPO_shift_register.clk
   (= (|Rx_top#1| state) (|SIPO_shift_register_n data_is_available| (|Rx_top_h SIPO| state))) ; SIPO_shift_register.data_is_available
   (= (|Rx_top#3| state) (|SIPO_shift_register_n received_data| (|Rx_top_h SIPO| state))) ; SIPO_shift_register.received_data
-  (= (|Rx_top#6| state) (|SIPO_shift_register_n serial_in| (|Rx_top_h SIPO| state))) ; SIPO_shift_register.serial_in
-  (|check_parity_h| (|Rx_top_h cp| state))
-  (|synchronizer_h| (|Rx_top_h sync| state))
+  (= (|Rx_top#5| state) (|SIPO_shift_register_n serial_in| (|Rx_top_h SIPO| state))) ; SIPO_shift_register.serial_in
+  (= (|Rx_top_is| state) (|synchronizer_is| (|Rx_top_h sync| state)))
+  (= (|Rx_top#0| state) (|synchronizer_n clk| (|Rx_top_h sync| state))) ; synchronizer.clk
+  (= (|Rx_top#4| state) (|synchronizer_n serial_in| (|Rx_top_h sync| state))) ; synchronizer.serial_in
+  (= (|Rx_top#5| state) (|synchronizer_n serial_in_synced| (|Rx_top_h sync| state))) ; synchronizer.serial_in_synced
   (|RxUART_h| (|Rx_top_h rx| state))
   (|SIPO_shift_register_h| (|Rx_top_h SIPO| state))
+  (|synchronizer_h| (|Rx_top_h sync| state))
 ))
 (define-fun |Rx_top_t| ((state |Rx_top_s|) (next_state |Rx_top_s|)) Bool (and
-  (|check_parity_t| (|Rx_top_h cp| state) (|Rx_top_h cp| next_state))
-  (|synchronizer_t| (|Rx_top_h sync| state) (|Rx_top_h sync| next_state))
   (|RxUART_t| (|Rx_top_h rx| state) (|Rx_top_h rx| next_state))
   (|SIPO_shift_register_t| (|Rx_top_h SIPO| state) (|Rx_top_h SIPO| next_state))
+  (|synchronizer_t| (|Rx_top_h sync| state) (|Rx_top_h sync| next_state))
 )) ; end of module Rx_top
 ; yosys-smt2-module UART
 (declare-sort |UART_s| 0)
@@ -627,7 +603,10 @@
 (define-fun |UART_n i_data| ((state |UART_s|)) (_ BitVec 8) (|UART#4| state))
 ; yosys-smt2-output o_busy 1
 ; yosys-smt2-wire o_busy 1
+; yosys-smt2-cell Tx_top tx
 (declare-fun |UART#5| (|UART_s|) Bool) ; \o_busy
+(declare-fun |UART#6| (|UART_s|) Bool) ; \serial_out
+(declare-fun |UART_h tx| (|UART_s|) |Tx_top_s|)
 (define-fun |UART_n o_busy| ((state |UART_s|)) Bool (|UART#5| state))
 ; yosys-smt2-output received_data 8
 ; yosys-smt2-wire received_data 8
@@ -637,14 +616,11 @@
 (define-fun |UART_n rx_error| ((state |UART_s|)) Bool (|UART#3| state))
 ; yosys-smt2-input serial_in 1
 ; yosys-smt2-wire serial_in 1
-(declare-fun |UART#6| (|UART_s|) Bool) ; \serial_in
-(define-fun |UART_n serial_in| ((state |UART_s|)) Bool (|UART#6| state))
+(declare-fun |UART#7| (|UART_s|) Bool) ; \serial_in
+(define-fun |UART_n serial_in| ((state |UART_s|)) Bool (|UART#7| state))
 ; yosys-smt2-output serial_out 1
 ; yosys-smt2-wire serial_out 1
-; yosys-smt2-cell Tx_top tx
-(declare-fun |UART#7| (|UART_s|) Bool) ; \serial_out
-(declare-fun |UART_h tx| (|UART_s|) |Tx_top_s|)
-(define-fun |UART_n serial_out| ((state |UART_s|)) Bool (|UART#7| state))
+(define-fun |UART_n serial_out| ((state |UART_s|)) Bool (|UART#6| state))
 ; yosys-smt2-input start 1
 ; yosys-smt2-wire start 1
 (declare-fun |UART#8| (|UART_s|) Bool) ; \start
@@ -664,15 +640,16 @@
 (define-fun |UART_h| ((state |UART_s|)) Bool (and
   (= (|UART_is| state) (|Tx_top_is| (|UART_h tx| state)))
   (= (|UART#0| state) (|Tx_top_n clk| (|UART_h tx| state))) ; Tx_top.clk
-  (= (concat #b0000000 (ite (|UART#5| state) #b1 #b0)) (|Tx_top_n i_data| (|UART_h tx| state))) ; Tx_top.i_data
-  (= (|UART#7| state) (|Tx_top_n serial_out| (|UART_h tx| state))) ; Tx_top.serial_out
+  (= (|UART#4| state) (|Tx_top_n i_data| (|UART_h tx| state))) ; Tx_top.i_data
+  (= (|UART#5| state) (|Tx_top_n o_busy| (|UART_h tx| state))) ; Tx_top.o_busy
+  (= (|UART#6| state) (|Tx_top_n serial_out| (|UART_h tx| state))) ; Tx_top.serial_out
   (= (|UART#8| state) (|Tx_top_n start| (|UART_h tx| state))) ; Tx_top.start
   (= (|UART_is| state) (|Rx_top_is| (|UART_h rx| state)))
   (= (|UART#0| state) (|Rx_top_n clk| (|UART_h rx| state))) ; Rx_top.clk
   (= (|UART#1| state) (|Rx_top_n data_is_valid| (|UART_h rx| state))) ; Rx_top.data_is_valid
   (= (|UART#2| state) (|Rx_top_n received_data| (|UART_h rx| state))) ; Rx_top.received_data
   (= (|UART#3| state) (|Rx_top_n rx_error| (|UART_h rx| state))) ; Rx_top.rx_error
-  (= (|UART#6| state) (|Rx_top_n serial_in| (|UART_h rx| state))) ; Rx_top.serial_in
+  (= (|UART#7| state) (|Rx_top_n serial_in| (|UART_h rx| state))) ; Rx_top.serial_in
   (|Tx_top_h| (|UART_h tx| state))
   (|Rx_top_h| (|UART_h rx| state))
 ))
@@ -683,77 +660,68 @@
 ; yosys-smt2-module test_UART
 (declare-sort |test_UART_s| 0)
 (declare-fun |test_UART_is| (|test_UART_s|) Bool)
-; yosys-smt2-register $formal$../rtl/test_UART.v:28$3_CHECK 1
-(declare-fun |test_UART#0| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:28$3_CHECK
-(define-fun |test_UART_n $formal$../rtl/test_UART.v:28$3_CHECK| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#0| state)) #b1))
-; yosys-smt2-register $formal$../rtl/test_UART.v:28$3_EN 1
-(declare-fun |test_UART#1| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:28$3_EN
-(define-fun |test_UART_n $formal$../rtl/test_UART.v:28$3_EN| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#1| state)) #b1))
-; yosys-smt2-register $formal$../rtl/test_UART.v:33$4_CHECK 1
-(declare-fun |test_UART#2| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:33$4_CHECK
-(define-fun |test_UART_n $formal$../rtl/test_UART.v:33$4_CHECK| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#2| state)) #b1))
-; yosys-smt2-register $formal$../rtl/test_UART.v:36$5_CHECK 1
-(declare-fun |test_UART#3| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:36$5_CHECK
-(define-fun |test_UART_n $formal$../rtl/test_UART.v:36$5_CHECK| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#3| state)) #b1))
-; yosys-smt2-register $formal$../rtl/test_UART.v:36$5_EN 1
-(declare-fun |test_UART#4| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:36$5_EN
-(define-fun |test_UART_n $formal$../rtl/test_UART.v:36$5_EN| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#4| state)) #b1))
+; yosys-smt2-register $formal$../rtl/test_UART.v:28$5_CHECK 1
+(declare-fun |test_UART#0| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:28$5_CHECK
+(define-fun |test_UART_n $formal$../rtl/test_UART.v:28$5_CHECK| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#0| state)) #b1))
+; yosys-smt2-register $formal$../rtl/test_UART.v:28$5_EN 1
+(declare-fun |test_UART#1| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:28$5_EN
+(define-fun |test_UART_n $formal$../rtl/test_UART.v:28$5_EN| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#1| state)) #b1))
+; yosys-smt2-register $formal$../rtl/test_UART.v:31$6_CHECK 1
+(declare-fun |test_UART#2| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:31$6_CHECK
+(define-fun |test_UART_n $formal$../rtl/test_UART.v:31$6_CHECK| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#2| state)) #b1))
+; yosys-smt2-register $formal$../rtl/test_UART.v:31$6_EN 1
+(declare-fun |test_UART#3| (|test_UART_s|) (_ BitVec 1)) ; $formal$../rtl/test_UART.v:31$6_EN
+(define-fun |test_UART_n $formal$../rtl/test_UART.v:31$6_EN| ((state |test_UART_s|)) Bool (= ((_ extract 0 0) (|test_UART#3| state)) #b1))
 ; yosys-smt2-input clk 1
 ; yosys-smt2-wire clk 1
-(declare-fun |test_UART#5| (|test_UART_s|) Bool) ; \clk
-(define-fun |test_UART_n clk| ((state |test_UART_s|)) Bool (|test_UART#5| state))
+(declare-fun |test_UART#4| (|test_UART_s|) Bool) ; \clk
+(define-fun |test_UART_n clk| ((state |test_UART_s|)) Bool (|test_UART#4| state))
 ; yosys-smt2-output data_is_valid 1
 ; yosys-smt2-wire data_is_valid 1
 ; yosys-smt2-cell UART uart
-(declare-fun |test_UART#6| (|test_UART_s|) Bool) ; \data_is_valid
-(declare-fun |test_UART#7| (|test_UART_s|) Bool) ; \o_busy
-(declare-fun |test_UART#8| (|test_UART_s|) (_ BitVec 8)) ; \received_data
-(declare-fun |test_UART#9| (|test_UART_s|) Bool) ; \rx_error
-(declare-fun |test_UART#10| (|test_UART_s|) Bool) ; \serial_in
+(declare-fun |test_UART#5| (|test_UART_s|) Bool) ; \data_is_valid
+(declare-fun |test_UART#6| (|test_UART_s|) Bool) ; \o_busy
+(declare-fun |test_UART#7| (|test_UART_s|) (_ BitVec 8)) ; \received_data
+(declare-fun |test_UART#8| (|test_UART_s|) Bool) ; \rx_error
+(declare-fun |test_UART#9| (|test_UART_s|) Bool) ; \serial_out
 (declare-fun |test_UART_h uart| (|test_UART_s|) |UART_s|)
-(define-fun |test_UART_n data_is_valid| ((state |test_UART_s|)) Bool (|test_UART#6| state))
-; yosys-smt2-input enable_tx 1
-; yosys-smt2-wire enable_tx 1
-(declare-fun |test_UART#11| (|test_UART_s|) Bool) ; \enable_tx
-(define-fun |test_UART_n enable_tx| ((state |test_UART_s|)) Bool (|test_UART#11| state))
+(define-fun |test_UART_n data_is_valid| ((state |test_UART_s|)) Bool (|test_UART#5| state))
 ; yosys-smt2-input i_data 8
 ; yosys-smt2-wire i_data 8
-(declare-fun |test_UART#12| (|test_UART_s|) (_ BitVec 8)) ; \i_data
-(define-fun |test_UART_n i_data| ((state |test_UART_s|)) (_ BitVec 8) (|test_UART#12| state))
+(declare-fun |test_UART#10| (|test_UART_s|) (_ BitVec 8)) ; \i_data
+(define-fun |test_UART_n i_data| ((state |test_UART_s|)) (_ BitVec 8) (|test_UART#10| state))
 ; yosys-smt2-output o_busy 1
 ; yosys-smt2-wire o_busy 1
-(define-fun |test_UART_n o_busy| ((state |test_UART_s|)) Bool (|test_UART#7| state))
+(define-fun |test_UART_n o_busy| ((state |test_UART_s|)) Bool (|test_UART#6| state))
 ; yosys-smt2-output received_data 8
 ; yosys-smt2-wire received_data 8
-(define-fun |test_UART_n received_data| ((state |test_UART_s|)) (_ BitVec 8) (|test_UART#8| state))
+(define-fun |test_UART_n received_data| ((state |test_UART_s|)) (_ BitVec 8) (|test_UART#7| state))
 ; yosys-smt2-output rx_error 1
 ; yosys-smt2-wire rx_error 1
-(define-fun |test_UART_n rx_error| ((state |test_UART_s|)) Bool (|test_UART#9| state))
-; yosys-smt2-input serial_in 1
+(define-fun |test_UART_n rx_error| ((state |test_UART_s|)) Bool (|test_UART#8| state))
 ; yosys-smt2-wire serial_in 1
-(define-fun |test_UART_n serial_in| ((state |test_UART_s|)) Bool (|test_UART#10| state))
+(define-fun |test_UART_n serial_in| ((state |test_UART_s|)) Bool (|test_UART#9| state))
 ; yosys-smt2-output serial_out 1
 ; yosys-smt2-wire serial_out 1
-(define-fun |test_UART_n serial_out| ((state |test_UART_s|)) Bool (|test_UART#10| state))
+(define-fun |test_UART_n serial_out| ((state |test_UART_s|)) Bool (|test_UART#9| state))
+; yosys-smt2-input start 1
 ; yosys-smt2-wire start 1
-(declare-fun |test_UART#13| (|test_UART_s|) Bool) ; \start
-(define-fun |test_UART_n start| ((state |test_UART_s|)) Bool (|test_UART#13| state))
-; yosys-smt2-assert 0 ../rtl/test_UART.v:33
-(define-fun |test_UART_a 0| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#2| state)) #b1) (not (= ((_ extract 0 0) (|test_UART#1| state)) #b1)))) ; $assert$../rtl/test_UART.v:33$21
-; yosys-smt2-assert 1 ../rtl/test_UART.v:36
-(define-fun |test_UART_a 1| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#3| state)) #b1) (not (= ((_ extract 0 0) (|test_UART#4| state)) #b1)))) ; $assert$../rtl/test_UART.v:36$22
-(define-fun |test_UART#14| ((state |test_UART_s|)) (_ BitVec 1) (bvnot (ite (|test_UART#5| state) #b1 #b0))) ; $0$formal$../rtl/test_UART.v:24$1_CHECK[0:0]$24
-(define-fun |test_UART#15| ((state |test_UART_s|)) Bool (|test_UART_is| state)) ; $0$formal$../rtl/test_UART.v:24$1_EN[0:0]$25
-; yosys-smt2-assume 0 ../rtl/test_UART.v:24
-(define-fun |test_UART_u 0| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#14| state)) #b1) (not (|test_UART#15| state)))) ; $assume$../rtl/test_UART.v:24$19
-; yosys-smt2-assume 1 ../rtl/test_UART.v:28
-(define-fun |test_UART_u 1| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#0| state)) #b1) (not (= ((_ extract 0 0) (|test_UART#1| state)) #b1)))) ; $assume$../rtl/test_UART.v:28$20
-(define-fun |test_UART#16| ((state |test_UART_s|)) (_ BitVec 1) (ite (|test_UART#6| state) #b1 #b0)) ; $0$formal$../rtl/test_UART.v:36$5_EN[0:0]$16
-(define-fun |test_UART#17| ((state |test_UART_s|)) Bool (= (|test_UART#8| state) (|test_UART#12| state))) ; $0$formal$../rtl/test_UART.v:36$5_CHECK[0:0]$15
-(define-fun |test_UART#18| ((state |test_UART_s|)) Bool (not (or  (|test_UART#9| state) false))) ; $0$formal$../rtl/test_UART.v:33$4_CHECK[0:0]$13
-(define-fun |test_UART#19| ((state |test_UART_s|)) Bool (not (or  (|test_UART#7| state) false))) ; $logic_not$../rtl/test_UART.v:28$9_Y
-(define-fun |test_UART#20| ((state |test_UART_s|)) Bool (= (ite (|test_UART#13| state) #b1 #b0) (ite (|test_UART#19| state) #b1 #b0))) ; $eq$../rtl/test_UART.v:28$10_Y
-(define-fun |test_UART#21| ((state |test_UART_s|)) Bool (and (or  (|test_UART#20| state) false) (or  (|test_UART#11| state) false))) ; $0$formal$../rtl/test_UART.v:28$3_CHECK[0:0]$7
+(declare-fun |test_UART#11| (|test_UART_s|) Bool) ; \start
+(define-fun |test_UART_n start| ((state |test_UART_s|)) Bool (|test_UART#11| state))
+; yosys-smt2-assert 0 ../rtl/test_UART.v:28
+(define-fun |test_UART_a 0| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#0| state)) #b1) (not (= ((_ extract 0 0) (|test_UART#1| state)) #b1)))) ; $assert$../rtl/test_UART.v:28$16
+; yosys-smt2-assert 1 ../rtl/test_UART.v:31
+(define-fun |test_UART_a 1| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#2| state)) #b1) (not (= ((_ extract 0 0) (|test_UART#3| state)) #b1)))) ; $assert$../rtl/test_UART.v:31$17
+(define-fun |test_UART#12| ((state |test_UART_s|)) (_ BitVec 1) (bvnot (ite (|test_UART#4| state) #b1 #b0))) ; $0$formal$../rtl/test_UART.v:23$1_CHECK[0:0]$19
+(define-fun |test_UART#13| ((state |test_UART_s|)) Bool (|test_UART_is| state)) ; $0$formal$../rtl/test_UART.v:23$1_EN[0:0]$20
+; yosys-smt2-assume 0 ../rtl/test_UART.v:23
+(define-fun |test_UART_u 0| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#12| state)) #b1) (not (|test_UART#13| state)))) ; $assume$../rtl/test_UART.v:23$14
+(define-fun |test_UART#14| ((state |test_UART_s|)) (_ BitVec 1) (bvnot (ite (|test_UART#5| state) #b1 #b0))) ; $0$formal$../rtl/test_UART.v:24$3_CHECK[0:0]$23
+; yosys-smt2-assume 1 ../rtl/test_UART.v:24
+(define-fun |test_UART_u 1| ((state |test_UART_s|)) Bool (or (= ((_ extract 0 0) (|test_UART#14| state)) #b1) (not (|test_UART#13| state)))) ; $assume$../rtl/test_UART.v:24$15
+(define-fun |test_UART#15| ((state |test_UART_s|)) (_ BitVec 1) (ite (|test_UART#5| state) #b1 #b0)) ; $0$formal$../rtl/test_UART.v:31$6_EN[0:0]$11
+(define-fun |test_UART#16| ((state |test_UART_s|)) Bool (= (|test_UART#7| state) (|test_UART#10| state))) ; $0$formal$../rtl/test_UART.v:31$6_CHECK[0:0]$10
+(define-fun |test_UART#17| ((state |test_UART_s|)) Bool (not (or  (|test_UART#8| state) false))) ; $0$formal$../rtl/test_UART.v:28$5_CHECK[0:0]$8
 (define-fun |test_UART_a| ((state |test_UART_s|)) Bool (and
   (|test_UART_a 0| state)
   (|test_UART_a 1| state)
@@ -765,29 +733,28 @@
   (|UART_u| (|test_UART_h uart| state))
 ))
 (define-fun |test_UART_i| ((state |test_UART_s|)) Bool (and
-  (= (= ((_ extract 0 0) (|test_UART#1| state)) #b1) false) ; $formal$../rtl/test_UART.v:28$3_EN
-  (= (= ((_ extract 0 0) (|test_UART#4| state)) #b1) false) ; $formal$../rtl/test_UART.v:36$5_EN
+  (= (= ((_ extract 0 0) (|test_UART#1| state)) #b1) false) ; $formal$../rtl/test_UART.v:28$5_EN
+  (= (= ((_ extract 0 0) (|test_UART#3| state)) #b1) false) ; $formal$../rtl/test_UART.v:31$6_EN
   (|UART_i| (|test_UART_h uart| state))
 ))
 (define-fun |test_UART_h| ((state |test_UART_s|)) Bool (and
   (= (|test_UART_is| state) (|UART_is| (|test_UART_h uart| state)))
-  (= (|test_UART#5| state) (|UART_n clk| (|test_UART_h uart| state))) ; UART.clk
-  (= (|test_UART#6| state) (|UART_n data_is_valid| (|test_UART_h uart| state))) ; UART.data_is_valid
-  (= (|test_UART#12| state) (|UART_n i_data| (|test_UART_h uart| state))) ; UART.i_data
-  (= (|test_UART#7| state) (|UART_n o_busy| (|test_UART_h uart| state))) ; UART.o_busy
-  (= (|test_UART#8| state) (|UART_n received_data| (|test_UART_h uart| state))) ; UART.received_data
-  (= (|test_UART#9| state) (|UART_n rx_error| (|test_UART_h uart| state))) ; UART.rx_error
-  (= (|test_UART#10| state) (|UART_n serial_in| (|test_UART_h uart| state))) ; UART.serial_in
-  (= (|test_UART#10| state) (|UART_n serial_out| (|test_UART_h uart| state))) ; UART.serial_out
-  (= (|test_UART#13| state) (|UART_n start| (|test_UART_h uart| state))) ; UART.start
+  (= (|test_UART#4| state) (|UART_n clk| (|test_UART_h uart| state))) ; UART.clk
+  (= (|test_UART#5| state) (|UART_n data_is_valid| (|test_UART_h uart| state))) ; UART.data_is_valid
+  (= (|test_UART#10| state) (|UART_n i_data| (|test_UART_h uart| state))) ; UART.i_data
+  (= (|test_UART#6| state) (|UART_n o_busy| (|test_UART_h uart| state))) ; UART.o_busy
+  (= (|test_UART#7| state) (|UART_n received_data| (|test_UART_h uart| state))) ; UART.received_data
+  (= (|test_UART#8| state) (|UART_n rx_error| (|test_UART_h uart| state))) ; UART.rx_error
+  (= (|test_UART#9| state) (|UART_n serial_in| (|test_UART_h uart| state))) ; UART.serial_in
+  (= (|test_UART#9| state) (|UART_n serial_out| (|test_UART_h uart| state))) ; UART.serial_out
+  (= (|test_UART#11| state) (|UART_n start| (|test_UART_h uart| state))) ; UART.start
   (|UART_h| (|test_UART_h uart| state))
 ))
 (define-fun |test_UART_t| ((state |test_UART_s|) (next_state |test_UART_s|)) Bool (and
-  (= (|test_UART#16| state) (|test_UART#4| next_state)) ; $procdff$210 $formal$../rtl/test_UART.v:36$5_EN
-  (= (ite (|test_UART#17| state) #b1 #b0) (|test_UART#3| next_state)) ; $procdff$209 $formal$../rtl/test_UART.v:36$5_CHECK
-  (= (ite (|test_UART#18| state) #b1 #b0) (|test_UART#2| next_state)) ; $procdff$207 $formal$../rtl/test_UART.v:33$4_CHECK
-  (= #b1 (|test_UART#1| next_state)) ; $procdff$208 $formal$../rtl/test_UART.v:28$3_EN
-  (= (ite (|test_UART#21| state) #b1 #b0) (|test_UART#0| next_state)) ; $procdff$211 $formal$../rtl/test_UART.v:28$3_CHECK
+  (= (|test_UART#15| state) (|test_UART#3| next_state)) ; $procdff$216 $formal$../rtl/test_UART.v:31$6_EN
+  (= (ite (|test_UART#16| state) #b1 #b0) (|test_UART#2| next_state)) ; $procdff$215 $formal$../rtl/test_UART.v:31$6_CHECK
+  (= #b1 (|test_UART#1| next_state)) ; $procdff$214 $formal$../rtl/test_UART.v:28$5_EN
+  (= (ite (|test_UART#17| state) #b1 #b0) (|test_UART#0| next_state)) ; $procdff$213 $formal$../rtl/test_UART.v:28$5_CHECK
   (|UART_t| (|test_UART_h uart| state) (|test_UART_h uart| next_state))
 )) ; end of module test_UART
 ; yosys-smt2-topmod test_UART

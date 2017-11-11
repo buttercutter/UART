@@ -1,7 +1,8 @@
 module Rx_top(clk, serial_in, received_data, rx_error, data_is_valid);  // serial input, parallel output
 
 input clk, serial_in;
-output reg rx_error, data_is_valid;
+output reg rx_error = 0;
+output reg data_is_valid = 0;
 output reg [7:0] received_data;
 
 wire data_is_available;

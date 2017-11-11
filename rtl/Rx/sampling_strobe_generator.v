@@ -3,7 +3,11 @@ module sampling_strobe_generator(clk, start_detected, sampling_strobe);  // prod
 input clk, start_detected;
 output reg sampling_strobe = 0;
 
-localparam CLOCKS_PER_BIT = 5000; // number of system clock in one UART bit, or equivalently 1/9600Hz divided by 1/48MHz
+`ifdef FORMAL
+    localparam CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equivalently 1/600MHz divided by 1/48MHz
+`else
+    localparam CLOCKS_PER_BIT = 5000; // number of system clock in one UART bit, or equivalently 1/9600Hz divided by 1/48MHz
+`endif
 
 reg [($clog2(CLOCKS_PER_BIT)-1) : 0] counter = 0;
 
