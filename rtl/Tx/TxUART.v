@@ -1,64 +1,39 @@
-`define Tx_IDLE       4'b0000
-`define Tx_START_BIT  4'b0001
-`define Tx_DATA_BIT_0 4'b0010
-`define Tx_DATA_BIT_1 4'b0011
-`define Tx_DATA_BIT_2 4'b0100
-`define Tx_DATA_BIT_3 4'b0101
-`define Tx_DATA_BIT_4 4'b0110
-`define Tx_DATA_BIT_5 4'b0111
-`define Tx_DATA_BIT_6 4'b1000
-`define Tx_DATA_BIT_7 4'b1001
-`define Tx_PARITY_BIT 4'b1010
-`define Tx_STOP_BIT   4'b1011
+// Credit: Adapted from http://hamsterworks.co.nz/mediawiki/index.php/TinyTx
 
-module TxUART(clk, baud_clk, enable, i_data, o_busy, start_tx);
+module TxUART(clk, baud_clk, enable, i_data, o_busy, serial_out);
+
+parameter INPUT_DATA_WIDTH = 8;
+parameter PARITY_ENABLED = 1;
 
 input clk, baud_clk, enable;
-input[7:0] i_data;
-output o_busy;
-output start_tx;
+input[(INPUT_DATA_WIDTH+PARITY_ENABLED-1):0] i_data;
+output o_busy;      // busy signal for data source that Tx cannot accept data 
+output serial_out;  // serialized data
 
-reg[3:0] state;
-reg start_tx = 0;
+reg [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg = 0;  // PISO shift reg, start+data+parity+stop
 
 always @(posedge clk)   
 begin
-    if (!o_busy && enable)  	
-	start_tx <= 1; 	// 'baud_clk' changes according to 9600Hz , while 'enable' changes according to  (500ms timer for simulation and hardware testing)
-	// So, start_tx *must* be held high until the clock cycle where both 'baud_clk and !enable'
-    else if (state == `Tx_START_BIT)	start_tx <= 0;
-end
+    if (enable & !o_busy) begin
+	shift_reg <= {1, i_data, 0};   // transmit LSB first: 1 = stop bit, 0 = start bit 
+    end
 
-always @(posedge clk)
-begin
     if (baud_clk) begin
-    case(state)
-	`Tx_IDLE 	: state <= (start_tx) ?  `Tx_START_BIT : `Tx_IDLE;
-
-	`Tx_START_BIT	: state <= `Tx_DATA_BIT_0;
-
-	`Tx_DATA_BIT_0,
-	`Tx_DATA_BIT_1,
-	`Tx_DATA_BIT_2,	
-	`Tx_DATA_BIT_3,
-	`Tx_DATA_BIT_4,
-	`Tx_DATA_BIT_5,
-	`Tx_DATA_BIT_6,
-	`Tx_DATA_BIT_7	: state <= state + 1'b1;
-
-	`Tx_PARITY_BIT 	: state <= `Tx_STOP_BIT;
-
-	`Tx_STOP_BIT 	: state <= `Tx_IDLE;
-
-	default      	: state <= `Tx_IDLE;
-    endcase
+        if (o_busy)
+	    shift_reg <= {0, shift_reg[(INPUT_DATA_WIDTH+1):1]};  // puts 0 for stop bit detection
     end
 end
 
-assign o_busy = !(state == `Tx_IDLE) | start_tx;  // (Tx is busy transmitting when not idling) OR (data is waiting to be transmitted)
+assign serial_out = shift_reg[0];   // save one register by making serial_out a 'wire'
+
+assign o_busy = !(shift_reg == 0);  // Tx is busy transmitting when there is pending stop bit
+
 
 `ifdef FORMAL
-    initial assume(state == `Tx_IDLE);
+initial begin
+    assume(baud_clk == 0);
+    assume(enable == 0);
+end
 `endif
 
 endmodule
