@@ -20,7 +20,7 @@ begin
 
     if (baud_clk) begin
         if (o_busy)
-	    shift_reg <= {0, shift_reg[(INPUT_DATA_WIDTH+1):1]};  // puts 0 for stop bit detection
+	    shift_reg <= {0, shift_reg[(INPUT_DATA_WIDTH+1):1]};  // puts 0 for stop bit detection, see o_busy signal
     end
 end
 
@@ -34,6 +34,9 @@ initial begin
     assume(baud_clk == 0);
     assume(enable == 0);
 end
+
+cover property (baud_clk);
+
 `endif
 
 endmodule

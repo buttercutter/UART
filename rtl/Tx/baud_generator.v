@@ -3,7 +3,7 @@
 module baud_generator(clk, baud_clk);     // we are obtaining baud_out = 9600bps = clk/5000 where clk = 48MHz
 
 input clk;
-output baud_clk = 0;
+output baud_clk;
 
 reg ck_stb;
 

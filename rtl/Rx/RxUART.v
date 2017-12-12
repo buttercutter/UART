@@ -17,4 +17,9 @@ rx_state state (.clk(clk), .start_detected(start_detected), .sampling_strobe(sam
 // computes the signal 'sampling_strobe' which is basically similar to sampling clock
 sampling_strobe_generator ssg (.clk(clk), .start_detected(start_detected), .sampling_strobe(sampling_strobe));
 
+
+`ifdef FORMAL
+    cover property (data_is_valid);
+`endif
+
 endmodule
