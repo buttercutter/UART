@@ -1,0 +1,44 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Thu Dec 14 01:15:38 2017
+[*]
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.vcd"
+[dumpfile_mtime] "Thu Dec 14 01:14:41 2017"
+[dumpfile_size] 79428
+[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.gtkw"
+[timestart] 786
+[size] 1920 1016
+[pos] -1 -1
+*-5.000000 990 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test_UART.
+[treeopen] test_UART.uart.
+[treeopen] test_UART.uart.rx.
+[treeopen] test_UART.uart.rx.rx.
+[sst_width] 229
+[signals_width] 230
+[sst_expanded] 1
+[sst_vpaned_height] 284
+@28
+smt_clock
+@420
+smt_step
+@28
+test_UART.clk
+test_UART.data_is_valid
+test_UART.enable
+@22
+test_UART.i_data[7:0]
+@28
+test_UART.o_busy
+@22
+test_UART.received_data[7:0]
+@28
+test_UART.rx_error
+test_UART.serial_in
+test_UART.serial_out
+test_UART.uart.tx.baud_clk
+test_UART.uart.rx.rx.ssg.sampling_strobe
+@25
+test_UART.uart.rx.rx.ssg.counter[2:0]
+[pattern_trace] 1
+[pattern_trace] 0

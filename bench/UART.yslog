@@ -1,0 +1,1083 @@
+
+ /----------------------------------------------------------------------------\
+ |                                                                            |
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |                                                                            |
+ |  Copyright (C) 2012 - 2016  Clifford Wolf <clifford@clifford.at>           |
+ |                                                                            |
+ |  Permission to use, copy, modify, and/or distribute this software for any  |
+ |  purpose with or without fee is hereby granted, provided that the above    |
+ |  copyright notice and this permission notice appear in all copies.         |
+ |                                                                            |
+ |  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES  |
+ |  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF          |
+ |  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR   |
+ |  ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES    |
+ |  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN     |
+ |  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF   |
+ |  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.            |
+ |                                                                            |
+ \----------------------------------------------------------------------------/
+
+ Yosys 0.7+386 (git sha1 ca2adc30, gcc 7.2.1 -march=x86-64 -mtune=generic -O2 -fstack-protector-strong -fPIC -Os)
+
+
+-- Running command `read_verilog -formal ../rtl/test_UART.v ../rtl/UART.v ../rtl/Tx/TxUART.v ../rtl/Tx/PISO_shift_register.v ../rtl/Tx/baud_generator.v ../rtl/Tx/Tx_top.v ../rtl/Tx/enable_generator.v ../rtl/Tx/test_Tx_top.v ../rtl/Rx/Rx_top.v ../rtl/Rx/synchronizer.v ../rtl/Rx/RxUART.v ../rtl/Rx/sampling_strobe_generator.v ../rtl/Rx/SIPO_shift_register.v ../rtl/Rx/rx_state.v ../rtl/Rx/check_parity.v ../rtl/Rx/detect_start_bit.v' --
+
+1. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/test_UART.v' to AST representation.
+Generating RTLIL representation for module `\test_UART'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/UART.v' to AST representation.
+Generating RTLIL representation for module `\UART'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Tx/TxUART.v' to AST representation.
+Generating RTLIL representation for module `\TxUART'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Tx/PISO_shift_register.v' to AST representation.
+Generating RTLIL representation for module `\PISO_shift_register'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Tx/baud_generator.v' to AST representation.
+Generating RTLIL representation for module `\baud_generator'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Tx/Tx_top.v' to AST representation.
+Generating RTLIL representation for module `\Tx_top'.
+Successfully finished Verilog frontend.
+
+7. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Tx/enable_generator.v' to AST representation.
+Generating RTLIL representation for module `\enable_generator'.
+Successfully finished Verilog frontend.
+
+8. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Tx/test_Tx_top.v' to AST representation.
+Generating RTLIL representation for module `\test_Tx_top'.
+Successfully finished Verilog frontend.
+
+9. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/Rx_top.v' to AST representation.
+Generating RTLIL representation for module `\Rx_top'.
+Successfully finished Verilog frontend.
+
+10. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/synchronizer.v' to AST representation.
+Generating RTLIL representation for module `\synchronizer'.
+Successfully finished Verilog frontend.
+
+11. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/RxUART.v' to AST representation.
+Generating RTLIL representation for module `\RxUART'.
+Successfully finished Verilog frontend.
+
+12. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/sampling_strobe_generator.v' to AST representation.
+Generating RTLIL representation for module `\sampling_strobe_generator'.
+Successfully finished Verilog frontend.
+
+13. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/SIPO_shift_register.v' to AST representation.
+Generating RTLIL representation for module `\SIPO_shift_register'.
+Successfully finished Verilog frontend.
+
+14. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/rx_state.v' to AST representation.
+Generating RTLIL representation for module `\rx_state'.
+Successfully finished Verilog frontend.
+
+15. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/check_parity.v' to AST representation.
+Generating RTLIL representation for module `\check_parity'.
+Successfully finished Verilog frontend.
+
+16. Executing Verilog-2005 frontend.
+Parsing formal Verilog input from `../rtl/Rx/detect_start_bit.v' to AST representation.
+Generating RTLIL representation for module `\detect_start_bit'.
+Successfully finished Verilog frontend.
+
+-- Running command `prep -top test_UART -nordff' --
+
+17. Executing PREP pass.
+
+17.1. Executing HIERARCHY pass (managing design hierarchy).
+
+17.1.1. Analyzing design hierarchy..
+Top module:  \test_UART
+Used module:     \UART
+Used module:         \Rx_top
+Used module:             \check_parity
+Used module:             \SIPO_shift_register
+Used module:             \RxUART
+Used module:                 \sampling_strobe_generator
+Used module:                 \rx_state
+Used module:                 \detect_start_bit
+Used module:             \synchronizer
+Used module:         \Tx_top
+Used module:             \baud_generator
+Used module:             \TxUART
+
+17.1.2. Analyzing design hierarchy..
+Top module:  \test_UART
+Used module:     \UART
+Used module:         \Rx_top
+Used module:             \check_parity
+Used module:             \SIPO_shift_register
+Used module:             \RxUART
+Used module:                 \sampling_strobe_generator
+Used module:                 \rx_state
+Used module:                 \detect_start_bit
+Used module:             \synchronizer
+Used module:         \Tx_top
+Used module:             \baud_generator
+Used module:             \TxUART
+Removing unused module `\test_Tx_top'.
+Removing unused module `\enable_generator'.
+Removing unused module `\PISO_shift_register'.
+Removed 3 unused modules.
+Module RxUART directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module Rx_top directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module Tx_top directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module baud_generator directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module TxUART directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module UART directly or indirectly contains $assert cells -> setting "keep" attribute.
+Module test_UART directly or indirectly contains $assert cells -> setting "keep" attribute.
+
+17.2. Executing PROC pass (convert processes to netlists).
+
+17.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+17.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Removed a total of 0 dead cases.
+
+17.2.3. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$89'.
+  Set init value: \sampling_strobe = 1'0
+Found init rule in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$118'.
+  Set init value: \previously_idle = 1'1
+Found init rule in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$117'.
+  Set init value: \start_detected = 1'0
+Found init rule in `\check_parity.$proc$../rtl/Rx/check_parity.v:5$110'.
+  Set init value: \rx_error = 1'0
+Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:34$66'.
+  Set init value: $formal$../rtl/Tx/baud_generator.v:34$53_EN = 1'0
+Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:27$65'.
+  Set init value: \cnt = 3'000
+Found init rule in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:11$64'.
+  Set init value: \counter = 4'0000
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:8$103'.
+  Set init value: \state = 4'0000
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:6$102'.
+  Set init value: \is_parity_stage = 1'0
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:5$101'.
+  Set init value: \data_is_valid = 1'0
+Found init rule in `\rx_state.$proc$../rtl/Rx/rx_state.v:4$100'.
+  Set init value: \data_is_available = 1'0
+Found init rule in `\TxUART.$proc$../rtl/Tx/TxUART.v:13$42'.
+  Set init value: \shift_reg = 11'00000000000
+Found init rule in `\test_UART.$proc$../rtl/test_UART.v:33$28'.
+  Set init value: $formal$../rtl/test_UART.v:33$6_EN = 1'0
+Found init rule in `\test_UART.$proc$../rtl/test_UART.v:30$26'.
+  Set init value: $formal$../rtl/test_UART.v:30$5_EN = 1'0
+
+17.2.4. Executing PROC_ARST pass (detect async resets in processes).
+
+17.2.5. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
+     1/1: $0\received_data[7:0]
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$89'.
+     1/1: $1\sampling_strobe[0:0]
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$87'.
+     1/1: $0\sampling_strobe[0:0]
+Creating decoders for process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$84'.
+     1/1: $0\counter[2:0]
+Creating decoders for process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
+     1/2: $0\serial_in_synced[0:0]
+     2/2: $0\serial_in_reg[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$118'.
+     1/1: $1\previously_idle[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$117'.
+     1/1: $1\start_detected[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+     1/1: $0\previously_idle[0:0]
+Creating decoders for process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+     1/1: $0\start_detected[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:5$110'.
+     1/1: $1\rx_error[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+     1/1: $0\rx_error[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
+     1/1: $0\parity_bit[0:0]
+Creating decoders for process `\check_parity.$proc$../rtl/Rx/check_parity.v:10$104'.
+     1/1: $0\parity_value[0:0]
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:34$66'.
+     1/1: $0$formal$../rtl/Tx/baud_generator.v:34$53_EN[0:0]$67
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:27$65'.
+     1/1: $1\cnt[2:0]
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:11$64'.
+     1/1: $1\counter[3:0]
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$56'.
+     1/3: $0\cnt[2:0]
+     2/3: $0$formal$../rtl/Tx/baud_generator.v:34$53_EN[0:0]$58
+     3/3: $0$formal$../rtl/Tx/baud_generator.v:34$53_CHECK[0:0]$57
+Creating decoders for process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:18$54'.
+     1/1: { $0\ck_stb[0:0] $0\counter[3:0] }
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:8$103'.
+     1/1: $1\state[3:0]
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:6$102'.
+     1/1: $1\is_parity_stage[0:0]
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:5$101'.
+     1/1: $1\data_is_valid[0:0]
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:4$100'.
+     1/1: $1\data_is_available[0:0]
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
+     1/1: $0\state[3:0]
+Creating decoders for process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
+     1/3: $0\data_is_available[0:0]
+     2/3: $0\is_parity_stage[0:0]
+     3/3: $0\data_is_valid[0:0]
+Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:33$43'.
+     1/4: $0$formal$../rtl/Tx/TxUART.v:35$32_EN[0:0]$47
+     2/4: $0$formal$../rtl/Tx/TxUART.v:35$32_CHECK[0:0]$46
+     3/4: $0$formal$../rtl/Tx/TxUART.v:34$30_EN[0:0]$45
+     4/4: $0$formal$../rtl/Tx/TxUART.v:34$30_CHECK[0:0]$44
+Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:13$42'.
+     1/1: $1\shift_reg[10:0]
+Creating decoders for process `\TxUART.$proc$../rtl/Tx/TxUART.v:15$34'.
+     1/1: $0\shift_reg[10:0]
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:33$28'.
+     1/1: $0$formal$../rtl/test_UART.v:33$6_EN[0:0]$29
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:30$26'.
+     1/1: $0$formal$../rtl/test_UART.v:30$5_EN[0:0]$27
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:26$22'.
+     1/2: $0$formal$../rtl/test_UART.v:26$3_EN[0:0]$24
+     2/2: $0$formal$../rtl/test_UART.v:26$3_CHECK[0:0]$23
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:25$18'.
+     1/2: $0$formal$../rtl/test_UART.v:25$1_EN[0:0]$20
+     2/2: $0$formal$../rtl/test_UART.v:25$1_CHECK[0:0]$19
+Creating decoders for process `\test_UART.$proc$../rtl/test_UART.v:28$7'.
+     1/4: $0$formal$../rtl/test_UART.v:30$5_EN[0:0]$9
+     2/4: $0$formal$../rtl/test_UART.v:30$5_CHECK[0:0]$8
+     3/4: $0$formal$../rtl/test_UART.v:33$6_EN[0:0]$11
+     4/4: $0$formal$../rtl/test_UART.v:33$6_CHECK[0:0]$10
+
+17.2.6. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\TxUART.$formal$../rtl/Tx/TxUART.v:34$30_CHECK' from process `\TxUART.$proc$../rtl/Tx/TxUART.v:33$43'.
+No latch inferred for signal `\TxUART.$formal$../rtl/Tx/TxUART.v:34$30_EN' from process `\TxUART.$proc$../rtl/Tx/TxUART.v:33$43'.
+No latch inferred for signal `\TxUART.$formal$../rtl/Tx/TxUART.v:35$32_CHECK' from process `\TxUART.$proc$../rtl/Tx/TxUART.v:33$43'.
+No latch inferred for signal `\TxUART.$formal$../rtl/Tx/TxUART.v:35$32_EN' from process `\TxUART.$proc$../rtl/Tx/TxUART.v:33$43'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:26$3_CHECK' from process `\test_UART.$proc$../rtl/test_UART.v:26$22'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:26$3_EN' from process `\test_UART.$proc$../rtl/test_UART.v:26$22'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:25$1_CHECK' from process `\test_UART.$proc$../rtl/test_UART.v:25$18'.
+No latch inferred for signal `\test_UART.$formal$../rtl/test_UART.v:25$1_EN' from process `\test_UART.$proc$../rtl/test_UART.v:25$18'.
+
+17.2.7. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\SIPO_shift_register.\received_data' using process `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
+  created $dff cell `$procdff$177' with positive edge clock.
+Creating register for signal `\sampling_strobe_generator.\sampling_strobe' using process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$87'.
+  created $dff cell `$procdff$178' with positive edge clock.
+Creating register for signal `\sampling_strobe_generator.\counter' using process `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$84'.
+  created $dff cell `$procdff$179' with positive edge clock.
+Creating register for signal `\synchronizer.\serial_in_synced' using process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
+  created $dff cell `$procdff$180' with positive edge clock.
+Creating register for signal `\synchronizer.\serial_in_reg' using process `\synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
+  created $dff cell `$procdff$181' with positive edge clock.
+Creating register for signal `\detect_start_bit.\previously_idle' using process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+  created $dff cell `$procdff$182' with positive edge clock.
+Creating register for signal `\detect_start_bit.\start_detected' using process `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+  created $dff cell `$procdff$183' with positive edge clock.
+Creating register for signal `\check_parity.\rx_error' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+  created $dff cell `$procdff$184' with positive edge clock.
+Creating register for signal `\check_parity.\parity_bit' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
+  created $dff cell `$procdff$185' with positive edge clock.
+Creating register for signal `\check_parity.\parity_value' using process `\check_parity.$proc$../rtl/Rx/check_parity.v:10$104'.
+  created $dff cell `$procdff$186' with positive edge clock.
+Creating register for signal `\baud_generator.\cnt' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$56'.
+  created $dff cell `$procdff$187' with positive edge clock.
+Creating register for signal `\baud_generator.$formal$../rtl/Tx/baud_generator.v:34$53_CHECK' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$56'.
+  created $dff cell `$procdff$188' with positive edge clock.
+Creating register for signal `\baud_generator.$formal$../rtl/Tx/baud_generator.v:34$53_EN' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$56'.
+  created $dff cell `$procdff$189' with positive edge clock.
+Creating register for signal `\baud_generator.\ck_stb' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:18$54'.
+  created $dff cell `$procdff$190' with positive edge clock.
+Creating register for signal `\baud_generator.\counter' using process `\baud_generator.$proc$../rtl/Tx/baud_generator.v:18$54'.
+  created $dff cell `$procdff$191' with positive edge clock.
+Creating register for signal `\rx_state.\state' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
+  created $dff cell `$procdff$192' with positive edge clock.
+Creating register for signal `\rx_state.\data_is_valid' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
+  created $dff cell `$procdff$193' with positive edge clock.
+Creating register for signal `\rx_state.\data_is_available' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
+  created $dff cell `$procdff$194' with positive edge clock.
+Creating register for signal `\rx_state.\is_parity_stage' using process `\rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
+  created $dff cell `$procdff$195' with positive edge clock.
+Creating register for signal `\TxUART.\shift_reg' using process `\TxUART.$proc$../rtl/Tx/TxUART.v:15$34'.
+  created $dff cell `$procdff$196' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:30$5_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:28$7'.
+  created $dff cell `$procdff$197' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:30$5_EN' using process `\test_UART.$proc$../rtl/test_UART.v:28$7'.
+  created $dff cell `$procdff$198' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:33$6_CHECK' using process `\test_UART.$proc$../rtl/test_UART.v:28$7'.
+  created $dff cell `$procdff$199' with positive edge clock.
+Creating register for signal `\test_UART.$formal$../rtl/test_UART.v:33$6_EN' using process `\test_UART.$proc$../rtl/test_UART.v:28$7'.
+  created $dff cell `$procdff$200' with positive edge clock.
+
+17.2.8. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
+Removing empty process `SIPO_shift_register.$proc$../rtl/Rx/SIPO_shift_register.v:6$90'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:4$89'.
+Found and cleaned up 1 empty switch in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$87'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:25$87'.
+Found and cleaned up 2 empty switches in `\sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$84'.
+Removing empty process `sampling_strobe_generator.$proc$../rtl/Rx/sampling_strobe_generator.v:14$84'.
+Removing empty process `synchronizer.$proc$../rtl/Rx/synchronizer.v:8$82'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:6$118'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:4$117'.
+Found and cleaned up 1 empty switch in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:16$116'.
+Found and cleaned up 1 empty switch in `\detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+Removing empty process `detect_start_bit.$proc$../rtl/Rx/detect_start_bit.v:8$111'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:5$110'.
+Found and cleaned up 1 empty switch in `\check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:21$107'.
+Found and cleaned up 1 empty switch in `\check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:15$106'.
+Removing empty process `check_parity.$proc$../rtl/Rx/check_parity.v:10$104'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:34$66'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:27$65'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:11$64'.
+Found and cleaned up 1 empty switch in `\baud_generator.$proc$../rtl/Tx/baud_generator.v:29$56'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:29$56'.
+Removing empty process `baud_generator.$proc$../rtl/Tx/baud_generator.v:18$54'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:8$103'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:6$102'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:5$101'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:4$100'.
+Found and cleaned up 2 empty switches in `\rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:30$97'.
+Removing empty process `rx_state.$proc$../rtl/Rx/rx_state.v:23$91'.
+Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:33$43'.
+Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:13$42'.
+Found and cleaned up 3 empty switches in `\TxUART.$proc$../rtl/Tx/TxUART.v:15$34'.
+Removing empty process `TxUART.$proc$../rtl/Tx/TxUART.v:15$34'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:33$28'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:30$26'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:26$22'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:25$18'.
+Found and cleaned up 1 empty switch in `\test_UART.$proc$../rtl/test_UART.v:28$7'.
+Removing empty process `test_UART.$proc$../rtl/test_UART.v:28$7'.
+Cleaned up 15 empty switches.
+
+17.3. Executing OPT_EXPR pass (perform const folding).
+Replacing $eq cell `$procmux$159_CMP0' in module `rx_state' with $logic_not.
+Replacing $eq cell `$eq$../rtl/Tx/TxUART.v:29$37' in module `TxUART' with $logic_not.
+Replacing $logic_not cell `$logic_not$../rtl/Tx/TxUART.v:17$35' (double_invert) in module `\TxUART' with constant driver `$logic_not$../rtl/Tx/TxUART.v:17$35_Y = $eq$../rtl/Tx/TxUART.v:29$37_Y'.
+Replacing $eq cell `$eq$../rtl/Tx/TxUART.v:34$48' in module `TxUART' with inverter.
+Replacing $eq cell `$eq$../rtl/Tx/TxUART.v:35$49' in module `TxUART' with inverter.
+Optimizing away select inverter for $mux cell `$procmux$167' in module `TxUART'.
+Replacing $eq cell `$eq$../rtl/test_UART.v:25$21' in module `test_UART' with inverter.
+Replacing $eq cell `$eq$../rtl/test_UART.v:26$25' in module `test_UART' with inverter.
+
+17.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \SIPO_shift_register..
+  removed 2 unused temporary wires.
+Finding unused cells or wires in module \sampling_strobe_generator..
+  removing unused `$mux' cell `$procmux$126'.
+  removed 7 unused temporary wires.
+Finding unused cells or wires in module \RxUART..
+Finding unused cells or wires in module \synchronizer..
+  removed 2 unused temporary wires.
+Finding unused cells or wires in module \Rx_top..
+Finding unused cells or wires in module \detect_start_bit..
+  removed 6 unused temporary wires.
+Finding unused cells or wires in module \check_parity..
+  removed 6 unused temporary wires.
+Finding unused cells or wires in module \Tx_top..
+  removed 1 unused temporary wires.
+Finding unused cells or wires in module \baud_generator..
+  removed 9 unused temporary wires.
+Finding unused cells or wires in module \rx_state..
+  removed 9 unused temporary wires.
+Finding unused cells or wires in module \TxUART..
+  removed 15 unused temporary wires.
+Finding unused cells or wires in module \UART..
+Finding unused cells or wires in module \test_UART..
+  removed 16 unused temporary wires.
+Removed 1 unused cells and 73 unused wires.
+
+17.5. Executing CHECK pass (checking for obvious problems).
+checking module RxUART..
+checking module Rx_top..
+checking module SIPO_shift_register..
+checking module TxUART..
+checking module Tx_top..
+checking module UART..
+checking module baud_generator..
+checking module check_parity..
+checking module detect_start_bit..
+checking module rx_state..
+checking module sampling_strobe_generator..
+checking module synchronizer..
+checking module test_UART..
+found and reported 0 problems.
+
+17.6. Executing OPT pass (performing simple optimizations).
+
+17.6.1. Executing OPT_EXPR pass (perform const folding).
+
+17.6.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\RxUART'.
+Finding identical cells in module `\Rx_top'.
+Finding identical cells in module `\SIPO_shift_register'.
+Finding identical cells in module `\TxUART'.
+  Cell `$initstate$33' is identical to cell `$initstate$31'.
+    Redirecting output \Y: $0$formal$../rtl/Tx/TxUART.v:35$32_EN[0:0]$47 = $0$formal$../rtl/Tx/TxUART.v:34$30_EN[0:0]$45
+    Removing $initstate cell `$initstate$33' from module `\TxUART'.
+Finding identical cells in module `\Tx_top'.
+Finding identical cells in module `\UART'.
+Finding identical cells in module `\baud_generator'.
+Finding identical cells in module `\check_parity'.
+Finding identical cells in module `\detect_start_bit'.
+Finding identical cells in module `\rx_state'.
+  Cell `$procmux$156_CMP0' is identical to cell `$eq$../rtl/Rx/rx_state.v:26$93'.
+    Redirecting output \Y: $procmux$156_CMP = $0\is_parity_stage[0:0]
+    Removing $eq cell `$procmux$156_CMP0' from module `\rx_state'.
+Finding identical cells in module `\sampling_strobe_generator'.
+  Cell `$eq$../rtl/Rx/sampling_strobe_generator.v:27$88' is identical to cell `$eq$../rtl/Rx/sampling_strobe_generator.v:19$85'.
+    Redirecting output \Y: $eq$../rtl/Rx/sampling_strobe_generator.v:27$88_Y = $eq$../rtl/Rx/sampling_strobe_generator.v:19$85_Y
+    Removing $eq cell `$eq$../rtl/Rx/sampling_strobe_generator.v:27$88' from module `\sampling_strobe_generator'.
+Finding identical cells in module `\synchronizer'.
+Finding identical cells in module `\test_UART'.
+  Cell `$initstate$4' is identical to cell `$initstate$2'.
+    Redirecting output \Y: $0$formal$../rtl/test_UART.v:26$3_EN[0:0]$24 = $0$formal$../rtl/test_UART.v:25$1_EN[0:0]$20
+    Removing $initstate cell `$initstate$4' from module `\test_UART'.
+Removed a total of 4 cells.
+
+17.6.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \RxUART..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \Rx_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \SIPO_shift_register..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$120 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \TxUART..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$163
+    Root of a mux tree: $procmux$169 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \Tx_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \UART..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \baud_generator..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$144 (pure)
+    Root of a mux tree: $procmux$147 (pure)
+    Root of a mux tree: $procmux$150 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \check_parity..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$138 (pure)
+    Root of a mux tree: $procmux$141 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \detect_start_bit..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$132 (pure)
+    Root of a mux tree: $procmux$135 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \rx_state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$160 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sampling_strobe_generator..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$123 (pure)
+    Root of a mux tree: $procmux$129 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \synchronizer..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \test_UART..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$172 (pure)
+    Root of a mux tree: $procmux$175 (pure)
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+17.6.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \RxUART.
+  Optimizing cells in module \Rx_top.
+  Optimizing cells in module \SIPO_shift_register.
+  Optimizing cells in module \TxUART.
+  Optimizing cells in module \Tx_top.
+  Optimizing cells in module \UART.
+  Optimizing cells in module \baud_generator.
+  Optimizing cells in module \check_parity.
+  Optimizing cells in module \detect_start_bit.
+  Optimizing cells in module \rx_state.
+    New input vector for $reduce_or cell $procmux$157_ANY: { $procmux$157_CMP [0] $procmux$157_CMP [1] $procmux$157_CMP [2] $procmux$157_CMP [3] $procmux$157_CMP [4] $procmux$157_CMP [5] $procmux$157_CMP [6] $procmux$157_CMP [7] }
+  Optimizing cells in module \rx_state.
+  Optimizing cells in module \sampling_strobe_generator.
+  Optimizing cells in module \synchronizer.
+  Optimizing cells in module \test_UART.
+Performed a total of 1 changes.
+
+17.6.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\RxUART'.
+Finding identical cells in module `\Rx_top'.
+Finding identical cells in module `\SIPO_shift_register'.
+Finding identical cells in module `\TxUART'.
+Finding identical cells in module `\Tx_top'.
+Finding identical cells in module `\UART'.
+Finding identical cells in module `\baud_generator'.
+Finding identical cells in module `\check_parity'.
+Finding identical cells in module `\detect_start_bit'.
+Finding identical cells in module `\rx_state'.
+Finding identical cells in module `\sampling_strobe_generator'.
+Finding identical cells in module `\synchronizer'.
+Finding identical cells in module `\test_UART'.
+Removed a total of 0 cells.
+
+17.6.6. Executing OPT_RMDFF pass (remove dff with constant values).
+
+17.6.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \RxUART..
+Finding unused cells or wires in module \Rx_top..
+Finding unused cells or wires in module \SIPO_shift_register..
+Finding unused cells or wires in module \TxUART..
+  removed 1 unused temporary wires.
+Finding unused cells or wires in module \Tx_top..
+Finding unused cells or wires in module \UART..
+Finding unused cells or wires in module \baud_generator..
+Finding unused cells or wires in module \check_parity..
+Finding unused cells or wires in module \detect_start_bit..
+Finding unused cells or wires in module \rx_state..
+  removed 1 unused temporary wires.
+Finding unused cells or wires in module \sampling_strobe_generator..
+  removed 1 unused temporary wires.
+Finding unused cells or wires in module \synchronizer..
+Finding unused cells or wires in module \test_UART..
+  removed 1 unused temporary wires.
+Removed 1 unused cells and 77 unused wires.
+
+17.6.8. Executing OPT_EXPR pass (perform const folding).
+
+17.6.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+17.6.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \RxUART..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \Rx_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \SIPO_shift_register..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$120 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \TxUART..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$163
+    Root of a mux tree: $procmux$169 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \Tx_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \UART..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \baud_generator..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$144 (pure)
+    Root of a mux tree: $procmux$147 (pure)
+    Root of a mux tree: $procmux$150 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \check_parity..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$138 (pure)
+    Root of a mux tree: $procmux$141 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \detect_start_bit..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$132 (pure)
+    Root of a mux tree: $procmux$135 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \rx_state..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$160 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \sampling_strobe_generator..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$123 (pure)
+    Root of a mux tree: $procmux$129 (pure)
+  Analyzing evaluation results.
+Running muxtree optimizer on module \synchronizer..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \test_UART..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+    Root of a mux tree: $procmux$172 (pure)
+    Root of a mux tree: $procmux$175 (pure)
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+
+17.6.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \RxUART.
+  Optimizing cells in module \Rx_top.
+  Optimizing cells in module \SIPO_shift_register.
+  Optimizing cells in module \TxUART.
+  Optimizing cells in module \Tx_top.
+  Optimizing cells in module \UART.
+  Optimizing cells in module \baud_generator.
+  Optimizing cells in module \check_parity.
+  Optimizing cells in module \detect_start_bit.
+  Optimizing cells in module \rx_state.
+  Optimizing cells in module \sampling_strobe_generator.
+  Optimizing cells in module \synchronizer.
+  Optimizing cells in module \test_UART.
+Performed a total of 0 changes.
+
+17.6.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\RxUART'.
+Finding identical cells in module `\Rx_top'.
+Finding identical cells in module `\SIPO_shift_register'.
+Finding identical cells in module `\TxUART'.
+Finding identical cells in module `\Tx_top'.
+Finding identical cells in module `\UART'.
+Finding identical cells in module `\baud_generator'.
+Finding identical cells in module `\check_parity'.
+Finding identical cells in module `\detect_start_bit'.
+Finding identical cells in module `\rx_state'.
+Finding identical cells in module `\sampling_strobe_generator'.
+Finding identical cells in module `\synchronizer'.
+Finding identical cells in module `\test_UART'.
+Removed a total of 0 cells.
+
+17.6.13. Executing OPT_RMDFF pass (remove dff with constant values).
+
+17.6.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \RxUART..
+Finding unused cells or wires in module \Rx_top..
+Finding unused cells or wires in module \SIPO_shift_register..
+Finding unused cells or wires in module \TxUART..
+Finding unused cells or wires in module \Tx_top..
+Finding unused cells or wires in module \UART..
+Finding unused cells or wires in module \baud_generator..
+Finding unused cells or wires in module \check_parity..
+Finding unused cells or wires in module \detect_start_bit..
+Finding unused cells or wires in module \rx_state..
+Finding unused cells or wires in module \sampling_strobe_generator..
+Finding unused cells or wires in module \synchronizer..
+Finding unused cells or wires in module \test_UART..
+Removed 1 unused cells and 77 unused wires.
+
+17.6.15. Executing OPT_EXPR pass (perform const folding).
+
+17.6.16. Finished OPT passes. (There is nothing left to do.)
+
+17.7. Executing WREDUCE pass (reducing word size of cells).
+Removed top 30 bits (of 32) from port B of cell baud_generator.$add$../rtl/Tx/baud_generator.v:19$55 ($add).
+Removed top 27 bits (of 32) from port Y of cell baud_generator.$add$../rtl/Tx/baud_generator.v:19$55 ($add).
+Removed top 31 bits (of 32) from port B of cell baud_generator.$add$../rtl/Tx/baud_generator.v:31$59 ($add).
+Removed top 29 bits (of 32) from port Y of cell baud_generator.$add$../rtl/Tx/baud_generator.v:31$59 ($add).
+Removed top 29 bits (of 32) from port B of cell baud_generator.$ge$../rtl/Tx/baud_generator.v:34$60 ($ge).
+Removed top 28 bits (of 32) from port B of cell baud_generator.$le$../rtl/Tx/baud_generator.v:34$61 ($le).
+Removed cell baud_generator.$procmux$150 ($mux).
+Removed top 29 bits (of 32) from wire baud_generator.$add$../rtl/Tx/baud_generator.v:31$59_Y.
+Removed top 3 bits (of 4) from port B of cell rx_state.$procmux$158_CMP0 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$157_CMP5 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$157_CMP4 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$157_CMP3 ($eq).
+Removed top 1 bits (of 4) from port B of cell rx_state.$procmux$157_CMP2 ($eq).
+Removed top 2 bits (of 4) from port B of cell rx_state.$procmux$157_CMP1 ($eq).
+Removed top 2 bits (of 4) from port B of cell rx_state.$procmux$157_CMP0 ($eq).
+Removed top 2 bits (of 4) from port B of cell rx_state.$ge$../rtl/Rx/rx_state.v:27$94 ($ge).
+Removed top 3 bits (of 4) from mux cell rx_state.$ternary$../rtl/Rx/rx_state.v:34$98 ($mux).
+Removed top 3 bits (of 4) from wire rx_state.$ternary$../rtl/Rx/rx_state.v:34$98_Y.
+Removed top 31 bits (of 32) from port B of cell sampling_strobe_generator.$add$../rtl/Rx/sampling_strobe_generator.v:22$86 ($add).
+Removed top 29 bits (of 32) from port Y of cell sampling_strobe_generator.$add$../rtl/Rx/sampling_strobe_generator.v:22$86 ($add).
+Removed top 29 bits (of 32) from wire sampling_strobe_generator.$add$../rtl/Rx/sampling_strobe_generator.v:22$86_Y.
+Removed cell test_UART.$procmux$175 ($mux).
+
+17.8. Executing MEMORY_DFF pass (merging $dff cells to $memrd and $memwr).
+
+17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \RxUART..
+Finding unused cells or wires in module \Rx_top..
+Finding unused cells or wires in module \SIPO_shift_register..
+Finding unused cells or wires in module \TxUART..
+Finding unused cells or wires in module \Tx_top..
+Finding unused cells or wires in module \UART..
+Finding unused cells or wires in module \baud_generator..
+  removed 3 unused temporary wires.
+Finding unused cells or wires in module \check_parity..
+Finding unused cells or wires in module \detect_start_bit..
+Finding unused cells or wires in module \rx_state..
+  removed 1 unused temporary wires.
+Finding unused cells or wires in module \sampling_strobe_generator..
+  removed 1 unused temporary wires.
+Finding unused cells or wires in module \synchronizer..
+Finding unused cells or wires in module \test_UART..
+  removed 1 unused temporary wires.
+Removed 1 unused cells and 83 unused wires.
+
+17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+17.11. Executing OPT pass (performing simple optimizations).
+
+17.11.1. Executing OPT_EXPR pass (perform const folding).
+
+17.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\RxUART'.
+Finding identical cells in module `\Rx_top'.
+Finding identical cells in module `\SIPO_shift_register'.
+Finding identical cells in module `\TxUART'.
+Finding identical cells in module `\Tx_top'.
+Finding identical cells in module `\UART'.
+Finding identical cells in module `\baud_generator'.
+Finding identical cells in module `\check_parity'.
+Finding identical cells in module `\detect_start_bit'.
+Finding identical cells in module `\rx_state'.
+Finding identical cells in module `\sampling_strobe_generator'.
+Finding identical cells in module `\synchronizer'.
+Finding identical cells in module `\test_UART'.
+Removed a total of 0 cells.
+
+17.11.3. Executing OPT_RMDFF pass (remove dff with constant values).
+
+17.11.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \RxUART..
+Finding unused cells or wires in module \Rx_top..
+Finding unused cells or wires in module \SIPO_shift_register..
+Finding unused cells or wires in module \TxUART..
+Finding unused cells or wires in module \Tx_top..
+Finding unused cells or wires in module \UART..
+Finding unused cells or wires in module \baud_generator..
+Finding unused cells or wires in module \check_parity..
+Finding unused cells or wires in module \detect_start_bit..
+Finding unused cells or wires in module \rx_state..
+Finding unused cells or wires in module \sampling_strobe_generator..
+Finding unused cells or wires in module \synchronizer..
+Finding unused cells or wires in module \test_UART..
+Removed 1 unused cells and 83 unused wires.
+
+17.11.5. Finished fast OPT passes.
+
+17.12. Printing statistics.
+
+=== RxUART ===
+
+   Number of wires:                  7
+   Number of wire bits:              7
+   Number of public wires:           7
+   Number of public wire bits:       7
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  4
+     $cover                          1
+     detect_start_bit                1
+     rx_state                        1
+     sampling_strobe_generator       1
+
+=== Rx_top ===
+
+   Number of wires:                  7
+   Number of wire bits:             14
+   Number of public wires:           7
+   Number of public wire bits:      14
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  4
+     RxUART                          1
+     SIPO_shift_register             1
+     check_parity                    1
+     synchronizer                    1
+
+=== SIPO_shift_register ===
+
+   Number of wires:                  5
+   Number of wire bits:             19
+   Number of public wires:           4
+   Number of public wire bits:      11
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  2
+     $dff                            1
+     $mux                            1
+
+=== TxUART ===
+
+   Number of wires:                 15
+   Number of wire bits:             63
+   Number of public wires:           7
+   Number of public wire bits:      25
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 13
+     $and                            1
+     $assume                         2
+     $cover                          1
+     $dff                            1
+     $initstate                      1
+     $logic_not                      2
+     $mux                            3
+     $not                            2
+
+=== Tx_top ===
+
+   Number of wires:                  7
+   Number of wire bits:             14
+   Number of public wires:           7
+   Number of public wire bits:      14
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     $reduce_xor                     1
+     TxUART                          1
+     baud_generator                  1
+
+=== UART ===
+
+   Number of wires:                  9
+   Number of wire bits:             23
+   Number of public wires:           9
+   Number of public wire bits:      23
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  2
+     Rx_top                          1
+     Tx_top                          1
+
+=== baud_generator ===
+
+   Number of wires:                 15
+   Number of wire bits:             27
+   Number of public wires:           5
+   Number of public wire bits:      10
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 13
+     $add                            2
+     $assert                         1
+     $dff                            5
+     $ge                             1
+     $le                             1
+     $logic_and                      1
+     $mux                            2
+
+=== check_parity ===
+
+   Number of wires:                 13
+   Number of wire bits:             20
+   Number of public wires:           8
+   Number of public wire bits:      15
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  8
+     $dff                            3
+     $logic_and                      1
+     $mux                            2
+     $ne                             1
+     $reduce_xor                     1
+
+=== detect_start_bit ===
+
+   Number of wires:                 10
+   Number of wire bits:             10
+   Number of public wires:           4
+   Number of public wire bits:       4
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  8
+     $dff                            2
+     $logic_and                      2
+     $logic_not                      2
+     $mux                            2
+
+=== rx_state ===
+
+   Number of wires:                 20
+   Number of wire bits:             42
+   Number of public wires:           7
+   Number of public wire bits:      10
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 24
+     $add                            1
+     $dff                            4
+     $eq                            11
+     $ge                             1
+     $le                             1
+     $logic_and                      1
+     $logic_not                      1
+     $mux                            2
+     $pmux                           1
+     $reduce_or                      1
+
+=== sampling_strobe_generator ===
+
+   Number of wires:                  8
+   Number of wire bits:             14
+   Number of public wires:           4
+   Number of public wire bits:       6
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  6
+     $add                            1
+     $dff                            2
+     $eq                             1
+     $mux                            2
+
+=== synchronizer ===
+
+   Number of wires:                  4
+   Number of wire bits:              4
+   Number of public wires:           4
+   Number of public wire bits:       4
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  2
+     $dff                            2
+
+=== test_UART ===
+
+   Number of wires:                 19
+   Number of wire bits:             33
+   Number of public wires:           9
+   Number of public wire bits:      23
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 15
+     $assert                         2
+     $assume                         2
+     $dff                            4
+     $eq                             1
+     $initstate                      1
+     $logic_not                      1
+     $mux                            1
+     $not                            2
+     UART                            1
+
+=== design hierarchy ===
+
+   test_UART                         1
+     UART                            1
+       Rx_top                        1
+         RxUART                      1
+           detect_start_bit          1
+           rx_state                  1
+           sampling_strobe_generator      1
+         SIPO_shift_register         1
+         check_parity                1
+         synchronizer                1
+       Tx_top                        1
+         TxUART                      1
+         baud_generator              1
+
+   Number of wires:                139
+   Number of wire bits:            290
+   Number of public wires:          82
+   Number of public wire bits:     166
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                 92
+     $add                            4
+     $and                            1
+     $assert                         3
+     $assume                         4
+     $cover                          2
+     $dff                           24
+     $eq                            13
+     $ge                             2
+     $initstate                      2
+     $le                             2
+     $logic_and                      5
+     $logic_not                      6
+     $mux                           15
+     $ne                             1
+     $not                            4
+     $pmux                           1
+     $reduce_or                      1
+     $reduce_xor                     2
+
+17.13. Executing CHECK pass (checking for obvious problems).
+checking module RxUART..
+checking module Rx_top..
+checking module SIPO_shift_register..
+checking module TxUART..
+checking module Tx_top..
+checking module UART..
+checking module baud_generator..
+checking module check_parity..
+checking module detect_start_bit..
+checking module rx_state..
+checking module sampling_strobe_generator..
+checking module synchronizer..
+checking module test_UART..
+found and reported 0 problems.
+
+-- Running command `write_smt2 -wires UART.smt2' --
+
+18. Executing SMT2 backend.
+Creating SMT-LIBv2 representation of module TxUART.
+Creating SMT-LIBv2 representation of module synchronizer.
+Creating SMT-LIBv2 representation of module baud_generator.
+Creating SMT-LIBv2 representation of module sampling_strobe_generator.
+Creating SMT-LIBv2 representation of module detect_start_bit.
+Creating SMT-LIBv2 representation of module SIPO_shift_register.
+Creating SMT-LIBv2 representation of module rx_state.
+Creating SMT-LIBv2 representation of module check_parity.
+Creating SMT-LIBv2 representation of module Tx_top.
+Creating SMT-LIBv2 representation of module RxUART.
+Creating SMT-LIBv2 representation of module Rx_top.
+Creating SMT-LIBv2 representation of module UART.
+Creating SMT-LIBv2 representation of module test_UART.
+
+End of script. Logfile hash: 70f34188a5
+CPU: user 0.13s system 0.00s, MEM: 38.51 MB total, 9.18 MB resident
+Yosys 0.7+386 (git sha1 ca2adc30, gcc 7.2.1 -march=x86-64 -mtune=generic -O2 -fstack-protector-strong -fPIC -Os)
+Time spent: 22% 17x read_verilog (0 sec), 22% 5x opt_expr (0 sec), ...
