@@ -27,6 +27,9 @@ initial assume(enable == 0);
 
 always @(posedge clk)
 begin
+    if(o_busy)
+        assume(enable == 0);
+
     assert(!rx_error);
 
     if(data_is_valid) 

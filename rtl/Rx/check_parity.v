@@ -9,13 +9,10 @@ reg parity_bit;  // this bit is received directly through UART
 
 always @(posedge clk)
 begin
-    parity_value <= ^(received_data);
-end
-
-always @(posedge clk)
-begin
-    if (is_parity_stage)
+    if (is_parity_stage) begin
 	parity_bit <= serial_in;
+	parity_value <= ^(received_data);
+    end
 end
 
 always @(posedge clk)

@@ -1,9 +1,9 @@
 module rx_state(clk, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage);  // FSM for UART Rx
 
 input clk, start_detected, sampling_strobe;
-output reg data_is_available = 0;
-output reg data_is_valid = 0;
-output reg is_parity_stage = 0;
+output reg data_is_available;
+output reg is_parity_stage;
+output data_is_valid;
 
 reg [3:0] state = 0;
 
@@ -20,9 +20,10 @@ localparam Rx_DATA_BIT_7 = 4'b1001;
 localparam Rx_PARITY_BIT = 4'b1010;
 localparam Rx_STOP_BIT   = 4'b1011;
 
+assign data_is_valid = (state == Rx_STOP_BIT);  // so as to align with rx_error
+
 always @(posedge clk)
 begin
-    data_is_valid <= (state == Rx_STOP_BIT);  // so as to align with rx_error
     is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
     data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // data states
 end

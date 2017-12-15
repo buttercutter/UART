@@ -1,7 +1,7 @@
 module sampling_strobe_generator(clk, start_detected, sampling_strobe);  // produces sampling control signal for the incoming Rx
 
 input clk, start_detected;
-output reg sampling_strobe = 0;
+output reg sampling_strobe;
 
 `ifdef FORMAL
     localparam CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equivalently 1/600MHz divided by 1/48MHz
