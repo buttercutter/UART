@@ -1,11 +1,11 @@
 module rx_state(clk, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage);  // FSM for UART Rx
 
 input clk, start_detected, sampling_strobe;
-output reg data_is_available;
+output reg data_is_available;   // in data states
 output reg is_parity_stage;
-output data_is_valid;
+output reg data_is_valid;	// finished all data states
 
-reg [3:0] state = 0;
+reg [3:0] state;
 
 localparam Rx_IDLE       = 4'b0000;
 localparam Rx_START_BIT  = 4'b0001;
@@ -20,10 +20,9 @@ localparam Rx_DATA_BIT_7 = 4'b1001;
 localparam Rx_PARITY_BIT = 4'b1010;
 localparam Rx_STOP_BIT   = 4'b1011;
 
-assign data_is_valid = (state == Rx_STOP_BIT);  // so as to align with rx_error
-
 always @(posedge clk)
 begin
+    data_is_valid <= (state == Rx_STOP_BIT);  // so as to align with rx_error
     is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
     data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // data states
 end
@@ -31,27 +30,34 @@ end
 always @(posedge clk)
 begin
     if (sampling_strobe) begin
-    case(state)
-	Rx_IDLE 	: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
+        case(state)
+	        Rx_IDLE 	: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
 
-	Rx_START_BIT	: state <= Rx_DATA_BIT_0;
+	        Rx_START_BIT	: state <= Rx_DATA_BIT_0;
 
-	Rx_DATA_BIT_0,
-	Rx_DATA_BIT_1,
-	Rx_DATA_BIT_2,	
-	Rx_DATA_BIT_3,
-	Rx_DATA_BIT_4,
-	Rx_DATA_BIT_5,
-	Rx_DATA_BIT_6,
-	Rx_DATA_BIT_7	: state <= state + 1'b1;
+	        Rx_DATA_BIT_0,
+	        Rx_DATA_BIT_1,
+	        Rx_DATA_BIT_2,	
+	        Rx_DATA_BIT_3,
+	        Rx_DATA_BIT_4,
+	        Rx_DATA_BIT_5,
+	        Rx_DATA_BIT_6,
+	        Rx_DATA_BIT_7	: state <= state + 1'b1;
 
-	Rx_PARITY_BIT 	: state <= Rx_STOP_BIT;
+	        Rx_PARITY_BIT 	: state <= Rx_STOP_BIT;
 
-	Rx_STOP_BIT 	: state <= Rx_IDLE;
+	        Rx_STOP_BIT 	: state <= Rx_IDLE;
 
-	default      	: state <= Rx_IDLE;
-    endcase
+	        default      	: state <= Rx_IDLE;
+        endcase
     end
 end
+
+`ifdef FORMAL
+    initial begin
+    	assume(sampling_strobe == 0);
+    	assume(start_detected == 0);
+    end
+`endif
 
 endmodule

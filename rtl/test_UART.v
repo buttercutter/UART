@@ -22,11 +22,16 @@ assign serial_in = serial_out; // tx goes to rx, so that we know that our UART w
 
 `ifdef FORMAL
 
-initial assume(clk == 0);
-initial assume(enable == 0);
+initial begin
+    assume(clk == 0);
+    assume(enable == 0);
+end
 
 always @(posedge clk)
 begin
+    if((!enable) || (data_is_valid))
+        assume($past(i_data) == i_data);
+
     if(o_busy)
         assume(enable == 0);
 
