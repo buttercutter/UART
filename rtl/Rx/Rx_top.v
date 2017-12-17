@@ -1,6 +1,6 @@
-module Rx_top(clk, serial_in, received_data, rx_error, data_is_valid);  // serial input, parallel output
+module Rx_top(clk, reset, serial_in, received_data, rx_error, data_is_valid);  // serial input, parallel output
 
-input clk, serial_in;
+input clk, reset, serial_in;
 output reg rx_error;
 output reg data_is_valid;
 output reg [7:0] received_data;
