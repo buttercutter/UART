@@ -62,6 +62,8 @@ end
     initial begin
     	assume(sampling_strobe == 0);
     	assume(start_detected == 0);
+    	assume(data_is_valid == 0);
+    	assume(state == 0);
     end
     
     always @(posedge clk) 

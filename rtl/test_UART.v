@@ -26,7 +26,7 @@ assign serial_in = serial_out; // tx goes to rx, so that we know that our UART w
 initial begin
     assume(clk == 0);
     assume(enable == 0);
-    assume(reset == 1);
+    assume(reset == 0);
 end
 
 always @(posedge clk)
