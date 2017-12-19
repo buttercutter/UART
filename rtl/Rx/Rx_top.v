@@ -13,7 +13,7 @@ wire serial_in_synced;
 synchronizer sync (.clk(clk), .serial_in(serial_in), .serial_in_synced(serial_in_synced));
 
 // determines when to sample data
-RxUART rx (.clk(clk), .serial_in(serial_in_synced), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .received_data(received_data));
+RxUART rx (.clk(clk), .reset(reset), .serial_in(serial_in_synced), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .received_data(received_data));
 
 // even parity check
 check_parity cp (.clk(clk), .serial_in(serial_in_synced), .received_data(received_data), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .rx_error(rx_error));

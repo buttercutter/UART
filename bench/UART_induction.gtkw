@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Sun Dec 17 01:49:13 2017
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Tue Dec 19 03:33:05 2017
 [*]
-[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.vcd"
-[dumpfile_mtime] "Sun Dec 17 01:48:40 2017"
-[dumpfile_size] 83740
-[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.gtkw"
+[dumpfile] "/home/phung/Documents/phung/UART/bench/UART_induction.vcd"
+[dumpfile_mtime] "Tue Dec 19 03:20:38 2017"
+[dumpfile_size] 86098
+[savefile] "/home/phung/Documents/phung/UART/bench/UART_induction.gtkw"
 [timestart] 0
-[size] 1920 1016
-[pos] -1 -1
-*-7.250384 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1855 588
+[pos] -1 12
+*-7.250384 990 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
@@ -19,7 +19,7 @@
 [sst_width] 229
 [signals_width] 264
 [sst_expanded] 1
-[sst_vpaned_height] 284
+[sst_vpaned_height] 144
 @420
 smt_step
 @28
@@ -43,5 +43,7 @@ test_UART.uart.rx.is_parity_stage
 test_UART.uart.rx.received_data[7:0]
 @28
 test_UART.uart.rx.rx_error
+@22
+test_UART.uart.rx.rx.state.state[3:0]
 [pattern_trace] 1
 [pattern_trace] 0

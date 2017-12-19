@@ -1,6 +1,6 @@
-module rx_state(clk, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage);  // FSM for UART Rx
+module rx_state(clk, reset, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage);  // FSM for UART Rx
 
-input clk, start_detected, sampling_strobe;
+input clk, reset, start_detected, sampling_strobe;
 output reg data_is_available;   // in data states
 output reg is_parity_stage;
 output reg data_is_valid;	// finished all data states
@@ -29,27 +29,32 @@ end
 
 always @(posedge clk)
 begin
-    if (sampling_strobe) begin
-        case(state)
-	        Rx_IDLE 	: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
+    if (reset)
+        state <= Rx_IDLE;
+    
+    else begin
+        if (sampling_strobe) begin
+            case(state)
+	            Rx_IDLE 	: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
 
-	        Rx_START_BIT	: state <= Rx_DATA_BIT_0;
+	            Rx_START_BIT	: state <= Rx_DATA_BIT_0;
 
-	        Rx_DATA_BIT_0,
-	        Rx_DATA_BIT_1,
-	        Rx_DATA_BIT_2,	
-	        Rx_DATA_BIT_3,
-	        Rx_DATA_BIT_4,
-	        Rx_DATA_BIT_5,
-	        Rx_DATA_BIT_6,
-	        Rx_DATA_BIT_7	: state <= state + 1'b1;
+	            Rx_DATA_BIT_0,
+	            Rx_DATA_BIT_1,
+	            Rx_DATA_BIT_2,	
+	            Rx_DATA_BIT_3,
+	            Rx_DATA_BIT_4,
+	            Rx_DATA_BIT_5,
+	            Rx_DATA_BIT_6,
+	            Rx_DATA_BIT_7	: state <= state + 1'b1;
 
-	        Rx_PARITY_BIT 	: state <= Rx_STOP_BIT;
+	            Rx_PARITY_BIT 	: state <= Rx_STOP_BIT;
 
-	        Rx_STOP_BIT 	: state <= Rx_IDLE;
+	            Rx_STOP_BIT 	: state <= Rx_IDLE;
 
-	        default      	: state <= Rx_IDLE;
-        endcase
+	            default      	: state <= Rx_IDLE;
+            endcase
+        end
     end
 end
 
@@ -57,6 +62,12 @@ end
     initial begin
     	assume(sampling_strobe == 0);
     	assume(start_detected == 0);
+    end
+    
+    always @(posedge clk) 
+    begin
+        if (state == Rx_STOP_BIT)
+            assume(reset == 0);  // this is to assume for induction test because Tx internal registers are not reset/initialized properly at time = 0, such that data_is_valid signal will not be asserted in the next clock cycle after the "FIRST" stop bit state
     end
 `endif
 
