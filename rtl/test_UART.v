@@ -29,6 +29,17 @@ initial begin
     assume(reset == 0);
 end
 
+reg has_been_enabled;
+
+always @(posedge clk)
+begin
+    if(enable)
+	has_been_enabled <= 1;
+
+    if(has_been_enabled)
+    	cover(data_is_valid);
+end
+
 always @(posedge clk)
 begin
     if((!enable) || (data_is_valid))

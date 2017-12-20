@@ -1,20 +1,21 @@
 [*]
-[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Wed Dec 20 02:20:21 2017
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Wed Dec 20 14:30:15 2017
 [*]
-[dumpfile] "/home/phung/Documents/phung/UART/bench/UART_BMC.vcd"
-[dumpfile_mtime] "Wed Dec 20 02:19:35 2017"
-[dumpfile_size] 74101
-[savefile] "/home/phung/Documents/phung/UART/bench/UART_BMC.gtkw"
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.vcd"
+[dumpfile_mtime] "Wed Dec 20 14:29:06 2017"
+[dumpfile_size] 76280
+[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.gtkw"
 [timestart] 0
 [size] 913 600
 [pos] -1 -1
-*-5.563975 80 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-5.563975 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
+[treeopen] test_UART.uart.rx.
 [treeopen] test_UART.uart.rx.rx.
 [treeopen] test_UART.uart.tx.
-[sst_width] 225
+[sst_width] 229
 [signals_width] 223
 [sst_expanded] 1
 [sst_vpaned_height] 160
@@ -31,6 +32,11 @@ test_UART.i_data[7:0]
 test_UART.o_busy
 test_UART.serial_out
 test_UART.serial_in
+@29
+test_UART.uart.rx.sync.serial_in_reg
+@28
+test_UART.uart.rx.sync.serial_in_reg2
+test_UART.uart.rx.rx.dsb.serial_in_synced
 test_UART.data_is_valid
 @22
 test_UART.received_data[7:0]
@@ -40,5 +46,7 @@ test_UART.rx_error
 test_UART.uart.rx.rx.state.state[3:0]
 @28
 test_UART.uart.rx.rx.state.sampling_strobe
+test_UART.uart.rx.rx.dsb.previously_idle
+test_UART.uart.rx.rx.dsb.start_detected
 [pattern_trace] 1
 [pattern_trace] 0
