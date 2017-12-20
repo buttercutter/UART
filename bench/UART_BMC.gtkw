@@ -1,19 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Tue Dec 19 13:24:58 2017
+[*] Wed Dec 20 02:20:21 2017
 [*]
 [dumpfile] "/home/phung/Documents/phung/UART/bench/UART_BMC.vcd"
-[dumpfile_mtime] "Tue Dec 19 13:23:59 2017"
-[dumpfile_size] 17391
+[dumpfile_mtime] "Wed Dec 20 02:19:35 2017"
+[dumpfile_size] 74101
 [savefile] "/home/phung/Documents/phung/UART/bench/UART_BMC.gtkw"
 [timestart] 0
 [size] 913 600
 [pos] -1 -1
-*-5.563975 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-5.563975 80 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
-[treeopen] test_UART.uart.rx.
 [treeopen] test_UART.uart.rx.rx.
+[treeopen] test_UART.uart.tx.
 [sst_width] 225
 [signals_width] 223
 [sst_expanded] 1
@@ -31,7 +31,6 @@ test_UART.i_data[7:0]
 test_UART.o_busy
 test_UART.serial_out
 test_UART.serial_in
-@29
 test_UART.data_is_valid
 @22
 test_UART.received_data[7:0]

@@ -1,9 +1,11 @@
 module Rx_top(clk, reset, serial_in, received_data, rx_error, data_is_valid);  // serial input, parallel output
 
+parameter INPUT_DATA_WIDTH = 8;
+
 input clk, reset, serial_in;
 output reg rx_error;
 output reg data_is_valid;
-output reg [7:0] received_data;
+output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 
 wire data_is_available;
 wire is_parity_stage;

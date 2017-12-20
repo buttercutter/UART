@@ -24,7 +24,7 @@ assign baud_clk = ck_stb;
 
 localparam DIVIDE_FACTOR = 8;
 
-reg[($clog2(DIVIDE_FACTOR)-1) : 0] cnt = 0;
+reg[$clog2(DIVIDE_FACTOR) : 0] cnt = 0;
 
 always @(posedge clk)
 begin

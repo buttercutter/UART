@@ -1,10 +1,12 @@
 module RxUART(clk, reset, serial_in, data_is_available, data_is_valid, is_parity_stage, received_data);  // manages UART Rx deserializer-related control signal
 
+parameter INPUT_DATA_WIDTH = 8;
+
 input clk, reset, serial_in;
 output reg data_is_available; // if asserted HIGH, it is ok to sample the serial_in
 output reg data_is_valid;   // all 8-bit data have been sampled, please note that valid does not mean no data corruption
 output reg is_parity_stage; // is the parity bit being received now ?
-output received_data;   // deserialized data
+output [(INPUT_DATA_WIDTH-1):0]received_data;   // deserialized data
 
 wire start_detected; // start_bit is detected
 wire sampling_strobe; // determines when to sample the incoming Rx
