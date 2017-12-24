@@ -23,21 +23,25 @@ assign serial_in = serial_out; // tx goes to rx, so that we know that our UART w
 
 `ifdef FORMAL
 
-initial begin
-    assume(clk == 0);
-    assume(enable == 0);
-    assume(reset == 0);
-end
-
 reg has_been_enabled;
+reg[3:0] cnt = 0;
+
+initial has_been_enabled = 0;
 
 always @(posedge clk)
 begin
     if(enable)
 	has_been_enabled <= 1;
 
-    if(has_been_enabled)
-    	cover(data_is_valid);
+    if(has_been_enabled) begin
+	cnt <= cnt + 1;
+
+	if(cnt == 80) begin
+	    assert(data_is_valid == 1);
+	    cnt <= 0;
+ 	    has_been_enabled <= 0;
+	end
+    end
 end
 
 always @(posedge clk)
@@ -47,6 +51,8 @@ begin
 
     if(o_busy)
         assume(enable == 0);
+    else
+	assert(serial_out == 1);
 
     assert(!rx_error);
 
