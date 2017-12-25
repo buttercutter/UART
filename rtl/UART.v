@@ -24,10 +24,4 @@ Tx_top tx (.clk(clk), .reset(reset), .enable(enable), .i_data(i_data), .o_busy(o
 // UART receiver
 Rx_top rx (.clk(clk), .reset(reset), .serial_in(serial_in), .received_data(received_data), .rx_error(rx_error), .data_is_valid(data_is_valid));
 
-`ifdef FORMAL
-
-    initial assume(serial_in == 1);
-
-`endif
-
 endmodule

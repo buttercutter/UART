@@ -46,10 +46,6 @@ begin
 end
 
 `ifdef FORMAL
-initial begin
-    assume(baud_clk == 0);
-    assume(enable == 0);
-end
 
 always @(posedge clk) 
 begin
