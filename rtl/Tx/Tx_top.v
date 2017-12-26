@@ -10,7 +10,7 @@ input reset;  // added to clear various registers
 input enable;     // this 'enable transmission' signal is active HIGH
 input[(INPUT_DATA_WIDTH-1):0] i_data; 	// parallel input
 
-output reg serial_out;  // serial output from serializer (TxUART)
+output serial_out;  // serial output from serializer (TxUART)
 output reg o_busy;	// busy transmitting
 
 wire baud_clk;  // default 9600bps baudrate clock

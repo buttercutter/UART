@@ -10,7 +10,7 @@ input reset;
 input enable;
 input [(INPUT_DATA_WIDTH-1):0] i_data;
 output reg o_busy;
-output reg serial_out;
+output serial_out;
 
 // receiver signals
 input serial_in;

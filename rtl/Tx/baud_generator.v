@@ -13,28 +13,17 @@ reg ck_stb;
     parameter DIVIDE_FACTOR = 5000;
 `endif
 
-reg[$clog2(DIVIDE_FACTOR):0] cnt = 0;
+reg[$clog2(DIVIDE_FACTOR):0] cnt;
 
-initial baud_clk = 0;
+initial ck_stb = 0;
+initial cnt = 0;
 
 always @(posedge clk)
 begin
-    ck_stb <= (counter == (DIVIDE_FACTOR - 1)); 
+    ck_stb <= (cnt == (DIVIDE_FACTOR - 1)); 
     cnt <= cnt + 1;
 end
-				    
+
 assign baud_clk = ck_stb;
-
-`ifdef FORMAL
-
-always @(posedge clk)
-begin
-    if (baud_clk) begin
-	assert((cnt >= (DIVIDE_FACTOR-2)) && (cnt <= (DIVIDE_FACTOR)));
-	cnt <= 0;
-    end
-end
-
-`endif
 
 endmodule
