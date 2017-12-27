@@ -24,9 +24,10 @@ assign serial_in = serial_out; // tx goes to rx, so that we know that our UART w
 `ifdef FORMAL
 
 reg has_been_enabled;
-reg[3:0] cnt = 0;
+reg[$clog2(88):0] cnt;
 
 initial has_been_enabled = 0;
+initial cnt = 0;
 
 always @(posedge clk)
 begin
@@ -36,7 +37,7 @@ begin
     if(has_been_enabled) begin
 	cnt <= cnt + 1;
 
-	if(cnt == 80) begin
+	if(cnt == 88) begin
 	    assert(data_is_valid == 1);
 	    cnt <= 0;
  	    has_been_enabled <= 0;
