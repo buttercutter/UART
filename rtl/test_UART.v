@@ -43,11 +43,14 @@ begin
  	    has_been_enabled <= 0;
 	end
     end
+    
+    else
+    	assert(cnt == 0);
 end
 
 always @(posedge clk)
 begin
-    if((!enable) && (data_is_valid)) begin
+    if((has_been_enabled) && (!reset)) begin
         assume($past(i_data) == i_data);
 	assert(o_busy == 1);
     end
