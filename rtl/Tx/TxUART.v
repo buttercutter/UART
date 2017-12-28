@@ -44,14 +44,19 @@ end
 
 always @(posedge clk)
 begin
-    o_busy <= !(shift_reg == 0) && (reset);  // Tx is busy transmitting when there is pending stop bit
+    if(reset)
+    	o_busy <= 0;
+    else	
+    	o_busy <= !(shift_reg == 0);  // Tx is busy transmitting when there is pending stop bit
 end
 
 `ifdef FORMAL
 
 always @(posedge clk) 
 begin
-
+     if(!enable) begin
+	assert(shift_reg == 0);
+     end
 end
 
 `endif
