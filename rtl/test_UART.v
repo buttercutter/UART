@@ -8,7 +8,7 @@ input reset;
 // transmitter signals
 input enable;
 input [(INPUT_DATA_WIDTH-1):0] i_data;
-output reg o_busy;
+output o_busy;
 output serial_out;
 
 // receiver signals
@@ -41,13 +41,13 @@ begin
     	    has_been_enabled <= 1;
     
     	if(has_been_enabled) begin
-	    cnt <= cnt + 1;
+	        cnt <= cnt + 1;
 
-	    if(cnt == 88) begin
-	    	assert(data_is_valid == 1);
-	    	cnt <= 0;
- 	    	has_been_enabled <= 0;
-	    end
+	        if(cnt == 88) begin
+	        	assert(data_is_valid == 1);
+	        	cnt <= 0;
+     	    	has_been_enabled <= 0;
+	        end
     	end
     	    
     	else begin
@@ -59,20 +59,18 @@ end
 
 always @(posedge clk)
 begin
-    if((has_been_enabled) && (!reset)) begin
+    if((enable) && (has_been_enabled) && (!reset)) begin
         assume($past(i_data) == i_data);
 	assert(o_busy == 1);
     end
 
     if(o_busy)
         assume(enable == 0);
-    else
-	assert(serial_out == 1);
 
-    if(reset) begin
+    if(reset)
         assume(enable == 0);
-	assert(serial_out == 1);
-    end
+    else
+	    assert(serial_out == 1);
 
     assert(!rx_error);
 
