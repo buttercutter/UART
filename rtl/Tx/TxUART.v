@@ -10,9 +10,13 @@ input[(INPUT_DATA_WIDTH+PARITY_ENABLED-1):0] i_data;
 output reg o_busy;      // busy signal for data source that Tx cannot accept data 
 output reg serial_out;  // serialized data
 
-initial serial_out = 1;
-
 reg [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg;  // PISO shift reg, start+data+parity+stop
+
+initial 
+begin
+    serial_out = 1;
+    shift_reg = ~0;
+end
 
 always @(posedge clk)   
 begin
@@ -55,7 +59,7 @@ end
 always @(posedge clk) 
 begin
      if(!enable) begin
-	assert(shift_reg == 0);
+	assert(shift_reg == ~0);
      end
 end
 
