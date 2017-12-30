@@ -63,12 +63,9 @@ end
     always @(posedge clk) 
     begin
         assume(state <= Rx_STOP_BIT);
-        
-        if(state > Rx_IDLE)
-        	assert(start_detected == 0);
     
-        if (state == Rx_STOP_BIT)
-            assume(reset == 0);  // this is to assume for induction test because Tx internal registers are not reset/initialized properly at time = 0, such that data_is_valid signal will not be asserted in the next clock cycle after the "FIRST" stop bit state
+        //if (state == Rx_STOP_BIT)
+            //assume(reset == 0);  // this is to assume for induction test because Tx internal registers are not reset/initialized properly at time = 0, such that data_is_valid signal will not be asserted in the next clock cycle after the "FIRST" stop bit state
     end
 `endif
 

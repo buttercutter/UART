@@ -8,17 +8,17 @@ reg previously_idle = 1;
 always @(posedge clk)
 begin
     if((!serial_in_synced) && (previously_idle) && (!start_detected))
-	start_detected <= 1;
+		start_detected <= 1;
     else
-	start_detected <= 0;
+		start_detected <= 0;
 end
 
 always @(posedge clk)
 begin
     if(serial_in_synced)
-	previously_idle <= 1;
+		previously_idle <= 1;
     else
-	previously_idle <= 0;
+		previously_idle <= 0;
 end
 
 endmodule
