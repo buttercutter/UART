@@ -39,10 +39,10 @@ end
 
 always @(posedge clk) 
 begin
-    if (reset) begin
-        serial_out <= 1; 
+    if(reset) begin 
+    	serial_out <= 1;
     end
-    
+
     else begin
         if (baud_clk) begin
             if (o_busy) begin

@@ -1,6 +1,8 @@
 module test_UART(clk, reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
 parameter INPUT_DATA_WIDTH = 8;
+localparam NUMBER_OF_STATES = INPUT_DATA_WIDTH + 3;
+localparam CLOCKS_PER_STATE = 8;
 
 input clk;
 input reset;
@@ -24,7 +26,7 @@ assign serial_in = serial_out; // tx goes to rx, so that we know that our UART w
 `ifdef FORMAL
 
 reg has_been_enabled;
-reg[$clog2(88):0] cnt;
+reg[$clog2(NUMBER_OF_STATES*CLOCKS_PER_STATE):0] cnt;
 
 initial has_been_enabled = 0;
 initial cnt = 0;
@@ -37,13 +39,15 @@ begin
     end
     
     else begin
-        if(enable)
+        if(enable) begin
     	    has_been_enabled <= 1;
-    
+	    assert(serial_out == 1);
+        end
+
     	if(has_been_enabled) begin
 	        cnt <= cnt + 1;
 
-	        if(cnt == 88) begin
+	        if(cnt == NUMBER_OF_STATES*CLOCKS_PER_STATE) begin
 	        	assert(data_is_valid == 1);
 	        	cnt <= 0;
      	    	has_been_enabled <= 0;
@@ -59,18 +63,13 @@ end
 
 always @(posedge clk)
 begin
-    if((enable) && (has_been_enabled) && (!reset)) begin
+    if((has_been_enabled) && (!reset)) begin
         assume($past(i_data) == i_data);
 	assert(o_busy == 1);
     end
 
-    if(o_busy)
+    if(reset | o_busy)
         assume(enable == 0);
-
-    if(reset)
-        assume(enable == 0);
-    else
-	    assert(serial_out == 1);
 
     assert(!rx_error);
 
