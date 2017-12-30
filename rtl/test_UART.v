@@ -26,7 +26,7 @@ assign serial_in = serial_out; // tx goes to rx, so that we know that our UART w
 `ifdef FORMAL
 
 reg has_been_enabled;
-reg[$clog2(NUMBER_OF_STATES*CLOCKS_PER_STATE):0] cnt;
+reg[$clog2(NUMBER_OF_STATES*CLOCKS_PER_STATE):0] cnt;  // to track the number of clock cycles between assertion of 'enable' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 initial has_been_enabled = 0;
 initial cnt = 0;
@@ -35,23 +35,25 @@ always @(posedge clk)
 begin
     if(reset) begin
     	has_been_enabled <= 0;
-	cnt <= 0;
+		cnt <= 0;
     end
     
     else begin
         if(enable) begin
+    	    cnt <= 0;
+    	    assert(cnt == 0);            
     	    has_been_enabled <= 1;
-	    assert(serial_out == 1);
+	    	assert(serial_out == 1);
         end
 
     	if(has_been_enabled) begin
 	        cnt <= cnt + 1;
 
-	        if(cnt == NUMBER_OF_STATES*CLOCKS_PER_STATE) begin
-	        	assert(data_is_valid == 1);
-	        	cnt <= 0;
-     	    	has_been_enabled <= 0;
-	        end
+			if(cnt == NUMBER_OF_STATES*CLOCKS_PER_STATE) begin  // end of one UART transaction
+				assert(data_is_valid == 1);
+				cnt <= 0;
+				has_been_enabled <= 0;
+			end
     	end
     	    
     	else begin
@@ -63,18 +65,30 @@ end
 
 always @(posedge clk)
 begin
-    if((has_been_enabled) && (!reset)) begin
-        assume($past(i_data) == i_data);
-	assert(o_busy == 1);
-    end
-
     if(reset | o_busy)
         assume(enable == 0);
 
-    assert(!rx_error);
+    else begin
+    	if(has_been_enabled) begin
+            assume($past(i_data) == i_data);
+	    	assert(o_busy == 1);
+    	end
 
-    if(data_is_valid) 
-    	assert(received_data == i_data);
+    	else begin
+    	    assert(o_busy == 0);
+	    	assert(serial_out == 1);
+    	end
+    end
+end
+
+always @(posedge clk)
+begin
+    assert(!rx_error);   // no parity error
+
+    if(data_is_valid) begin   // state == Rx_STOP_BIT
+        assert(received_data == i_data);
+        assert(cnt < NUMBER_OF_STATES*CLOCKS_PER_STATE);
+    end
 end
 
 `endif

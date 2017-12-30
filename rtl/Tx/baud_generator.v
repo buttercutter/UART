@@ -8,19 +8,19 @@ output baud_clk;
 reg ck_stb;
 
 `ifdef FORMAL
-    parameter DIVIDE_FACTOR = 8;
+    parameter CLOCKS_PER_BIT = 8;   // CLOCKS_PER_BIT is similar in concept to clock divide factor
 `else
-    parameter DIVIDE_FACTOR = 5000;
+    parameter CLOCKS_PER_BIT = 5000;
 `endif
 
-reg[$clog2(DIVIDE_FACTOR):0] cnt;
+reg[($clog2(CLOCKS_PER_BIT)-1) : 0] cnt;
 
 initial ck_stb = 0;
 initial cnt = 0;
 
 always @(posedge clk)
 begin
-    ck_stb <= (cnt == (DIVIDE_FACTOR - 1)); 
+    ck_stb <= (cnt == (CLOCKS_PER_BIT - 1)); 
     cnt <= cnt + 1;
 end
 
