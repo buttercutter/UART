@@ -1,4 +1,4 @@
-// Credit: Adapted from http://hamsterworks.co.nz/mediawiki/index.php/TinyTx
+// Credit: Adapted from http://hamsterworks.co.nz/mediawiki/index.php/TinyTx or https://electronics.stackexchange.com/questions/342921/uart-hdl-question
 
 module TxUART(clk, reset, baud_clk, enable, i_data, o_busy, serial_out);
 

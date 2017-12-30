@@ -1,9 +1,16 @@
-module rx_state(clk, reset, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage);  // FSM for UART Rx
+module rx_state(clk, reset, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage
+`ifdef FORMAL
+	, state
+`endif
+);  // FSM for UART Rx
 
 input clk, reset, start_detected, sampling_strobe;
 output reg data_is_available;   // in data states
 output reg is_parity_stage;
 output reg data_is_valid;	// finished all data states
+`ifdef FORMAL
+output [3:0] state;
+`endif
 
 reg [3:0] state;
 
