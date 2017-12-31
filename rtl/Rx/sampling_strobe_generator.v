@@ -27,4 +27,13 @@ begin
 		sampling_strobe <= 0;
 end
 
+`ifdef FORMAL
+
+always @(posedge clk)
+begin
+	assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
+end
+
+`endif
+
 endmodule
