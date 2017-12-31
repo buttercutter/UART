@@ -8,7 +8,7 @@ output reg [(INPUT_DATA_WIDTH-1):0] received_data; // SIPO
 always @(posedge clk)
 begin
     if(data_is_available)
-    	received_data <= { serial_in_synced , received_data[7:1] };  // LSB received first by UART definition
+    	received_data <= { serial_in_synced , received_data[(INPUT_DATA_WIDTH-1):1] };  // LSB received first by UART definition
 end
 
 endmodule

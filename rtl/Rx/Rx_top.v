@@ -30,6 +30,6 @@ RxUART rx (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .data_
 );
 
 // even parity check
-check_parity cp (.clk(clk), .serial_in_synced(serial_in_synced), .received_data(received_data), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .rx_error(rx_error));
+check_parity cp (.clk(clk), .serial_in_synced(serial_in_synced), .received_data(received_data), .is_parity_stage(is_parity_stage), .rx_error(rx_error));
 
 endmodule
