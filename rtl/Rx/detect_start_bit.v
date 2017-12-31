@@ -53,7 +53,9 @@ end
 
 always @(posedge clk) 
 begin
-
+	if((clocks_since_start_bit == 0) && (!falling_edge)) begin
+		assert(start_detected == 0);
+	end
 end
 
 `endif

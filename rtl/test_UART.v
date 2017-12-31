@@ -66,6 +66,7 @@ begin
     	    cnt <= 0;
     	    assert(cnt == 0);            
     	    has_been_enabled <= 1;
+    	    assert(data_is_valid == 0);
 	    	assert(serial_out == 1);
         end
 
@@ -83,6 +84,7 @@ begin
 			end
 			
 			else if(cnt == (NUMBER_OF_STATES + NUMBER_OF_RX_SYNCHRONIZERS)*CLOCKS_PER_STATE) begin  // end of one UART transaction (both transmitting and receiving)
+				assert(state == Rx_STOP_BIT);
 				assert(data_is_valid == 1);
 				assert(serial_out == 1);
 				cnt <= 0;
@@ -98,6 +100,9 @@ begin
     	else begin  // UART Tx and Rx are idling
     	    cnt <= 0;
     	    assert(cnt == 0);
+    	    assert(state == Rx_IDLE);
+    	    assert(data_is_valid == 0);
+    	    assert(serial_out == 1);
     	end
     end
 end
