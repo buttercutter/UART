@@ -66,20 +66,24 @@ begin
     	    cnt <= 0;
     	    assert(cnt == 0);            
     	    has_been_enabled <= 1;
+    	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
 	    	assert(serial_out == 1);
+	    	assert(o_busy == 0);
         end
 
     	else if(has_been_enabled) begin
 	        cnt <= cnt + 1;
 
 			if(cnt == (1*CLOCKS_PER_BIT)) begin // start of UART transmission
+				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(serial_out == 0);   // start bit
 				assert(o_busy == 1);
 			end
 
 			else if(cnt == ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin // end of UART transmission
+				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(serial_out == 1);   // stop bit
 				assert(o_busy == 1);
@@ -89,11 +93,13 @@ begin
 				assert(state == Rx_STOP_BIT);
 				assert(data_is_valid == 1);
 				assert(serial_out == 1);
+				assert(o_busy == 0);
 				cnt <= 0;
 				has_been_enabled <= 0;
 			end
 			
 			else begin
+				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(o_busy == 1);  // busy in the midst of UART transmission
 			end

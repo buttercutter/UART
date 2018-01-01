@@ -53,8 +53,8 @@ end
 
 always @(posedge clk) 
 begin
-	if((clocks_since_start_bit == 0) && (!falling_edge)) begin
-		assert(start_detected == 0);
+	if((clocks_since_start_bit == 0) && ($past(falling_edge) == 0)) begin
+		assert(start_detected == 0);  // such that during start up, there is no erronous UART Rx activity
 	end
 end
 
