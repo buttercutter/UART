@@ -81,6 +81,12 @@ begin
 				assert(serial_out == 0);   // start bit
 				assert(o_busy == 1);
 			end
+			
+			else if((cnt == (1*CLOCKS_PER_BIT)) && (cnt < ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT))) begin  // during UART transmission
+				assert(state < Rx_STOP_BIT);
+				assert(data_is_valid == 0);
+				assert(o_busy == 1);				
+			end
 
 			else if(cnt == ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin // end of UART transmission
 				assert(state < Rx_STOP_BIT);
@@ -89,19 +95,48 @@ begin
 				assert(o_busy == 1);
 			end
 			
-			else if(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT) begin  // end of one UART transaction (both transmitting and receiving)
-				assert(state == Rx_STOP_BIT);
-				assert(data_is_valid == 1);
-				assert(serial_out == 1);
-				assert(o_busy == 0);
-				cnt <= 0;
-				has_been_enabled <= 0;
+			else if(cnt > ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin  // UART Rx internal states
+				
+				if(state == Rx_START_BIT) begin
+					assert(data_is_valid == 0);
+					assert(serial_in == 0);
+					assert(o_busy == 1);
+					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT);					
+				end
+
+				else if((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)) begin
+					assert(data_is_valid == 1);
+					assert(o_busy == 1);
+					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + (state - Rx_START_BIT) +  1)*CLOCKS_PER_BIT);					
+				end
+	
+				else if(state == Rx_PARITY_BIT) begin
+					assert(data_is_valid == 0);
+					assert(serial_in == ^i_data);
+					assert(o_busy == 1);
+					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + state +  1)*CLOCKS_PER_BIT);					
+				end
+						
+				else if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
+					assert(data_is_valid == 1);
+					assert(serial_in == 1);
+					assert(o_busy == 0);
+					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT);
+					cnt <= 0;
+					has_been_enabled <= 0;
+				end
+				
+				else begin
+					assert(state == Rx_IDLE);
+					assert(data_is_valid == 0);
+					assert(o_busy == 0); 
+				end
 			end
 			
 			else begin
-				assert(state < Rx_STOP_BIT);
+				assert(state == Rx_IDLE);
 				assert(data_is_valid == 0);
-				assert(o_busy == 1);  // busy in the midst of UART transmission
+				assert(o_busy == 0);  
 			end
     	end
     	    
