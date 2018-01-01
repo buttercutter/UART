@@ -59,7 +59,7 @@ begin
     end
 
     else begin
-		o_busy <= (shift_reg != 0) | enable;   // if not reset, (Tx is busy transmitting when there is pending stop bit) OR (Tx is about to transmit)
+		o_busy <= ((shift_reg != 0) && (shift_reg != ~0)) | enable;   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset)) OR (Tx is about to transmit)
     end
 end
 

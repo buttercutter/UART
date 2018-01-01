@@ -31,10 +31,6 @@ end
 
 always @(posedge clk)
 begin
-    if(start_detected) begin 
-    	assert(sampling_strobe == 0);
-    end
-    
 	assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
 end
 
