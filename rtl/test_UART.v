@@ -18,7 +18,8 @@ output reg rx_error;
 output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 
 `ifdef FORMAL
-wire [3:0] state;  // for Rx
+localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 `endif
 
 UART uart(.clk(clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
@@ -44,7 +45,6 @@ localparam Rx_DATA_BIT_7 = 4'b1001;
 localparam Rx_PARITY_BIT = 4'b1010;
 localparam Rx_STOP_BIT   = 4'b1011;
 
-localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock domain crossing
 localparam CLOCKS_PER_BIT = 8;
 

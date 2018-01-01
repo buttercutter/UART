@@ -4,15 +4,18 @@ module rx_state(clk, reset, start_detected, sampling_strobe, data_is_available, 
 `endif
 );  // FSM for UART Rx
 
+parameter INPUT_DATA_WIDTH = 8;
+localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+
 input clk, reset, start_detected, sampling_strobe;
 output reg data_is_available;   // in data states
 output reg is_parity_stage;
 output reg data_is_valid;	// finished all data states
 `ifdef FORMAL
-output [3:0] state;
+output [($clog2(NUMBER_OF_BITS)-1) : 0] state;
 `endif
 
-reg [3:0] state;
+reg [($clog2(NUMBER_OF_BITS)-1) : 0] state;
 
 localparam Rx_IDLE       = 4'b0000;
 localparam Rx_START_BIT  = 4'b0001;

@@ -23,7 +23,8 @@ output reg rx_error;
 output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 
 `ifdef FORMAL
-output [3:0] state;
+localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+output [($clog2(NUMBER_OF_BITS)-1) : 0] state;
 `endif
 
 // UART transmitter

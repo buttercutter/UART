@@ -13,7 +13,8 @@ output reg is_parity_stage; // is the parity bit being received now ?
 output [(INPUT_DATA_WIDTH-1):0]received_data;   // deserialized data
 
 `ifdef FORMAL
-output [3:0] state;
+localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+output [($clog2(NUMBER_OF_BITS)-1) : 0] state;
 `endif
 
 wire start_detected; // start_bit is detected
