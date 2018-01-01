@@ -79,13 +79,13 @@ begin
 				assert(o_busy == 1);
 			end
 
-			else if(cnt == (NUMBER_OF_BITS*CLOCKS_PER_BIT)) begin // end of UART transmission
+			else if(cnt == ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin // end of UART transmission
 				assert(data_is_valid == 0);
 				assert(serial_out == 1);   // stop bit
 				assert(o_busy == 1);
 			end
 			
-			else if(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)*CLOCKS_PER_BIT) begin  // end of one UART transaction (both transmitting and receiving)
+			else if(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 				assert(state == Rx_STOP_BIT);
 				assert(data_is_valid == 1);
 				assert(serial_out == 1);
