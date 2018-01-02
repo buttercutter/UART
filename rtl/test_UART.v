@@ -75,14 +75,22 @@ begin
     	else if(has_been_enabled) begin
 	        cnt <= cnt + 1;
 
-			if(cnt == (1*CLOCKS_PER_BIT)) begin // start of UART transmission
+			if(cnt < (1*CLOCKS_PER_BIT)) begin  // which means start bit is about to be transmitted, still waiting for Tx baud clock strobe (baud_clk)
+				assert(state == Rx_IDLE);
+				assert(data_is_valid == 0);
+				assert(serial_in == 1);
+				assert(serial_out == 1);
+				assert(o_busy == 1);  
+			end
+
+			else if(cnt == (1*CLOCKS_PER_BIT)) begin // start of UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(serial_out == 0);   // start bit
 				assert(o_busy == 1);
 			end
 			
-			else if((cnt == (1*CLOCKS_PER_BIT)) && (cnt < ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT))) begin  // during UART transmission
+			else if((cnt > (1*CLOCKS_PER_BIT)) && (cnt < ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT))) begin  // during UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(o_busy == 1);				
@@ -95,7 +103,7 @@ begin
 				assert(o_busy == 1);
 			end
 			
-			else if(cnt > ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin  // UART Rx internal states
+			else begin // if(cnt > ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin  // UART Rx internal states
 				
 				if(state == Rx_START_BIT) begin
 					assert(data_is_valid == 0);
@@ -131,12 +139,6 @@ begin
 					assert(data_is_valid == 0);
 					assert(o_busy == 0); 
 				end
-			end
-			
-			else begin
-				assert(state == Rx_IDLE);
-				assert(data_is_valid == 0);
-				assert(o_busy == 0);  
 			end
     	end
     	    
