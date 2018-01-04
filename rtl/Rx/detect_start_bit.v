@@ -1,9 +1,9 @@
-module detect_start_bit(clk, serial_in_synced, start_detected); // just a falling edge detector + a counter
+module detect_start_bit(clk, reset, serial_in_synced, start_detected); // just a falling edge detector + a counter
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 
-input clk, serial_in_synced;
+input clk, reset, serial_in_synced;
 output reg start_detected; 
 
 reg previously_idle;
@@ -29,14 +29,21 @@ end
 
 always @(posedge clk)
 begin
-    if((falling_edge) && (clocks_since_start_bit >= TOTAL_BITS_IN_UART*CLOCKS_PER_BIT)) begin
-		start_detected <= 1;
-		clocks_since_start_bit <= 0;
-	end
-		
-    else begin
+	if(reset) begin
 		start_detected <= 0;
-		clocks_since_start_bit <= clocks_since_start_bit + 1;
+		clocks_since_start_bit <= 0;		
+	end
+	
+	else begin
+		if((falling_edge) && (clocks_since_start_bit >= TOTAL_BITS_IN_UART*CLOCKS_PER_BIT)) begin
+			start_detected <= 1;
+			clocks_since_start_bit <= 0;
+		end
+			
+		else begin
+			start_detected <= 0;
+			clocks_since_start_bit <= clocks_since_start_bit + 1;
+		end
 	end
 end
 

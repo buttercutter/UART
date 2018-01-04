@@ -94,7 +94,7 @@ begin
     	else if(transmission_had_started) begin
 	        cnt <= cnt + 1;
 
-			if(cnt == (1*CLOCKS_PER_BIT)) begin // start of UART transmission
+			if(cnt <= (1*CLOCKS_PER_BIT)) begin // start of UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(serial_out == 0);   // start bit
@@ -136,7 +136,8 @@ begin
 					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + state +  1)*CLOCKS_PER_BIT);					
 				end
 						
-				else if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
+				else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
+					assert(state == Rx_STOP_BIT);
 					assert(data_is_valid == 1);
 					assert(serial_in == 1);
 					assert(o_busy == 0);
@@ -144,12 +145,12 @@ begin
 					cnt <= 0;
 					has_been_enabled <= 0;
 				end
-				
+				/*
 				else begin
 					assert(state == Rx_IDLE);
 					assert(data_is_valid == 0);
-					//assert(serial_in == 1); 
-				end
+					assert(serial_in == 1); 
+				end*/
 			end
     	end
     	    
