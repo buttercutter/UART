@@ -1,4 +1,8 @@
-module Tx_top(clk, reset, enable, i_data, o_busy, serial_out);   // UART transmitter :  parallel input, serial output (PISO)
+module Tx_top(clk, reset, enable, i_data, o_busy, serial_out
+`ifdef FORMAL
+, baud_clk
+`endif
+);   // UART transmitter :  parallel input, serial output (PISO)
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
@@ -13,7 +17,12 @@ input[(INPUT_DATA_WIDTH-1):0] i_data; 	// parallel input
 output serial_out;  // serial output from serializer (TxUART)
 output reg o_busy;	// busy transmitting
 
-wire baud_clk;  // default 9600bps baudrate clock
+`ifdef FORMAL
+	output baud_clk;  // default 9600bps baudrate clock
+`else
+	wire baud_clk;  // default 9600bps baudrate clock
+`endif
+
 wire parity_bit;
 
 // transmitter internal working mechanism

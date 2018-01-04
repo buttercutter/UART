@@ -11,6 +11,10 @@ input [(INPUT_DATA_WIDTH-1):0] i_data;
 output o_busy;
 output serial_out;
 
+`ifdef FORMAL
+wire baud_clk;
+`endif
+
 // receiver signals
 wire serial_in;
 output reg data_is_valid;
@@ -24,7 +28,7 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 
 UART uart(.clk(clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
-	, .state(state)
+	, .state(state), .baud_clk(baud_clk)
 `endif
 );
 
@@ -49,10 +53,25 @@ localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock do
 localparam CLOCKS_PER_BIT = 8;
 
 reg has_been_enabled;   // a signal to latch 'enable'
-reg[($clog2((NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'enable' signal from Tx and assertion of 'data_is_valid' signal from Rx
+reg[($clog2((NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
+
+reg transmission_had_started; 
 
 initial has_been_enabled = 0;  
 initial cnt = 0;
+initial transmission_had_started = 0;
+
+always @(posedge clk)
+begin
+	if(reset) begin
+		transmission_had_started <= 0;
+	end
+		
+	else begin
+		if(baud_clk)
+			transmission_had_started <= has_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
+	end
+end
 
 always @(posedge clk)
 begin
@@ -72,18 +91,10 @@ begin
 	    	assert(o_busy == 0);
         end
 
-    	else if(has_been_enabled) begin
+    	else if(transmission_had_started) begin
 	        cnt <= cnt + 1;
 
-			if(cnt < (1*CLOCKS_PER_BIT)) begin  // which means start bit is about to be transmitted, still waiting for Tx baud clock strobe (baud_clk)
-				assert(state == Rx_IDLE);
-				assert(data_is_valid == 0);
-				assert(serial_in == 1);
-				assert(serial_out == 1);
-				assert(o_busy == 1);  
-			end
-
-			else if(cnt == (1*CLOCKS_PER_BIT)) begin // start of UART transmission
+			if(cnt == (1*CLOCKS_PER_BIT)) begin // start of UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(serial_out == 0);   // start bit
@@ -137,7 +148,7 @@ begin
 				else begin
 					assert(state == Rx_IDLE);
 					assert(data_is_valid == 0);
-					assert(o_busy == 0); 
+					//assert(serial_in == 1); 
 				end
 			end
     	end
@@ -148,7 +159,11 @@ begin
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
-    	    assert(o_busy == 0);
+    	    
+    	    if(has_been_enabled)
+	    	    assert(o_busy == 1);
+	    	else
+	    		assert(o_busy == 0);
     	end
     end
 end
