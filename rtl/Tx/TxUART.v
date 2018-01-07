@@ -1,6 +1,10 @@
 // Credit: Adapted from http://hamsterworks.co.nz/mediawiki/index.php/TinyTx or https://electronics.stackexchange.com/questions/342921/uart-hdl-question
 
-module TxUART(clk, reset, baud_clk, enable, i_data, o_busy, serial_out);
+module TxUART(clk, reset, baud_clk, enable, i_data, o_busy, serial_out
+`ifdef FORMAL
+	, shift_reg
+`endif
+);
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
@@ -9,6 +13,10 @@ input clk, reset, baud_clk, enable;
 input[(INPUT_DATA_WIDTH+PARITY_ENABLED-1):0] i_data;
 output reg o_busy;      // busy signal for data source that Tx cannot accept data 
 output reg serial_out;  // serialized data
+
+`ifdef FORMAL
+	output [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg;
+`endif
 
 reg [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg;  // PISO shift reg, start+data+parity+stop
 

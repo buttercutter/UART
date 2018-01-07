@@ -1,6 +1,6 @@
 module Tx_top(clk, reset, enable, i_data, o_busy, serial_out
 `ifdef FORMAL
-, baud_clk
+, baud_clk, shift_reg
 `endif
 );   // UART transmitter :  parallel input, serial output (PISO)
 
@@ -19,6 +19,7 @@ output reg o_busy;	// busy transmitting
 
 `ifdef FORMAL
 	output baud_clk;  // default 9600bps baudrate clock
+	output [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg;  // Tx internal PISO
 `else
 	wire baud_clk;  // default 9600bps baudrate clock
 `endif
@@ -26,7 +27,11 @@ output reg o_busy;	// busy transmitting
 wire parity_bit;
 
 // transmitter internal working mechanism
-TxUART tx (.clk(clk), .reset(reset), .baud_clk(baud_clk), .enable(enable), .i_data({parity_bit, i_data}), .o_busy(o_busy), .serial_out(serial_out));
+TxUART tx (.clk(clk), .reset(reset), .baud_clk(baud_clk), .enable(enable), .i_data({parity_bit, i_data}), .o_busy(o_busy), .serial_out(serial_out)
+`ifdef FORMAL
+	, .shift_reg(shift_reg)
+`endif
+);
 
 // baud rate generator, default = 9600bps
 baud_generator bg (.clk(clk), .baud_clk(baud_clk));
