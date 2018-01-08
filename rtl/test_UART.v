@@ -79,6 +79,8 @@ end
 reg had_just_reset;
 initial had_just_reset = 0;
 
+wire stop_bit_location_plus_one = (INPUT_DATA_WIDTH+PARITY_ENABLED+1)-cnt;
+
 always @(posedge clk)
 begin
     if(reset) begin
@@ -111,7 +113,7 @@ begin
 			if(cnt == 0) begin // start of UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
-				assert(shift_reg == {1'b0, 1'b1, i_data});
+				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});  // ^data is even parity bit
 				assert(serial_out == 0);   // start bit
 				assert(o_busy == 1);
 			end
@@ -119,7 +121,7 @@ begin
 			else if((cnt > 0) && (cnt < ((NUMBER_OF_BITS-1)*CLOCKS_PER_BIT))) begin  // during UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
-				assert(shift_reg[(INPUT_DATA_WIDTH+PARITY_ENABLED)-cnt] == 1'b0);
+				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
 				assert(o_busy == 1);				
 			end
 
