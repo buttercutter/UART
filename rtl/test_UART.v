@@ -193,7 +193,7 @@ begin
         assume(enable == 0);
 
     else begin
-    	if(has_been_enabled) begin
+    	if((!had_just_reset) && (enable | has_been_enabled)) begin
             assume($past(i_data) == i_data);
 	    	assert(o_busy == 1);
     	end

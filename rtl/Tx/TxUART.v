@@ -76,7 +76,9 @@ end
 
 always @(posedge clk) 
 begin
-
+	if(!o_busy) begin
+		assert(&shift_reg == 1);
+	end
 end
 
 `endif
