@@ -55,12 +55,12 @@ localparam Rx_STOP_BIT   = 4'b1011;
 localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock domain crossing
 localparam CLOCKS_PER_BIT = 8;
 
-reg has_been_enabled;   // a signal to latch 'enable'
+reg had_been_enabled;   // a signal to latch 'enable'
 reg[($clog2((NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg transmission_had_started; 
 
-initial has_been_enabled = 0;  
+initial had_been_enabled = 0;  
 initial cnt = 0;
 initial transmission_had_started = 0;
 
@@ -72,34 +72,32 @@ begin
 		
 	else begin
 		if(baud_clk)
-			transmission_had_started <= has_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
+			transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
 	end
 end
 
 reg had_just_reset;
 initial had_just_reset = 0;
 
-wire stop_bit_location_plus_one = (INPUT_DATA_WIDTH+PARITY_ENABLED+1)-cnt;
+wire [$clog2(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] stop_bit_location_plus_one = (INPUT_DATA_WIDTH+PARITY_ENABLED+1)-cnt;
 
 always @(posedge clk)
 begin
     if(reset) begin
         cnt <= 0;
-    	has_been_enabled <= 0;
-    	had_just_reset <= 1;
+    	had_been_enabled <= 0;
     end
     
     else begin
     
-        if(enable && (!has_been_enabled)) begin
+        if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;
     	    assert(cnt == 0);            
-    	    has_been_enabled <= 1;
+    	    had_been_enabled <= 1;
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
     	    
     	    if(had_just_reset) begin
-    	    	had_just_reset <= 0;
     	    	assert(&shift_reg == 1);
     	    end
     	    
@@ -161,7 +159,7 @@ begin
 					assert(o_busy == 0);
 					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT);
 					cnt <= 0;
-					has_been_enabled <= 0;
+					had_been_enabled <= 0;
 				end
 				/*
 				else begin
@@ -179,7 +177,7 @@ begin
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
     	    
-    	    if(has_been_enabled)
+    	    if(had_been_enabled)
 	    	    assert(o_busy == 1);
 	    	else
 	    		assert(o_busy == 0);
@@ -189,12 +187,15 @@ end
 
 always @(posedge clk)
 begin
-    if(reset | o_busy)
-        assume(enable == 0);
+    if(reset) begin
+    	had_just_reset <= 1;
+		//assert();
+    end
 
     else begin
-    	if((!had_just_reset) && (enable | has_been_enabled)) begin
-            assume($past(i_data) == i_data);
+    	had_just_reset <= 0;
+    
+    	if(had_been_enabled) begin
 	    	assert(o_busy == 1);
     	end
 
@@ -203,6 +204,17 @@ begin
 	    	assert(serial_out == 1);
     	end
     end
+end
+
+always @(posedge clk)
+begin
+    if(reset | o_busy) begin
+        assume(enable == 0);
+    end
+	
+	if(enable | had_been_enabled) begin
+		assume($past(i_data) == i_data);
+	end
 end
 
 always @(posedge clk)

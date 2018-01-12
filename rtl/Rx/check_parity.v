@@ -1,8 +1,8 @@
-module check_parity(clk, serial_in_synced, received_data, is_parity_stage, rx_error); // even parity checker
+module check_parity(clk, reset, serial_in_synced, received_data, is_parity_stage, rx_error); // even parity checker
 
 parameter INPUT_DATA_WIDTH = 8;
 
-input clk, serial_in_synced, is_parity_stage;
+input clk, reset, serial_in_synced, is_parity_stage;
 input [(INPUT_DATA_WIDTH-1) : 0] received_data;
 output reg rx_error = 0; 
 
