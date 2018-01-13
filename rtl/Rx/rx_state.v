@@ -32,9 +32,17 @@ localparam Rx_STOP_BIT   = 4'b1011;
 
 always @(posedge clk)
 begin
-    data_is_valid <= (state == Rx_STOP_BIT);  // so as to align with rx_error
-    is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
-    data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // data states
+	if(reset) begin
+		data_is_valid <= 0;
+		is_parity_stage <= 0;
+		data_is_available <= 0;
+	end
+	
+	else begin
+    	data_is_valid <= (state == Rx_STOP_BIT);  // so as to align with rx_error
+    	is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
+    	data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // data states
+    end
 end
 
 always @(posedge clk)

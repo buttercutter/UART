@@ -67,7 +67,8 @@ begin
     end
 
     else begin
-		o_busy <= ((shift_reg != 0) && !(&shift_reg)) | enable;   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset)) OR (Tx is about to transmit)
+    	o_busy <= (shift_reg != 0) | !(&shift_reg) | enable;
+		//o_busy <= ((shift_reg != 0) && !(&shift_reg)) | enable;   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset)) OR (Tx is about to transmit)
     end
 end
 
@@ -77,7 +78,7 @@ end
 always @(posedge clk) 
 begin
 	if(!o_busy) begin
-		assert(&shift_reg == 1);
+		//assert(&shift_reg == 1);
 	end
 end
 

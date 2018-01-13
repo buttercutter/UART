@@ -79,7 +79,8 @@ end
 reg had_just_reset;
 initial had_just_reset = 0;
 
-wire [$clog2(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] stop_bit_location_plus_one = (INPUT_DATA_WIDTH+PARITY_ENABLED+1)-cnt;
+wire [$clog2(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] stop_bit_location_plus_one = (INPUT_DATA_WIDTH+PARITY_ENABLED+1)+1-cnt;
+//initial stop_bit_location_plus_one = INPUT_DATA_WIDTH+PARITY_ENABLED;
 
 always @(posedge clk)
 begin
@@ -106,7 +107,10 @@ begin
         end
 
     	else if(transmission_had_started) begin
-	        cnt <= cnt + 1;
+    	
+    		if(baud_clk) begin
+	        	cnt <= cnt + 1;
+	        end
 
 			if(cnt == 0) begin // start of UART transmission
 				assert(state < Rx_STOP_BIT);
