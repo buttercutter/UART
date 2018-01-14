@@ -31,7 +31,7 @@ rx_state rx_fsm (.clk(clk), .reset(reset), .start_detected(start_detected), .sam
 );
 
 // handles data sampling
-SIPO_shift_register SIPO (.clk(sampling_strobe), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .received_data(received_data)); 
+SIPO_shift_register SIPO (.clk(clk), .sampling_strobe(sampling_strobe), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .received_data(received_data)); 
 
 // computes the signal 'sampling_strobe' which is basically similar to sampling clock
 sampling_strobe_generator ssg (.clk(clk), .start_detected(start_detected), .sampling_strobe(sampling_strobe));

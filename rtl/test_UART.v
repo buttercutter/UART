@@ -56,7 +56,7 @@ localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock do
 localparam CLOCKS_PER_BIT = 8;
 
 reg had_been_enabled;   // a signal to latch 'enable'
-reg[($clog2((NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
+reg[($clog2(NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg transmission_had_started; 
 
@@ -79,21 +79,29 @@ end
 reg had_just_reset;
 initial had_just_reset = 0;
 
-wire [$clog2(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] stop_bit_location_plus_one = (INPUT_DATA_WIDTH+PARITY_ENABLED+1)+1-cnt;
-//initial stop_bit_location_plus_one = INPUT_DATA_WIDTH+PARITY_ENABLED;
+wire [($clog2(NUMBER_OF_BITS-1)-1) : 0] stop_bit_location;
+assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
+
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
+
+always @(posedge clk)
+begin
+	assert(cnt < NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1);
+	assert(stop_bit_location < NUMBER_OF_BITS);
+end
 
 always @(posedge clk)
 begin
     if(reset) begin
-        cnt <= 0;
+        cnt <= 1;
     	had_been_enabled <= 0;
     end
     
     else begin
     
         if(enable && (!had_been_enabled)) begin
-    	    cnt <= 0;
-    	    assert(cnt == 0);            
+    	    cnt <= 1;
+    	    assert(cnt == 1);            
     	    had_been_enabled <= 1;
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
@@ -120,14 +128,15 @@ begin
 				assert(o_busy == 1);
 			end
 			
-			else if((cnt > 0) && (cnt < ((NUMBER_OF_BITS-1)*CLOCKS_PER_BIT))) begin  // during UART transmission
+			else if((cnt > 0) && (cnt < (NUMBER_OF_BITS-1))) begin  // during UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
+				assert(shift_reg[stop_bit_location] == 1'b1);
 				assert(o_busy == 1);				
 			end
 
-			else if(cnt == ((NUMBER_OF_BITS - 1)*CLOCKS_PER_BIT)) begin // end of UART transmission
+			else if(cnt == (NUMBER_OF_BITS - 1)) begin // end of UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(serial_out == 1);   // stop bit
@@ -174,9 +183,9 @@ begin
 			end
     	end
     	    
-    	else begin  // UART Tx and Rx are idling
-    	    cnt <= 0;
-    	    assert(cnt == 0);
+    	else begin  // UART Tx and Rx are idling, still waiting for baud_clk
+    	    cnt <= 1;
+    	    assert(cnt == 1);
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
