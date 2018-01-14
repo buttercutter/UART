@@ -1,14 +1,14 @@
 [*]
-[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Fri Dec 29 09:03:20 2017
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Sun Jan 14 14:33:08 2018
 [*]
-[dumpfile] "/home/phung/Documents/phung/UART/bench/UART_BMC.vcd"
-[dumpfile_mtime] "Fri Dec 29 05:36:56 2017"
-[dumpfile_size] 11596
-[savefile] "/home/phung/Documents/phung/UART/bench/UART_BMC.gtkw"
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.vcd"
+[dumpfile_mtime] "Sun Jan 14 14:19:38 2018"
+[dumpfile_size] 13551
+[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.gtkw"
 [timestart] 0
 [size] 913 600
-[pos] -598 349
+[pos] 82 408
 *-4.563975 10 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
@@ -24,10 +24,16 @@ smt_clock
 @24
 smt_step
 @29
-test_UART.uart.tx.baud_clk
+test_UART.reset
+@23
+test_UART.cnt[3:0]
 @28
+test_UART.uart.tx.baud_clk
 test_UART.reset
 test_UART.enable
+test_UART.had_been_enabled
+@29
+test_UART.transmission_had_started
 @22
 test_UART.i_data[7:0]
 @28
@@ -43,10 +49,6 @@ test_UART.data_is_valid
 test_UART.received_data[7:0]
 @28
 test_UART.rx_error
-@22
-test_UART.uart.rx.rx.state.state[3:0]
-@28
-test_UART.uart.rx.rx.state.sampling_strobe
 test_UART.uart.rx.rx.dsb.previously_idle
 test_UART.uart.rx.rx.dsb.start_detected
 [pattern_trace] 1

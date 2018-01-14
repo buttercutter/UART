@@ -21,7 +21,11 @@ wire start_detected; // start_bit is detected
 wire sampling_strobe; // determines when to sample the incoming Rx
 
 // synchronous detection of start bit (falling edge by UART definition)
-detect_start_bit dsb (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .start_detected(start_detected));
+detect_start_bit dsb (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .start_detected(start_detected)
+`ifdef FORMAL
+	, .state(state)
+`endif
+);
 
 // FSM for UART Rx
 rx_state rx_fsm (.clk(clk), .reset(reset), .start_detected(start_detected), .sampling_strobe(sampling_strobe), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage)
