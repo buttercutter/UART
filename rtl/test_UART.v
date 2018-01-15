@@ -59,10 +59,14 @@ reg had_been_enabled;   // a signal to latch 'enable'
 reg[($clog2(NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg transmission_had_started; 
+reg had_just_reset;
 
-initial had_been_enabled = 0;  
-initial cnt = 0;
-initial transmission_had_started = 0;
+initial begin
+	had_been_enabled = 0;  
+	cnt = 1;
+	transmission_had_started = 0;
+	had_just_reset = 0;
+end
 
 always @(posedge clk)
 begin
@@ -75,9 +79,6 @@ begin
 			transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
 	end
 end
-
-reg had_just_reset;
-initial had_just_reset = 0;
 
 wire [($clog2(NUMBER_OF_BITS-1)-1) : 0] stop_bit_location;
 assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason

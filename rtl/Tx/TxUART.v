@@ -22,6 +22,7 @@ reg [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg;  // PISO shift reg, start
 
 initial 
 begin
+    o_busy = 0;
     serial_out = 1;
     shift_reg = ~0;
 end

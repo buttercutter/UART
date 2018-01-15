@@ -11,6 +11,11 @@ output reg sampling_strobe;
 
 reg [($clog2(CLOCKS_PER_BIT)-1) : 0] counter;
 
+initial begin
+    sampling_strobe = 0;
+    counter = 0;
+end
+
 always @(posedge clk)
 begin
     if(start_detected)

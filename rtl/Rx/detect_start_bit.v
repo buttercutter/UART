@@ -60,9 +60,14 @@ begin
 			clocks_since_start_bit <= 0;
 		end
 			
-		else begin
+		else if(start_detected) begin
 			start_detected <= 0;
 			clocks_since_start_bit <= clocks_since_start_bit + 1;
+		end
+
+		else begin
+			start_detected <= 0;
+			clocks_since_start_bit <= 0;
 		end
 	end
 end
@@ -78,14 +83,24 @@ end
 
 `ifdef FORMAL
 
+reg first_clock_passed;
+initial first_clock_passed = 0;
+
+always @(posedge clk)
+begin
+	first_clock_passed <= 1;
+end
+
 always @(posedge clk) 
 begin
-	if((clocks_since_start_bit == 0) && ($past(falling_edge) == 0)) begin
-		assert(start_detected == 0);  // such that during start up, there is no erronous UART Rx activity
-	end
+	if(first_clock_passed) begin
+		if((clocks_since_start_bit == 0) && ($past(falling_edge) == 0)) begin
+			assert(start_detected == 0);  // such that during start up, there is no erronous UART Rx activity
+		end
 	
-	if(clocks_since_start_bit == 0) begin
-		assert(&($past(clocks_since_start_bit)) == 1'b1);  // such that it starts from zero
+		if((clocks_since_start_bit == 0) && (state == Rx_STOP_BIT)) begin
+			assert(&($past(clocks_since_start_bit)) == 1'b1);  // such that it wraps around after reaching max and restarts from zero
+		end
 	end
 end
 

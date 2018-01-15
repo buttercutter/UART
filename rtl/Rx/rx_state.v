@@ -30,6 +30,13 @@ localparam Rx_DATA_BIT_7 = 4'b1001;
 localparam Rx_PARITY_BIT = 4'b1010;
 localparam Rx_STOP_BIT   = 4'b1011;
 
+initial begin
+    data_is_available = 0;
+    is_parity_stage = 0;
+    data_is_valid = 0;
+    state = 0;
+end
+
 always @(posedge clk)
 begin
 	if(reset) begin
