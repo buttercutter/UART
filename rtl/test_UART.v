@@ -63,7 +63,7 @@ reg had_just_reset;
 
 initial begin
 	had_been_enabled = 0;  
-	cnt = 1;
+	cnt = 0;
 	transmission_had_started = 0;
 	had_just_reset = 0;
 end
@@ -94,15 +94,15 @@ end
 always @(posedge clk)
 begin
     if(reset) begin
-        cnt <= 1;
+        cnt <= 0;
     	had_been_enabled <= 0;
     end
     
     else begin
     
         if(enable && (!had_been_enabled)) begin
-    	    cnt <= 1;
-    	    assert(cnt == 1);            
+    	    cnt <= 0;
+    	    assert(cnt == 0);            
     	    had_been_enabled <= 1;
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
@@ -140,6 +140,7 @@ begin
 			else if(cnt == (NUMBER_OF_BITS - 1)) begin // end of UART transmission
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
+				assert(shift_reg == 0);
 				assert(serial_out == 1);   // stop bit
 				assert(o_busy == 1);
 			end
@@ -185,8 +186,8 @@ begin
     	end
     	    
     	else begin  // UART Tx and Rx are idling, still waiting for baud_clk
-    	    cnt <= 1;
-    	    assert(cnt == 1);
+    	    cnt <= 0;
+    	    assert(cnt == 0);
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
