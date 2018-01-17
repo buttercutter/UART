@@ -55,19 +55,19 @@ begin
 	end
 	
 	else begin
-		if((falling_edge) && (clocks_since_start_bit >= NUMBER_OF_BITS*CLOCKS_PER_BIT)) begin
+		if((falling_edge) && ((clocks_since_start_bit >= NUMBER_OF_BITS*CLOCKS_PER_BIT) || (clocks_since_start_bit == 0))) begin  // (start bit) AND ((the previous UART message had been successfully received ) OR (Rx is idling))
 			start_detected <= 1;
 			clocks_since_start_bit <= 0;
 		end
 			
 		else if(start_detected) begin
-			start_detected <= 0;
+			start_detected <= 1;
 			clocks_since_start_bit <= clocks_since_start_bit + 1;
 		end
 
 		else begin
 			start_detected <= 0;
-			clocks_since_start_bit <= clocks_since_start_bit + 1;
+			clocks_since_start_bit <= 0;
 		end
 	end
 end

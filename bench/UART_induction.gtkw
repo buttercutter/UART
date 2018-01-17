@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Jan 16 16:17:21 2018
+[*] Wed Jan 17 17:01:55 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.vcd"
-[dumpfile_mtime] "Tue Jan 16 16:16:04 2018"
+[dumpfile_mtime] "Wed Jan 17 16:36:46 2018"
 [dumpfile_size] 22440
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.gtkw"
 [timestart] 0
 [size] 1920 1016
 [pos] 1475 226
-*-5.659012 290 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-5.659012 90 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
@@ -33,13 +33,15 @@ test_UART.transmission_had_started
 test_UART.uart.tx.i_data[7:0]
 test_UART.uart.tx.o_busy
 test_UART.uart.tx.parity_bit
-@24
+@25
 test_UART.cnt[3:0]
+@24
 test_UART.stop_bit_location[3:0]
 test_UART.stop_bit_location_plus_one[3:0]
-@28
+@29
 test_UART.uart.tx.tx.shift_reg[10:0]
 test_UART.uart.tx.serial_out
+@28
 test_UART.uart.rx.serial_in
 test_UART.uart.rx.serial_in_synced
 test_UART.uart.rx.data_is_available
@@ -51,13 +53,10 @@ test_UART.uart.rx.received_data[7:0]
 test_UART.uart.rx.rx_error
 test_UART.uart.rx.rx.ssg.start_detected
 test_UART.uart.rx.rx.ssg.sampling_strobe
-@23
+@24
 test_UART.state[3:0]
-@25
 test_UART.uart.rx.rx.dsb.clocks_since_start_bit[6:0]
 @28
 test_UART.uart.rx.rx.dsb.falling_edge
-@24
-test_UART.uart.rx.rx.ssg.counter[2:0]
 [pattern_trace] 1
 [pattern_trace] 0
