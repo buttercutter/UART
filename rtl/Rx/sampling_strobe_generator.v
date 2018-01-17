@@ -37,6 +37,7 @@ end
 always @(posedge clk)
 begin
 	assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
+	assert((counter - $past(counter)) == 1'b1);  // to keep the increasing trend for induction test purpose such that sampling_strobe occurs at the correct period interval 
 end
 
 `endif

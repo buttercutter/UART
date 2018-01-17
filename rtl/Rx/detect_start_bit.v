@@ -67,7 +67,7 @@ begin
 
 		else begin
 			start_detected <= 0;
-			clocks_since_start_bit <= 0;
+			clocks_since_start_bit <= clocks_since_start_bit + 1;
 		end
 	end
 end
@@ -110,6 +110,15 @@ begin
 		Rx_IDLE			:	assert(clocks_since_start_bit == 0);
 		Rx_START_BIT	:	assert(clocks_since_start_bit == 0);
 		Rx_DATA_BIT_0	: 	assert(clocks_since_start_bit == 1);
+		Rx_DATA_BIT_1	: 	assert(clocks_since_start_bit == 2);
+		Rx_DATA_BIT_2	: 	assert(clocks_since_start_bit == 3);
+		Rx_DATA_BIT_3	: 	assert(clocks_since_start_bit == 4);
+		Rx_DATA_BIT_4	: 	assert(clocks_since_start_bit == 5);
+		Rx_DATA_BIT_5	: 	assert(clocks_since_start_bit == 6);
+		Rx_DATA_BIT_6	: 	assert(clocks_since_start_bit == 7);
+		Rx_DATA_BIT_7	: 	assert(clocks_since_start_bit == 8);
+		Rx_PARITY_BIT	: 	assert(clocks_since_start_bit == 9);
+		Rx_STOP_BIT		: 	assert(clocks_since_start_bit == 10);
 		
 		default			:	assert(clocks_since_start_bit == 0);
 	endcase
