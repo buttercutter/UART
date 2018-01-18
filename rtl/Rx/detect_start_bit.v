@@ -1,6 +1,6 @@
 module detect_start_bit(clk, reset, serial_in_synced, start_detected
 `ifdef FORMAL
-	, state
+	, state, sampling_strobe
 `endif
 ); // just a falling edge detector + a counter
 
@@ -10,6 +10,7 @@ localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits,
 
 `ifdef FORMAL
 input [($clog2(NUMBER_OF_BITS)-1) : 0] state;
+input sampling_strobe;
 `endif
 
 input clk, reset, serial_in_synced;
@@ -102,26 +103,32 @@ begin
 			assert(&($past(clocks_since_start_bit)) == 1'b1);  // such that it wraps around after reaching max and restarts from zero
 		end
 	end
+	
+	if(($past(first_clock_passed) == 0) && (first_clock_passed)) begin
+		assert($past(state) == Rx_IDLE);
+	end
 end
 
 always @(posedge clk)
 begin
-	case(state) 
-		Rx_IDLE			:	assert(clocks_since_start_bit == 0);
-		Rx_START_BIT	:	assert(clocks_since_start_bit == 0);
-		Rx_DATA_BIT_0	: 	assert(clocks_since_start_bit == 1);
-		Rx_DATA_BIT_1	: 	assert(clocks_since_start_bit == 2);
-		Rx_DATA_BIT_2	: 	assert(clocks_since_start_bit == 3);
-		Rx_DATA_BIT_3	: 	assert(clocks_since_start_bit == 4);
-		Rx_DATA_BIT_4	: 	assert(clocks_since_start_bit == 5);
-		Rx_DATA_BIT_5	: 	assert(clocks_since_start_bit == 6);
-		Rx_DATA_BIT_6	: 	assert(clocks_since_start_bit == 7);
-		Rx_DATA_BIT_7	: 	assert(clocks_since_start_bit == 8);
-		Rx_PARITY_BIT	: 	assert(clocks_since_start_bit == 9);
-		Rx_STOP_BIT		: 	assert(clocks_since_start_bit == 10);
-		
-		default			:	assert(clocks_since_start_bit == 0);
-	endcase
+	if(sampling_strobe) begin
+		case(state) 
+			Rx_IDLE			:	assert(clocks_since_start_bit == 0);
+			Rx_START_BIT	:	assert(clocks_since_start_bit == 0);
+			Rx_DATA_BIT_0	: 	assert(clocks_since_start_bit == 1);
+			Rx_DATA_BIT_1	: 	assert(clocks_since_start_bit == 2);
+			Rx_DATA_BIT_2	: 	assert(clocks_since_start_bit == 3);
+			Rx_DATA_BIT_3	: 	assert(clocks_since_start_bit == 4);
+			Rx_DATA_BIT_4	: 	assert(clocks_since_start_bit == 5);
+			Rx_DATA_BIT_5	: 	assert(clocks_since_start_bit == 6);
+			Rx_DATA_BIT_6	: 	assert(clocks_since_start_bit == 7);
+			Rx_DATA_BIT_7	: 	assert(clocks_since_start_bit == 8);
+			Rx_PARITY_BIT	: 	assert(clocks_since_start_bit == 9);
+			Rx_STOP_BIT		: 	assert(clocks_since_start_bit == 10);
+			
+			default			:	assert(clocks_since_start_bit == 0);
+		endcase
+	end
 end
 
 `endif

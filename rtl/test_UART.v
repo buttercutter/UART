@@ -60,12 +60,19 @@ reg[($clog2(NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)-1) : 0] cnt;  // to tra
 
 reg transmission_had_started; 
 reg had_just_reset;
+reg first_clock_passed;
 
 initial begin
 	had_been_enabled = 0;  
 	cnt = 0;
 	transmission_had_started = 0;
 	had_just_reset = 0;
+	first_clock_passed = 0;
+end
+
+always @(posedge clk)
+begin
+	first_clock_passed <= 1;
 end
 
 always @(posedge clk)
@@ -89,6 +96,11 @@ always @(posedge clk)
 begin
 	assert(cnt < NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1);
 	assert(stop_bit_location < NUMBER_OF_BITS);
+	
+	if($past(first_clock_passed) == 0) begin
+		assert($past(stop_bit_location) == (NUMBER_OF_BITS-1));
+		assert($past(&shift_reg) == 1);
+	end
 end
 
 always @(posedge clk)
