@@ -75,10 +75,19 @@ end
 
 `ifdef FORMAL
 
+reg first_clock_passed;
+initial first_clock_passed = 0;
+
+always @(posedge clk)
+begin
+	first_clock_passed <= 1;
+end
+
 always @(posedge clk) 
 begin
-	if(!o_busy) begin
-		//assert(&shift_reg == 1);
+	if(first_clock_passed) begin    // for induction check purpose
+		assert($past(o_busy) == 0);  // initially not busy
+		assert(&($past(shift_reg)) == 1);  // initially all ones, transmitting ones
 	end
 end
 
