@@ -85,7 +85,7 @@ end
 
 always @(posedge clk) 
 begin
-	if(first_clock_passed) begin    // for induction check purpose
+	if(first_clock_passed && ($past(first_clock_passed) == 0)) begin    // for induction check purpose
 		assert($past(o_busy) == 0);  // initially not busy
 		assert(&($past(shift_reg)) == 1);  // initially all ones, transmitting ones
 	end
