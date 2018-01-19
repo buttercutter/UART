@@ -98,6 +98,7 @@ begin
 	assert(stop_bit_location < NUMBER_OF_BITS);
 	
 	if($past(first_clock_passed) == 0) begin
+		assert(first_clock_passed == 1);
 		assert($past(stop_bit_location) == (NUMBER_OF_BITS-1));
 		assert($past(&shift_reg) == 1);
 	end
