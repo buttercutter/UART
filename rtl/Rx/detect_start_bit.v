@@ -2,14 +2,14 @@ module detect_start_bit(clk, reset, serial_in_synced, start_detected
 `ifdef FORMAL
 	, state, sampling_strobe
 `endif
-); // just a falling edge detector + a counter
+); // just (a falling edge detector + a counter) to detect UART start bit correctly
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
-localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+localparam ALL_BITS_RECEIVED = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 
 `ifdef FORMAL
-input [($clog2(NUMBER_OF_BITS)-1) : 0] state;
+input [($clog2(ALL_BITS_RECEIVED)-1) : 0] state;
 input sampling_strobe;
 `endif
 
@@ -31,13 +31,7 @@ localparam Rx_STOP_BIT   = 4'b1011;
 
 reg previously_idle;
 
-`ifdef FORMAL
-    parameter CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equivalently 1/600MHz divided by 1/48MHz
-`else
-    parameter CLOCKS_PER_BIT = 5000; // number of system clock in one UART bit, or equivalently 1/9600Hz divided by 1/48MHz
-`endif
-
-reg [($clog2(NUMBER_OF_BITS*CLOCKS_PER_BIT)-1) : 0] clocks_since_start_bit;  // a counter to indicate start bit is only in existence for every (start + data + parity + stop = 11) bits in a UART stream
+reg [($clog2(ALL_BITS_RECEIVED)-1) : 0] clocks_since_start_bit;  // a counter to indicate start bit is only in existence for every (start + data + parity + stop = 11) bits in a UART stream
 
 wire falling_edge = (!serial_in_synced) && (previously_idle);
 
@@ -56,19 +50,26 @@ begin
 	end
 	
 	else begin
-		if((falling_edge) && ((clocks_since_start_bit >= NUMBER_OF_BITS*CLOCKS_PER_BIT) || (clocks_since_start_bit == 0))) begin  // (start bit) AND ((the previous UART message had been successfully received ) OR (Rx is idling))
-			start_detected <= 1;
-			clocks_since_start_bit <= clocks_since_start_bit + 1;
-		end
-			
-		else if(start_detected) begin
-			start_detected <= 1;
-			clocks_since_start_bit <= clocks_since_start_bit + 1;
-		end
+		if(sampling_strobe) begin
+			if(clocks_since_start_bit >= ALL_BITS_RECEIVED) begin  // (the previous UART message had already been successfully received)
+				start_detected <= 0;
+				clocks_since_start_bit <= 0;
+			end
 
-		else begin
-			start_detected <= 0;
-			clocks_since_start_bit <= 0;
+			else if((falling_edge) && (clocks_since_start_bit == 0)) begin  // (start bit) AND (Rx is idling)
+				start_detected <= 1;
+				clocks_since_start_bit <= clocks_since_start_bit + 1;
+			end
+
+			else if(start_detected) begin
+				start_detected <= 1;
+				clocks_since_start_bit <= clocks_since_start_bit + 1;
+			end
+
+			else begin
+				start_detected <= 0;
+				clocks_since_start_bit <= 0;
+			end
 		end
 	end
 end
@@ -94,7 +95,7 @@ end
 
 always @(posedge clk) 
 begin
-	assert(clocks_since_start_bit <= NUMBER_OF_BITS*CLOCKS_PER_BIT);
+	assert(clocks_since_start_bit <= ALL_BITS_RECEIVED);
 
 	if(first_clock_passed) begin
 		if((clocks_since_start_bit == 0) && ($past(falling_edge) == 0)) begin
