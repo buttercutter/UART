@@ -253,6 +253,10 @@ begin
         assert(received_data == i_data);
         assert(cnt < NUMBER_OF_BITS*CLOCKS_PER_BIT);
     end
+
+	if(state <= Rx_STOP_BIT) begin
+		assert(cnt - $past(cnt) == 1);
+	end
 end
 
 `endif
