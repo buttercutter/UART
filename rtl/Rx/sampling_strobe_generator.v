@@ -34,11 +34,20 @@ end
 
 `ifdef FORMAL
 
+reg first_clock_passed;
+
+initial first_clock_passed = 0;
+
+always @(posedge clk)
+begin
+	first_clock_passed <= 1;
+end
+
 always @(posedge clk)
 begin
 	assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
 	
-	if(!($past(start_detected))) begin
+	if(!($past(start_detected)) && (first_clock_passed)) begin
 		assert((counter - $past(counter)) == 1'b1);  // to keep the increasing trend for induction test purpose such that sampling_strobe occurs at the correct period interval 
 	end
 end

@@ -26,4 +26,24 @@ end
 
 assign baud_clk = ck_stb;
 
+`ifdef FORMAL
+
+reg first_clock_passed;
+
+initial first_clock_passed = 0;
+
+always @(posedge clk)
+begin
+	first_clock_passed <= 1;
+end
+
+always @(posedge clk)
+begin
+	if(first_clock_passed) begin
+		assert((baud_clk && $past(baud_clk)) == 0);  // asserts that baud_clk is only single pulse HIGH
+	end
+end
+
+`endif
+
 endmodule
