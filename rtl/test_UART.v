@@ -253,7 +253,7 @@ begin
         assert(cnt < NUMBER_OF_BITS*CLOCKS_PER_BIT);
     end
 
-	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (!transmission_had_started)) begin
+	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && (baud_clk)) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end
