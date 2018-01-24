@@ -129,7 +129,7 @@ begin
 
     	else if(transmission_had_started) begin
     	
-    		if(baud_clk) begin
+    		if($past(baud_clk)) begin
 	        	cnt <= cnt + 1;
 	        end
 
@@ -204,6 +204,10 @@ begin
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
     	    
+    	    if(!had_been_enabled) begin
+    	    	assert(&shift_reg == 1);
+    	    end
+    	    
     	    if(had_been_enabled)
 	    	    assert(o_busy == 1);
 	    	else
@@ -253,7 +257,7 @@ begin
         assert(cnt < NUMBER_OF_BITS*CLOCKS_PER_BIT);
     end
 
-	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && (baud_clk)) begin
+	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end

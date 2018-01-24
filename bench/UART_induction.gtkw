@@ -1,9 +1,9 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Sun Jan 21 16:05:27 2018
+[*] Tue Jan 23 16:50:12 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.vcd"
-[dumpfile_mtime] "Sun Jan 21 16:04:38 2018"
+[dumpfile_mtime] "Tue Jan 23 16:49:59 2018"
 [dumpfile_size] 23319
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.gtkw"
 [timestart] 0
@@ -27,8 +27,8 @@ smt_clock
 test_UART.reset
 @29
 test_UART.had_just_reset
-@28
 test_UART.uart.tx.baud_clk
+@28
 test_UART.uart.tx.enable
 test_UART.had_been_enabled
 @29
