@@ -97,6 +97,14 @@ always @(posedge clk)
 begin
 	assert(clocks_since_start_bit <= ALL_BITS_RECEIVED);
 
+	if((clocks_since_start_bit > 0) && (clocks_since_start_bit < ALL_BITS_RECEIVED)) begin
+		assert(start_detected);
+
+		if($past(start_detected)) begin
+			assert(start_detected);
+		end
+	end
+
 	if(first_clock_passed) begin
 		if((clocks_since_start_bit == 0) && ($past(falling_edge) == 0)) begin
 			assert(start_detected == 0);  // such that during start up, there is no erronous UART Rx activity

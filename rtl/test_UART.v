@@ -75,17 +75,6 @@ begin
 	first_clock_passed <= 1;
 end
 
-always @(posedge clk)
-begin
-	if(reset) begin
-		transmission_had_started <= 0;
-	end
-		
-	else begin
-		if(baud_clk)
-			transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
-	end
-end
 
 wire [($clog2(NUMBER_OF_BITS-1)-1) : 0] stop_bit_location;
 assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
@@ -108,11 +97,20 @@ begin
     if(reset) begin
         cnt <= 0;
     	had_been_enabled <= 0;
+		transmission_had_started <= 0;
     end
     
     else begin
-    
-        if(enable && (!had_been_enabled)) begin
+ 
+		if(baud_clk) begin
+			if(transmission_had_started) begin
+				cnt <= cnt + 1;
+			end
+
+			transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
+		end
+   
+        else if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;
     	    assert(cnt == 0);            
     	    had_been_enabled <= 1;
@@ -128,10 +126,6 @@ begin
         end
 
     	else if(transmission_had_started) begin
-    	
-    		if($past(baud_clk)) begin
-	        	cnt <= cnt + 1;
-	        end
 
 			if(cnt == 0) begin // start of UART transmission
 				assert(state < Rx_STOP_BIT);
@@ -207,11 +201,6 @@ begin
     	    if(!had_been_enabled) begin
     	    	assert(&shift_reg == 1);
     	    end
-    	    
-    	    if(had_been_enabled)
-	    	    assert(o_busy == 1);
-	    	else
-	    		assert(o_busy == 0);
     	end
     end
 end
@@ -225,15 +214,24 @@ begin
 
     else begin
     	had_just_reset <= 0;
-    
-    	if(had_been_enabled) begin
-	    	assert(o_busy == 1);
-    	end
+    	
+		if(!had_just_reset) begin
+			if((had_been_enabled) && (!$past(had_been_enabled))) begin
+				assert(!$past(o_busy));
+				assert(o_busy);
+			end
 
-    	else begin
-    	    assert(o_busy == 0);
-	    	assert(serial_out == 1);
-    	end
+			else if((had_been_enabled) && ($past(had_been_enabled))) begin
+				assert($past(o_busy));
+				assert(o_busy);
+			end
+
+			else begin
+			    assert(!$past(o_busy));
+				assert(!o_busy);
+				assert(serial_out == 1);
+			end
+		end
     end
 end
 
@@ -257,7 +255,7 @@ begin
         assert(cnt < NUMBER_OF_BITS*CLOCKS_PER_BIT);
     end
 
-	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(baud_clk))) begin
+	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(transmission_had_started)) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end

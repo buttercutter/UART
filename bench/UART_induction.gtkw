@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Jan 23 16:50:12 2018
+[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
+[*] Thu Jan 25 12:27:03 2018
 [*]
-[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.vcd"
-[dumpfile_mtime] "Tue Jan 23 16:49:59 2018"
+[dumpfile] "/home/phung/Documents/phung/UART/bench/UART_induction.vcd"
+[dumpfile_mtime] "Thu Jan 25 12:26:36 2018"
 [dumpfile_size] 23319
-[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_induction.gtkw"
+[savefile] "/home/phung/Documents/phung/UART/bench/UART_induction.gtkw"
 [timestart] 0
-[size] 1141 915
-[pos] 1223 430
-*-5.659012 90 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1001 915
+[pos] 880 165
+*-5.987061 90 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
@@ -27,19 +27,20 @@ smt_clock
 test_UART.reset
 @29
 test_UART.had_just_reset
+@28
 test_UART.uart.tx.baud_clk
-@28
 test_UART.uart.tx.enable
-test_UART.had_been_enabled
 @29
-test_UART.transmission_had_started
+test_UART.had_been_enabled
 @28
+test_UART.transmission_had_started
 test_UART.uart.tx.i_data[7:0]
+@29
 test_UART.uart.tx.o_busy
+@28
 test_UART.uart.tx.parity_bit
-@25
-test_UART.cnt[3:0]
 @24
+test_UART.cnt[3:0]
 test_UART.stop_bit_location[3:0]
 test_UART.stop_bit_location_plus_one[3:0]
 @28
@@ -56,13 +57,15 @@ test_UART.uart.rx.received_data[7:0]
 test_UART.uart.rx.rx_error
 test_UART.uart.rx.rx.ssg.start_detected
 test_UART.uart.rx.rx.ssg.sampling_strobe
-@25
+@22
 test_UART.state[3:0]
 @28
 test_UART.uart.rx.rx.dsb.falling_edge
 @24
 test_UART.uart.rx.rx.ssg.counter[2:0]
-@29
+@28
 test_UART.uart.rx.rx.dsb.first_clock_passed
+@24
+test_UART.uart.rx.rx.dsb.clocks_since_start_bit[3:0]
 [pattern_trace] 1
 [pattern_trace] 0
