@@ -99,18 +99,17 @@ begin
     	had_been_enabled <= 0;
 		transmission_had_started <= 0;
     end
-    
+
+	else if(baud_clk) begin
+		if(transmission_had_started) begin
+			cnt <= cnt + 1;
+		end
+		transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
+	end    
+
     else begin
  
-		if(baud_clk) begin
-			if(transmission_had_started) begin
-				cnt <= cnt + 1;
-			end
-
-			transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
-		end
-   
-        else if(enable && (!had_been_enabled)) begin
+        if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;
     	    assert(cnt == 0);            
     	    had_been_enabled <= 1;
@@ -228,7 +227,15 @@ begin
 
 			else begin
 			    assert(!$past(o_busy));
-				assert(!o_busy);
+				
+				if($past(enable)) begin
+					assert(o_busy);
+				end
+
+				else begin
+					assert(!o_busy);
+				end
+
 				assert(serial_out == 1);
 			end
 		end
