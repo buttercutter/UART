@@ -96,7 +96,6 @@ always @(posedge clk)
 begin
     if(reset) begin
         cnt <= 0;
-    	had_been_enabled <= 0;
 		transmission_had_started <= 0;
     end
 
@@ -105,12 +104,25 @@ begin
 			cnt <= cnt + 1;
 		end
 		transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
-	end    
+	end   
+	
+	else begin
+	
+        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (state == Rx_STOP_BIT))) begin
+    	    cnt <= 0;  
+    	end
+    end
+end
+
+always @(posedge clk)
+begin
+    if(reset) begin
+    	had_been_enabled <= 0;
+    end   
 
     else begin
  
         if(enable && (!had_been_enabled)) begin
-    	    cnt <= 0;
     	    assert(cnt == 0);            
     	    had_been_enabled <= 1;
     	    assert(state == Rx_IDLE);
@@ -135,7 +147,7 @@ begin
 			end
 			
 			else if((cnt > 0) && (cnt < (NUMBER_OF_BITS-1))) begin  // during UART transmission
-				assert(state < Rx_STOP_BIT);
+				assert((state-NUMBER_OF_RX_SYNCHRONIZERS) < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
 				assert(shift_reg[stop_bit_location] == 1'b1);
@@ -150,7 +162,7 @@ begin
 				assert(o_busy == 1);
 			end
 			
-			else begin // if(cnt > ((NUMBER_OF_BITS + 1)*CLOCKS_PER_BIT)) begin  // UART Rx internal states
+			else begin // if(cnt > (NUMBER_OF_BITS + 1)) begin  // UART Rx internal states
 				
 				if(state == Rx_START_BIT) begin
 					assert(data_is_valid == 0);
@@ -178,7 +190,6 @@ begin
 					assert(serial_in == 1);
 					assert(o_busy == 0);
 					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT);
-					cnt <= 0;
 					had_been_enabled <= 0;
 				end
 				/*
@@ -191,7 +202,6 @@ begin
     	end
     	    
     	else begin  // UART Tx and Rx are idling, still waiting for baud_clk
-    	    cnt <= 0;
     	    assert(cnt == 0);
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
