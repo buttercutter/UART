@@ -258,7 +258,7 @@ begin
         assume(enable == 0);
     end
 	
-	if(enable | had_been_enabled) begin
+	if((!reset) && (enable | had_been_enabled)) begin
 		assume($past(i_data) == i_data);
 	end
 end
