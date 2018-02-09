@@ -86,9 +86,14 @@ begin
 	assert(cnt < NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1);
 	assert(stop_bit_location < NUMBER_OF_BITS);
 	
-	if(($past(first_clock_passed) == 0) && (first_clock_passed == 1)) begin
-		assert($past(stop_bit_location) == (NUMBER_OF_BITS-1));
-		assert($past(&shift_reg) == 1);
+	if(first_clock_passed) begin
+		if($past(reset) == 0) begin 
+			assert($past(stop_bit_location) == (NUMBER_OF_BITS-1));
+		end
+
+		if($past(first_clock_passed) == 0) begin
+			assert($past(&shift_reg) == 1);
+		end
 	end
 end
 
