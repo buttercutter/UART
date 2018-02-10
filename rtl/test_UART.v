@@ -76,8 +76,8 @@ begin
 end
 
 
-wire [($clog2(NUMBER_OF_BITS-1)-1) : 0] stop_bit_location;
-assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location;
+assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 2 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
 
@@ -88,7 +88,7 @@ begin
 	
 	if(first_clock_passed) begin
 		if($past(reset) == 0) begin 
-			assert($past(stop_bit_location) == (NUMBER_OF_BITS-1));
+			assert(stop_bit_location == (NUMBER_OF_BITS - 2 - cnt));
 		end
 
 		if($past(first_clock_passed) == 0) begin
@@ -119,7 +119,7 @@ begin
     end
     
     if(first_clock_passed) begin
-    	if((had_been_enabled) && ($past(baud_clk)) && !($past(had_just_reset)) && !($past(transmission_had_started))) begin
+    	if(($past(had_been_enabled)) && ($past(baud_clk)) && !($past(had_just_reset)) && !($past(reset)) && !($past(transmission_had_started))) begin
 	   		assert(transmission_had_started);
 	   	end
     end
@@ -272,7 +272,7 @@ begin
         assume(enable == 0);
     end
 	
-	if((!reset) && (enable | had_been_enabled)) begin
+	if(!data_is_valid) begin
 		assume($past(i_data) == i_data);
 	end
 end
