@@ -50,10 +50,10 @@ begin
 			if(falling_edge) begin  // (start bit) 
 				start_detected <= 1;
 			end
-
-			else begin
-				start_detected <= 0;
-			end
+		end
+		
+		else begin
+			start_detected <= 0;
 		end
 	end
 end
@@ -85,6 +85,11 @@ begin
 	if(($past(first_clock_passed) == 0) && (first_clock_passed)) begin
 		assert($past(state) == Rx_IDLE);
 	end
+end
+
+always @(posedge clk)
+begin
+	assert((start_detected & $past(start_detected)) == 0);  // 'start_detected' is only a single clock pulse
 end
 
 `endif

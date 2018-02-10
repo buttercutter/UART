@@ -42,6 +42,10 @@ begin
 	if(first_clock_passed) begin
 		assert((baud_clk && $past(baud_clk)) == 0);  // asserts that baud_clk is only single pulse HIGH
 	end
+	
+	if(baud_clk) begin
+		assert(cnt == 0);
+	end
 end
 
 `endif

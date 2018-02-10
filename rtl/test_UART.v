@@ -117,6 +117,12 @@ begin
     	    cnt <= 0;  
     	end
     end
+    
+    if(first_clock_passed) begin
+    	if((had_been_enabled) && ($past(baud_clk)) && !($past(had_just_reset)) && !($past(transmission_had_started))) begin
+	   		assert(transmission_had_started);
+	   	end
+    end
 end
 
 always @(posedge clk)
@@ -241,10 +247,13 @@ begin
 			end
 
 			else begin
-			    assert(!$past(o_busy));
+			
+				if(first_clock_passed) begin
+			    	assert(!$past(o_busy));
 				
-				if($past(enable)) begin
-					assert(o_busy);
+					if($past(enable)) begin
+						assert(o_busy);
+					end
 				end
 
 				else begin
