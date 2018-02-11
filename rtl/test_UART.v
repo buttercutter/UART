@@ -158,7 +158,11 @@ begin
 			end
 			
 			else if((cnt > 0) && (cnt < (NUMBER_OF_BITS-1))) begin  // during UART transmission
-				assert((state-NUMBER_OF_RX_SYNCHRONIZERS) < Rx_STOP_BIT);
+				
+				if(state >= NUMBER_OF_RX_SYNCHRONIZERS) begin
+					assert((state-NUMBER_OF_RX_SYNCHRONIZERS) < Rx_STOP_BIT);
+				end
+				
 				assert(data_is_valid == 0);
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
 				assert(shift_reg[stop_bit_location] == 1'b1);
