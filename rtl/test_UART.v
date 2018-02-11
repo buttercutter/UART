@@ -246,12 +246,12 @@ begin
     	had_just_reset <= 0;
     	
 		if(!had_just_reset) begin
-			if((had_been_enabled) && (!$past(had_been_enabled))) begin
+			if((had_been_enabled) && (!$past(had_been_enabled))) begin  // Tx starts transmission now
 				assert(!$past(o_busy));
 				assert(o_busy);
 			end
 
-			else if((had_been_enabled) && ($past(had_been_enabled))) begin
+			else if((had_been_enabled) && ($past(had_been_enabled))) begin  // Tx is in the midst of transmission
 				assert($past(o_busy));
 				
 				if($past(shift_reg) == 0) begin
@@ -259,7 +259,8 @@ begin
 				end
 			end
 
-			else begin  // Tx finished transmission
+			else if((!had_been_enabled) && ($past(had_been_enabled))) begin  // Tx finished transmission
+				assert(serial_out == 1);
 			
 				if(first_clock_passed) begin
 			    	assert(($past(o_busy)) && (!o_busy));
@@ -268,11 +269,10 @@ begin
 						assert(o_busy);
 					end
 				end
-
-				else begin
-					assert(!o_busy);
-				end
-
+			end
+			
+			else begin  // Tx had not been enabled yet
+				assert(!o_busy);
 				assert(serial_out == 1);
 			end
 		end
