@@ -89,7 +89,9 @@ begin
 	
 	if(first_clock_passed) begin
 		if($past(reset) == 0) begin 
-			assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
+			if(cnt < NUMBER_OF_BITS) begin
+				assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
+			end
 		end
 
 		if($past(first_clock_passed) == 0) begin
@@ -114,8 +116,9 @@ begin
 	
 	else begin
 	
-        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (state == Rx_STOP_BIT))) begin
+        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (cnt == (NUMBER_OF_BITS-1)))) begin
     	    cnt <= 0;  
+			transmission_had_started <= 0;
     	end
     end
     
@@ -134,8 +137,7 @@ begin
 
     else begin
  
-        if(enable && (!had_been_enabled)) begin
-    	    assert(cnt == 0);            
+        if(enable && (!had_been_enabled)) begin           
     	    had_been_enabled <= 1;
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
@@ -222,14 +224,36 @@ begin
 			end
     	end
     	    
-    	else begin  // UART Tx and Rx are idling, still waiting for baud_clk
+    	else begin  // UART Tx and Rx are idling, still waiting for ((next enable signal) && (baud_clk))
     	    assert(cnt == 0);
     	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
     	    
     	    if(!had_been_enabled) begin
-    	    	assert(&shift_reg == 1);
+				if(first_clock_passed && ($past(cnt) == (NUMBER_OF_BITS - 1))) begin  // Tx had just finished
+					if($past(reset)) begin
+						assert(&shift_reg == 1);
+					end					
+
+					else begin
+						assert(shift_reg == 0);
+					end
+				end
+
+				else if(first_clock_passed && ($past(shift_reg) == 0)) begin  // Tx is waiting to be enabled again after a transmission
+					if($past(reset)) begin
+						assert(&shift_reg == 1);
+					end
+					
+					else begin
+						assert(shift_reg == 0);
+					end
+				end
+
+				else begin  // Tx is waiting to be enabled for the first time
+					assert(&shift_reg == 1);
+				end
     	    end
     	end
     end
