@@ -4,7 +4,7 @@ parameter INPUT_DATA_WIDTH = 8;
 
 input clk, reset, serial_in_synced, is_parity_stage;
 input [(INPUT_DATA_WIDTH-1) : 0] received_data;
-output reg rx_error; 
+output reg rx_error; // parity error indicator
 
 reg parity_value; // this is being computed from the received 8-bit data
 reg parity_bit;  // this bit is received directly through UART
