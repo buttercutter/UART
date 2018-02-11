@@ -55,7 +55,7 @@ localparam Rx_STOP_BIT   = 4'b1011;
 localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock domain crossing
 localparam CLOCKS_PER_BIT = 8;
 
-reg had_been_enabled;   // a signal to latch 'enable'
+reg had_been_enabled;   // a signal to latch Tx 'enable' signal
 reg[($clog2(NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg transmission_had_started; 
@@ -77,9 +77,10 @@ end
 
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location;
-assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 2 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
+assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_minus_one = stop_bit_location - 1;
 
 always @(posedge clk)
 begin
@@ -88,7 +89,7 @@ begin
 	
 	if(first_clock_passed) begin
 		if($past(reset) == 0) begin 
-			assert(stop_bit_location == (NUMBER_OF_BITS - 2 - cnt));
+			assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
 		end
 
 		if($past(first_clock_passed) == 0) begin
@@ -165,16 +166,22 @@ begin
 				
 				assert(data_is_valid == 0);
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
-				assert(shift_reg[stop_bit_location] == 1'b1);
+				assert(shift_reg[stop_bit_location] == 1'b0);
+				assert(shift_reg[stop_bit_location_minus_one] == 1'b1);
 				assert(o_busy == 1);				
 			end
 
 			else if(cnt == (NUMBER_OF_BITS - 1)) begin // end of UART transmission
+				had_been_enabled <= 0;
+			
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(shift_reg == 0);
 				assert(serial_out == 1);   // stop bit
-				assert(o_busy == 1);
+				
+				if($past(shift_reg) == 0) begin
+					assert(!o_busy);
+				end
 			end
 			
 			else begin // if(cnt > (NUMBER_OF_BITS + 1)) begin  // UART Rx internal states
@@ -205,7 +212,6 @@ begin
 					assert(serial_in == 1);
 					assert(o_busy == 0);
 					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT);
-					had_been_enabled <= 0;
 				end
 				/*
 				else begin
@@ -247,13 +253,16 @@ begin
 
 			else if((had_been_enabled) && ($past(had_been_enabled))) begin
 				assert($past(o_busy));
-				assert(o_busy);
+				
+				if($past(shift_reg) == 0) begin
+					assert(!o_busy);
+				end
 			end
 
-			else begin
+			else begin  // Tx finished transmission
 			
 				if(first_clock_passed) begin
-			    	assert(!$past(o_busy));
+			    	assert(($past(o_busy)) && (!o_busy));
 				
 					if($past(enable)) begin
 						assert(o_busy);
