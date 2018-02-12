@@ -139,7 +139,7 @@ begin
  
         if(enable && (!had_been_enabled)) begin           
     	    had_been_enabled <= 1;
-    	    assert(state == Rx_IDLE);
+    	    assert(cnt == 0);  // transmission had not started
     	    assert(data_is_valid == 0);
     	    
     	    if(had_just_reset) begin
@@ -224,9 +224,8 @@ begin
 			end
     	end
     	    
-    	else begin  // UART Tx and Rx are idling, still waiting for ((next enable signal) && (baud_clk))
+    	else begin  // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
     	    assert(cnt == 0);
-    	    assert(state == Rx_IDLE);
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
     	    
@@ -311,6 +310,7 @@ begin
 	
 	if(!data_is_valid) begin
 		assume($past(i_data) == i_data);
+		assert($past(i_data) == i_data);
 	end
 end
 
