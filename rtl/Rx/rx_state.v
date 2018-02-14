@@ -87,8 +87,12 @@ end
     
     always @(posedge clk) 
     begin
-        assume(state <= Rx_STOP_BIT);
+        assert(state <= Rx_STOP_BIT);
     
+    	if(((state == Rx_DATA_BIT_0) && ($past(state) == Rx_DATA_BIT_0)) || ((state > Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7))) begin
+    		assert(data_is_available);
+    	end
+    	
         //if (state == Rx_STOP_BIT)
             //assume(reset == 0);  // this is to assume for induction test because Tx internal registers are not reset/initialized properly at time = 0, such that data_is_valid signal will not be asserted in the next clock cycle after the "FIRST" stop bit state
     end
