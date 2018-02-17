@@ -59,14 +59,12 @@ reg had_been_enabled;   // a signal to latch Tx 'enable' signal
 reg[($clog2(NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg transmission_had_started; 
-reg had_just_reset;
 reg first_clock_passed;
 
 initial begin
 	had_been_enabled = 0;  
 	cnt = 0;
 	transmission_had_started = 0;
-	had_just_reset = 0;
 	first_clock_passed = 0;
 end
 
@@ -123,11 +121,13 @@ begin
     end
     
     if(first_clock_passed) begin
-    	if(($past(had_been_enabled)) && ($past(baud_clk)) && !($past(had_just_reset)) && !($past(reset)) && !($past(transmission_had_started))) begin
+    	if(($past(had_been_enabled)) && ($past(baud_clk)) && (!reset) && !($past(reset)) && !($past(transmission_had_started))) begin
 	   		assert(transmission_had_started);
 	   	end
     end
 end
+
+integer index, Tx_shift_reg_index;  // for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
 
 always @(posedge clk)
 begin
@@ -142,7 +142,7 @@ begin
     	    assert(cnt == 0);  // transmission had not started
     	    assert(data_is_valid == 0);
     	    
-    	    if(had_just_reset) begin
+    	    if($past(reset)) begin
     	    	assert(&shift_reg == 1);
     	    end
     	    
@@ -170,6 +170,22 @@ begin
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
 				assert(shift_reg[stop_bit_location] == 1'b0);
 				assert(shift_reg[stop_bit_location_minus_one] == 1'b1);
+				
+				Tx_shift_reg_index = NUMBER_OF_BITS - cnt + 1;
+					
+				for(index=INPUT_DATA_WIDTH; index>0; index=index-1) begin
+					
+					if(index <= Tx_shift_reg_index) begin
+						if(index == (stop_bit_location_minus_one-1)) begin
+							assert(shift_reg[index] == (^i_data));
+						end
+						
+						else begin
+							assert(shift_reg[index] == i_data[INPUT_DATA_WIDTH-index]);
+						end
+					end
+				end
+
 				assert(o_busy == 1);				
 			end
 
@@ -259,47 +275,38 @@ begin
 end
 
 always @(posedge clk)
-begin
-    if(reset) begin
-    	had_just_reset <= 1;
-		//assert();
-    end
+begin	
+	if(!$past(reset)) begin
+		if((had_been_enabled) && (!$past(had_been_enabled))) begin  // Tx starts transmission now
+			assert(!$past(o_busy));
+			assert(o_busy);
+		end
 
-    else begin
-    	had_just_reset <= 0;
-    	
-		if(!had_just_reset) begin
-			if((had_been_enabled) && (!$past(had_been_enabled))) begin  // Tx starts transmission now
-				assert(!$past(o_busy));
-				assert(o_busy);
-			end
-
-			else if((had_been_enabled) && ($past(had_been_enabled))) begin  // Tx is in the midst of transmission
-				assert($past(o_busy));
-				
-				if($past(shift_reg) == 0) begin
-					assert(!o_busy);
-				end
-			end
-
-			else if((!had_been_enabled) && ($past(had_been_enabled))) begin  // Tx finished transmission
-				assert(serial_out == 1);
+		else if((had_been_enabled) && ($past(had_been_enabled))) begin  // Tx is in the midst of transmission
+			assert($past(o_busy));
 			
-				if(first_clock_passed) begin
-			    	assert(($past(o_busy)) && (!o_busy));
-				
-					if($past(enable)) begin
-						assert(o_busy);
-					end
-				end
-			end
-			
-			else begin  // Tx had not been enabled yet
+			if($past(shift_reg) == 0) begin
 				assert(!o_busy);
-				assert(serial_out == 1);
 			end
 		end
-    end
+
+		else if((!had_been_enabled) && ($past(had_been_enabled))) begin  // Tx finished transmission
+			assert(serial_out == 1);
+		
+			if(first_clock_passed) begin
+		    	assert(($past(o_busy)) && (!o_busy));
+			
+				if($past(enable)) begin
+					assert(o_busy);
+				end
+			end
+		end
+		
+		else begin  // Tx had not been enabled yet
+			assert(!o_busy);
+			assert(serial_out == 1);
+		end
+	end
 end
 
 always @(posedge clk)
@@ -308,9 +315,8 @@ begin
         assume(enable == 0);
     end
 	
-	if(!data_is_valid) begin
-		assume($past(i_data) == i_data);
-		assert($past(i_data) == i_data);
+	if((!data_is_valid) || ((!$past(data_is_valid)) && (data_is_valid))) begin
+		assume($past(i_data) == i_data);  // must not change until Rx and Tx data comparison is done
 	end
 end
 
@@ -323,7 +329,7 @@ begin
         assert(cnt < NUMBER_OF_BITS*CLOCKS_PER_BIT);
     end
 
-	if((!had_just_reset) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(transmission_had_started)) && ($past(baud_clk))) begin
+	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(transmission_had_started)) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end

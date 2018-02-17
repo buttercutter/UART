@@ -40,4 +40,13 @@ baud_generator bg (.clk(clk), .baud_clk(baud_clk));
 
 assign parity_bit = ^i_data; // even parity http://www.asic-world.com/examples/verilog/parity.html
 
+`ifdef FORMAL
+
+always @(posedge clk)
+begin
+	assert(parity_bit == ^i_data);  // for induction purpose
+end
+
+`endif
+
 endmodule
