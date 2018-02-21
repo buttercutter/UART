@@ -42,9 +42,24 @@ assign parity_bit = ^i_data; // even parity http://www.asic-world.com/examples/v
 
 `ifdef FORMAL
 
+reg first_clock_passed;
+
+initial first_clock_passed = 0;
+
+always @(posedge clk)
+begin
+	first_clock_passed <= 1;
+end
+
 always @(posedge clk)
 begin
 	assert(parity_bit == ^i_data);  // for induction purpose
+	
+	if(first_clock_passed) begin
+		if($past(i_data) == i_data) begin
+			assert($past(parity_bit) == parity_bit);  // for induction purpose
+		end
+	end
 end
 
 `endif

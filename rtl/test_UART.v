@@ -74,21 +74,21 @@ begin
 end
 
 
-wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location;
-assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one;
+assign stop_bit_location_plus_one = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
 
-wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
-wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_minus_one = stop_bit_location - 1;
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_two = stop_bit_location_plus_one + 1;
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location = stop_bit_location_plus_one - 1;
 
 always @(posedge clk)
 begin
 	assert(cnt < NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1);
-	assert(stop_bit_location < NUMBER_OF_BITS);
+	assert(stop_bit_location_plus_one < NUMBER_OF_BITS);
 	
 	if(first_clock_passed) begin
 		if($past(reset) == 0) begin 
 			if(cnt < NUMBER_OF_BITS) begin
-				assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
+				assert(stop_bit_location_plus_one == (NUMBER_OF_BITS - 1 - cnt));
 			end
 		end
 
@@ -127,7 +127,8 @@ begin
     end
 end
 
-integer index, Tx_shift_reg_index;  // for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
+// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
+integer index, data_index;
 
 always @(posedge clk)
 begin
@@ -167,21 +168,20 @@ begin
 				end
 				
 				assert(data_is_valid == 0);
+				assert(shift_reg[stop_bit_location_plus_two] == 1'b0);
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
-				assert(shift_reg[stop_bit_location] == 1'b0);
-				assert(shift_reg[stop_bit_location_minus_one] == 1'b1);
-				
-				Tx_shift_reg_index = NUMBER_OF_BITS - cnt + 1;
+				assert(shift_reg[stop_bit_location] == 1'b1);
 					
-				for(index=INPUT_DATA_WIDTH; index>0; index=index-1) begin
+				for(index = (INPUT_DATA_WIDTH - 1); index>=0; index=index-1) begin
 					
-					if(index <= Tx_shift_reg_index) begin
-						if(index == (stop_bit_location_minus_one-1)) begin
+					if(index < INPUT_DATA_WIDTH) begin  // for yosys hardware loop compilation purpose
+						if(index == (stop_bit_location - 1)) begin
 							assert(shift_reg[index] == (^i_data));
 						end
 						
-						else begin
-							assert(shift_reg[index] == i_data[INPUT_DATA_WIDTH-index]);
+						else if(index < (INPUT_DATA_WIDTH - 1)) begin
+							data_index = index + cnt;
+							assert(shift_reg[index] == i_data[data_index]);
 						end
 					end
 				end
