@@ -128,37 +128,12 @@ begin
     end
 end
 
-wire [(INPUT_DATA_WIDTH-1) : 0] i_data_index [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0];
+wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0] i_data_index [(INPUT_DATA_WIDTH-1) : 0];
 wire [(INPUT_DATA_WIDTH-1) : 0] Tx_shift_reg_assertion;
 
 wire UART_is_transmitting = ((cnt > 0) && (cnt < (NUMBER_OF_BITS-1)));
-
-
-// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
-genvar Tx_shift_reg_index;	
-	
-generate
-
-	for(Tx_shift_reg_index=(INPUT_DATA_WIDTH - 1); Tx_shift_reg_index >= 0; Tx_shift_reg_index=Tx_shift_reg_index-1) 
-	begin : assert_Tx_shift_reg_label
-	
-		assign i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt;	
-	
-		always @(posedge clk)
-		begin
-			if((transmission_had_started) && (UART_is_transmitting)) begin // during UART transmission
-				Tx_shift_reg_assertion[Tx_shift_reg_index] <= (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);
-
-				assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
-			end
-		end
-	end
-	
-endgenerate
-
-
-// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
-//integer Tx_shift_reg_index, i_data_index;	
+		
+integer Tx_shift_reg_index;	
 							
 always @(posedge clk)
 begin
@@ -191,7 +166,7 @@ begin
 				assert(o_busy == 1);
 			end
 			
-			else if((cnt > 0) && (cnt < (NUMBER_OF_BITS-1))) begin  // during UART transmission
+			else if((cnt > 0) && (cnt <= INPUT_DATA_WIDTH)) begin  // during UART data transmission
 				
 				if(state >= NUMBER_OF_RX_SYNCHRONIZERS) begin
 					assert((state-NUMBER_OF_RX_SYNCHRONIZERS) < Rx_STOP_BIT);
@@ -202,17 +177,30 @@ begin
 				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
 				assert(shift_reg[stop_bit_location] == 1'b1);
 				assert(shift_reg[parity_bit_location] == (^i_data));
-/*
+
+				// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
+
 				for(Tx_shift_reg_index=(INPUT_DATA_WIDTH - 1); Tx_shift_reg_index >= 0; Tx_shift_reg_index=Tx_shift_reg_index-1) 
 				begin : assert_Tx_shift_reg_label
 				
-					if(Tx_shift_reg_index < INPUT_DATA_WIDTH) begin
-						i_data_index = Tx_shift_reg_index + cnt;
-						assert(shift_reg[Tx_shift_reg_index] == i_data[i_data_index]);
+					if(Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt)) begin
+					
+						i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt;	
+
+						if((transmission_had_started) && (UART_is_transmitting)) begin
+							Tx_shift_reg_assertion[Tx_shift_reg_index] = (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);
+							
+							assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
+						end
 					end
 				end
-*/			
+					
 				assert(o_busy == 1);				
+			end
+			
+			else if(cnt == INPUT_DATA_WIDTH + 1) begin  // UART stop bit transmission
+				assert(serial_out == 1);  // stop bit
+				assert(o_busy == 1);
 			end
 
 			else if(cnt == (NUMBER_OF_BITS - 1)) begin // end of UART transmission
@@ -221,7 +209,7 @@ begin
 				assert(state < Rx_STOP_BIT);
 				assert(data_is_valid == 0);
 				assert(shift_reg == 0);
-				assert(serial_out == 1);   // stop bit
+				assert(serial_out == 1);   // default idle bit
 				
 				if($past(shift_reg) == 0) begin
 					assert(!o_busy);
