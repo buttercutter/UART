@@ -199,7 +199,7 @@ begin
 			end
 			
 			else if(cnt == INPUT_DATA_WIDTH + 1) begin  // UART stop bit transmission
-				assert(serial_out == 1);  // stop bit
+				assert(shift_reg == 1);  // stop bit
 				assert(o_busy == 1);
 			end
 
