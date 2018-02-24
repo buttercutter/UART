@@ -329,7 +329,7 @@ begin
         assume(enable == 0);
     end
 	
-	if((!data_is_valid) || ((!$past(data_is_valid)) && (data_is_valid))) begin
+	if((!data_is_valid) || ((!$past(data_is_valid)) && (data_is_valid)) || (state == Rx_STOP_BIT) || ((data_is_valid) && ($past(state) == Rx_STOP_BIT))) begin
 		assume($past(i_data) == i_data);  // must not change until Rx and Tx data comparison is done
 	end
 end
