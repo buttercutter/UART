@@ -56,7 +56,7 @@ localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock do
 localparam CLOCKS_PER_BIT = 8;
 
 reg had_been_enabled;   // a signal to latch Tx 'enable' signal
-reg[($clog2(NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
+reg[($clog2((2*NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of clock cycles incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg transmission_had_started; 
 reg first_clock_passed;
@@ -159,7 +159,7 @@ begin
     	else if(transmission_had_started) begin
 
 			if(cnt == 0) begin // start of UART transmission
-				assert(state < Rx_STOP_BIT);
+				assert(state == Rx_IDLE);
 				assert(data_is_valid == 0);
 				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});  // ^data is even parity bit
 				assert(serial_out == 0);   // start bit
@@ -235,7 +235,8 @@ begin
 					assert(data_is_valid == 0);
 					assert(serial_in == ^i_data);
 					assert(o_busy == 1);
-					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + state +  1)*CLOCKS_PER_BIT);					
+					assert(cnt == (NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + state +  1)*CLOCKS_PER_BIT);	
+					//assert(shift_reg == );				
 				end
 						
 				else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
