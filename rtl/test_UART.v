@@ -259,6 +259,7 @@ begin
     	    assert(cnt == 0);
     	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
+    	    assert(state == Rx_IDLE);
     	    
     	    if(!had_been_enabled) begin
 				if(first_clock_passed && ($past(cnt) == (NUMBER_OF_BITS - 1))) begin  // Tx had just finished
