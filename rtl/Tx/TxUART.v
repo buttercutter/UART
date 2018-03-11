@@ -10,7 +10,7 @@ parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 
 input clk, reset, baud_clk, enable;
-input[(INPUT_DATA_WIDTH+PARITY_ENABLED-1):0] i_data;
+input[(INPUT_DATA_WIDTH+PARITY_ENABLED-1):0] i_data;  // {parity_bit , data}
 output reg o_busy;      // busy signal for data source that Tx cannot accept data 
 output reg serial_out;  // serialized data
 
