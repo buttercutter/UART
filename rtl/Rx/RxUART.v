@@ -23,7 +23,7 @@ wire sampling_strobe; // determines when to sample the incoming Rx
 // synchronous detection of start bit (falling edge by UART definition)
 detect_start_bit dsb (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .start_detected(start_detected)
 `ifdef FORMAL
-	, .state(state), .sampling_strobe(sampling_strobe)
+	, .state(state)
 `endif
 );
 
