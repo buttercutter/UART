@@ -60,7 +60,6 @@ begin
     else begin
         if (sampling_strobe) begin
             case(state)
-	            Rx_IDLE 	: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
 
 	            Rx_START_BIT	: state <= Rx_DATA_BIT_0;
 
@@ -77,6 +76,15 @@ begin
 
 	            Rx_STOP_BIT 	: state <= Rx_IDLE;
 
+	            default      	: state <= Rx_IDLE;
+            endcase
+        end
+        
+        else begin   // start bit falling edge is detected every clock cycle for better Rx synchronization accuracy
+            case(state)
+            
+	            Rx_IDLE 		: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
+	            
 	            default      	: state <= Rx_IDLE;
             endcase
         end

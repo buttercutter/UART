@@ -107,7 +107,7 @@ begin
     end
 
 	else if(baud_clk) begin
-		if(transmission_had_started) begin
+		if(transmission_had_started | had_been_enabled) begin
 			cnt <= cnt + 1;
 		end
 		transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
