@@ -161,7 +161,7 @@ begin
 			if(cnt == 0) begin // start of UART transmission
 				assert(state == Rx_IDLE);
 				assert(data_is_valid == 0);
-				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});  // ^data is even parity bit
+				assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
 				assert(serial_out == 0);   // start bit
 				assert(o_busy == 1);
 			end
@@ -172,10 +172,7 @@ begin
 				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);
 								
 				assert(data_is_valid == 0);
-				assert(shift_reg[stop_bit_location_plus_two] == 1'b0);
-				assert(shift_reg[stop_bit_location_plus_one] == 1'b0);
-				assert(shift_reg[stop_bit_location] == 1'b1);
-				assert(shift_reg[parity_bit_location] == (^i_data));  // for parity bit
+				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});  // ^data is even parity bit	
 
 				// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
 
