@@ -1,21 +1,21 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Sun Mar 18 14:45:41 2018
+[*] Thu Mar 22 22:06:55 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.vcd"
-[dumpfile_mtime] "Sun Mar 18 09:46:38 2018"
-[dumpfile_size] 31666
+[dumpfile_mtime] "Thu Mar 22 22:06:33 2018"
+[dumpfile_size] 33003
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.gtkw"
-[timestart] 25
+[timestart] 36
 [size] 1212 805
-[pos] -303 177
+[pos] -232 133
 *-4.883663 90 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
 [treeopen] test_UART.uart.rx.rx.
 [treeopen] test_UART.uart.tx.
-[sst_width] 229
+[sst_width] 305
 [signals_width] 333
 [sst_expanded] 1
 [sst_vpaned_height] 238
@@ -29,7 +29,9 @@ test_UART.uart.tx.baud_clk
 test_UART.reset
 test_UART.enable
 test_UART.had_been_enabled
+@29
 test_UART.transmission_had_started
+test_UART.Tx_shift_reg_assertion[7:0]
 @25
 test_UART.cnt[7:0]
 @24

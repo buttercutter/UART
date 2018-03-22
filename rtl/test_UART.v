@@ -1,3 +1,5 @@
+`default_nettype none
+
 module test_UART(clk, reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
 parameter INPUT_DATA_WIDTH = 8;
@@ -73,23 +75,23 @@ begin
 	first_clock_passed <= 1;
 end
 
-
-wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one;
-assign stop_bit_location_plus_one = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
-
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_two = stop_bit_location_plus_one + 1;
-wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location = stop_bit_location_plus_one - 1;
+wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location;
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] parity_bit_location = stop_bit_location - 1;
+
+assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
+
 
 always @(posedge clk)
 begin
 	assert(cnt < NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1);
-	assert(stop_bit_location_plus_one < NUMBER_OF_BITS);
+	assert(stop_bit_location < NUMBER_OF_BITS);
 	
 	if(first_clock_passed) begin
 		if($past(reset) == 0) begin 
 			if(cnt < NUMBER_OF_BITS) begin
-				assert(stop_bit_location_plus_one == (NUMBER_OF_BITS - 1 - cnt));
+				assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
 			end
 		end
 
@@ -132,8 +134,41 @@ wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 
 wire [(INPUT_DATA_WIDTH-1) : 0] Tx_shift_reg_assertion;
 
 wire UART_is_transmitting = ((cnt > 0) && (cnt < (NUMBER_OF_BITS-1)));
+	
+// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
+
+generate
+	genvar Tx_shift_reg_index;	
+
+	for(Tx_shift_reg_index=(INPUT_DATA_WIDTH - 1); Tx_shift_reg_index >= 0; Tx_shift_reg_index=Tx_shift_reg_index-1) 
+	begin : assert_Tx_shift_reg_label
+
+		// predicate logic simplification
+		// if (A and B) assert(C); is the same as assert((!A) || (!B) || C);  
+
+		assign i_data_index[Tx_shift_reg_index] = (Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt)) ? (Tx_shift_reg_index + cnt - 1) : 0;
+
+		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (Tx_shift_reg_index > (INPUT_DATA_WIDTH-cnt)) || (!transmission_had_started) || (!UART_is_transmitting) ||(shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
 		
-integer Tx_shift_reg_index;	
+		always @(posedge clk) begin
+			assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
+		end
+		
+		/*
+		always @(*) begin
+			if(Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt)) begin
+			
+				i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt;	
+
+				if((transmission_had_started) && (UART_is_transmitting)) begin
+					Tx_shift_reg_assertion[Tx_shift_reg_index] = (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);
+					
+					assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
+				end
+			end
+		end*/
+	end
+endgenerate
 							
 always @(posedge clk)
 begin
@@ -172,25 +207,7 @@ begin
 				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);
 								
 				assert(data_is_valid == 0);
-				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});  // ^data is even parity bit	
-
-				// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
-
-				for(Tx_shift_reg_index=(INPUT_DATA_WIDTH - 1); Tx_shift_reg_index >= 0; Tx_shift_reg_index=Tx_shift_reg_index-1) 
-				begin : assert_Tx_shift_reg_label
-				
-					if(Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt)) begin
-					
-						i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt;	
-
-						if((transmission_had_started) && (UART_is_transmitting)) begin
-							Tx_shift_reg_assertion[Tx_shift_reg_index] = (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);
-							
-							assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
-						end
-					end
-				end
-					
+				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});  // ^data is even parity bit						
 				assert(o_busy == 1);				
 			end
 			
