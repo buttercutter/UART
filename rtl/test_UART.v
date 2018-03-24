@@ -143,12 +143,12 @@ generate
 	for(Tx_shift_reg_index=(INPUT_DATA_WIDTH - 1); Tx_shift_reg_index >= 0; Tx_shift_reg_index=Tx_shift_reg_index-1) 
 	begin : assert_Tx_shift_reg_label
 
-		// predicate logic simplification
+		// predicate logic simplification using deMorgan Therorem
 		// if (A and B) assert(C); is the same as assert((!A) || (!B) || C);  
 
 		assign i_data_index[Tx_shift_reg_index] = (Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt)) ? (Tx_shift_reg_index + cnt - 1) : 0;
 
-		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (Tx_shift_reg_index > (INPUT_DATA_WIDTH-cnt)) || (!transmission_had_started) || (!UART_is_transmitting_data_and_parity) ||(shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
+		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (!((Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt - 1)))) || (!transmission_had_started) || (!UART_is_transmitting_data_and_parity) ||(shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
 		
 		always @(posedge clk) begin
 			assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
