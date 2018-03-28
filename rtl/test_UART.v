@@ -27,7 +27,7 @@ output reg rx_error;
 output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 
 `ifdef FORMAL
-localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + PARITY_ENABLED + 2;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 `endif
 
@@ -133,9 +133,9 @@ end
 wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0] i_data_index [(INPUT_DATA_WIDTH-1) : 0];
 wire [(INPUT_DATA_WIDTH-1) : 0] Tx_shift_reg_assertion;
 
-wire UART_is_transmitting_data_and_parity = ((cnt > 1) && (cnt < (NUMBER_OF_BITS-1)));
+wire tx_shift_reg_contains_data_bits = ((transmission_had_started) && (cnt >= 1) && (cnt < (INPUT_DATA_WIDTH + 1)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
 	
-// for induction purpose, checks whether the Tx PISO shift_reg is shifting out correct data
+// for induction purpose, checks whether the Tx PISO shift_reg is shifting out all 'INPUT_DATA_WIDTH' data bits correctly
 
 generate
 	genvar Tx_shift_reg_index;	
@@ -146,21 +146,21 @@ generate
 		// predicate logic simplification using deMorgan Therorem
 		// if (A and B) assert(C); is the same as assert((!A) || (!B) || C);  
 
-		assign i_data_index[Tx_shift_reg_index] = (Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt)) ? (Tx_shift_reg_index + cnt - 1) : 0;
+		assign i_data_index[Tx_shift_reg_index] = (Tx_shift_reg_index <= (INPUT_DATA_WIDTH - cnt)) ? (Tx_shift_reg_index + cnt - 1) : (INPUT_DATA_WIDTH - 1);
 
-		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (!((Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt - 1)))) || (!transmission_had_started) || (!UART_is_transmitting_data_and_parity) ||(shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
+		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (!(Tx_shift_reg_index <= (INPUT_DATA_WIDTH - cnt))) || (!tx_shift_reg_contains_data_bits) || (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
 		
-		always @(posedge clk) begin
+		always @(posedge clk) begin 
 			assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
 		end
 		
 		/*
 		always @(*) begin
-			if(Tx_shift_reg_index < (INPUT_DATA_WIDTH - cnt - 1)) begin
+			if(Tx_shift_reg_index <= (INPUT_DATA_WIDTH - cnt)) begin
 			
-				i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt - 1;	
+				i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt + 1;	
 
-				if((transmission_had_started) && (UART_is_transmitting_data_and_parity)) begin
+				if(tx_shift_reg_contains_data_bits) begin
 					Tx_shift_reg_assertion[Tx_shift_reg_index] = (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);
 					
 					assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
@@ -193,6 +193,8 @@ begin
 
 		else if((!transmission_had_started) && (had_been_enabled)) begin // waiting for the start of UART transmission
 			assert(state == Rx_IDLE);
+			
+			assert(serial_out == 1);
 			assert(data_is_valid == 0);
 			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
 			assert(o_busy == 1);  
@@ -201,25 +203,38 @@ begin
 		else if(transmission_had_started) begin
 			if(cnt == 1) begin
 				assert(serial_out == 0);  // start bit
+				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});
 				assert(o_busy == 1);
 			end
 			
-			else if((cnt > 1) && (cnt <= INPUT_DATA_WIDTH)) begin  // during UART data bits and parity bit transmission
+			else if((cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1))) begin  // during UART data bits transmission
 				
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) <= Rx_PARITY_BIT);
+				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) < Rx_PARITY_BIT);					
 				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);
 								
 				assert(data_is_valid == 0);					
 				assert(o_busy == 1);				
 			end
 			
-			else if(cnt == INPUT_DATA_WIDTH + 1) begin  // UART stop bit transmission
+			else if(cnt <= (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)) begin  // during UART parity bit transmission
+			
+				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) <= Rx_PARITY_BIT);
+
+				assert(serial_out == (^i_data));
+				assert(shift_reg == 1);
+				assert(data_is_valid == 0);					
+				assert(o_busy == 1);				
+			end
+			
+			else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission
 				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
-				assert(shift_reg == 1);  // stop bit
+				
+				assert(serial_out == 1); // stop bit
+				assert(shift_reg == 0);  
 				assert(o_busy == 1);
 			end
 
-			else if(cnt == (NUMBER_OF_BITS - 1)) begin // end of UART transmission
+			else if(cnt == NUMBER_OF_BITS + 1) begin // end of UART transmission
 				had_been_enabled <= 0;
 			
 				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_IDLE);
