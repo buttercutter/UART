@@ -117,7 +117,7 @@ begin
 	
 	else begin
 	
-        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (cnt == (NUMBER_OF_BITS-1)))) begin
+        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (cnt == (NUMBER_OF_BITS + 1)))) begin
     	    cnt <= 0;  
 			transmission_had_started <= 0;
     	end
@@ -158,7 +158,7 @@ generate
 		always @(*) begin
 			if(Tx_shift_reg_index <= (INPUT_DATA_WIDTH - cnt)) begin
 			
-				i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt + 1;	
+				i_data_index[Tx_shift_reg_index] = Tx_shift_reg_index + cnt - 1;	
 
 				if(tx_shift_reg_contains_data_bits) begin
 					Tx_shift_reg_assertion[Tx_shift_reg_index] = (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);
@@ -218,7 +218,7 @@ begin
 			
 			else if(cnt <= (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)) begin  // during UART parity bit transmission
 			
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) <= Rx_PARITY_BIT);
+				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_PARITY_BIT);
 
 				assert(serial_out == (^i_data));
 				assert(shift_reg == 1);

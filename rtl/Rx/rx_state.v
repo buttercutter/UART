@@ -81,12 +81,9 @@ begin
         end
         
         else begin   // start bit falling edge is detected every clock cycle for better Rx synchronization accuracy
-            case(state)
-            
-	            Rx_IDLE 		: state <= (start_detected) ?  Rx_START_BIT : Rx_IDLE;
-	            
-	            default      	: state <= Rx_IDLE;
-            endcase
+        
+            if((state == Rx_IDLE) && (start_detected))
+	    	    state <= Rx_START_BIT;
         end
     end
 end
