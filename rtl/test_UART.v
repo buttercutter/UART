@@ -209,16 +209,16 @@ begin
 			
 			else if((cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1))) begin  // during UART data bits transmission
 				
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) < Rx_PARITY_BIT);					
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);
+				assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) < Rx_PARITY_BIT);					
+				assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);
 								
 				assert(data_is_valid == 0);					
 				assert(o_busy == 1);				
 			end
 			
-			else if(cnt <= (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)) begin  // during UART parity bit transmission
+			else if(cnt == (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)) begin  // during UART parity bit transmission
 			
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_PARITY_BIT);
+				assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_PARITY_BIT);
 
 				assert(serial_out == (^i_data));
 				assert(shift_reg == 1);
@@ -227,7 +227,7 @@ begin
 			end
 			
 			else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
+				assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
 				
 				assert(serial_out == 1); // stop bit
 				assert(shift_reg == 0);  
@@ -237,7 +237,7 @@ begin
 			else if(cnt == NUMBER_OF_BITS + 1) begin // end of UART transmission
 				had_been_enabled <= 0;
 			
-				assert((state + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_IDLE);
+				assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_IDLE);
 				assert(data_is_valid == 0);
 				assert(shift_reg == 0);
 				assert(serial_out == 1);   // default idle bit
