@@ -117,7 +117,7 @@ begin
 	
 	else begin
 	
-        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (cnt == (NUMBER_OF_BITS + 1)))) begin
+        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (cnt == NUMBER_OF_BITS))) begin
     	    cnt <= 0;  
 			transmission_had_started <= 0;
     	end
@@ -229,13 +229,21 @@ begin
 			else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
 				
+				had_been_enabled <= 0;
+				
 				assert(serial_out == 1); // stop bit
 				assert(shift_reg == 0);  
-				assert(o_busy == 1);
+				
+				if($past(shift_reg) == 1) begin
+					assert(o_busy);
+				end
+				
+				else begin
+					assert(!o_busy);
+				end
 			end
 
 			else if(cnt == NUMBER_OF_BITS + 1) begin // end of UART transmission
-				had_been_enabled <= 0;
 			
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_IDLE);
 				assert(data_is_valid == 0);
