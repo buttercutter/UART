@@ -7,11 +7,10 @@ input [(INPUT_DATA_WIDTH-1) : 0] received_data;
 output reg rx_error; // parity error indicator
 
 reg parity_value; // this is being computed from the received 8-bit data
-reg parity_bit;  // this bit is received directly through UART
+wire parity_bit;  // this bit is received directly through UART
 
 initial begin
 	parity_value = 0;
-	parity_bit = 0;
 	rx_error = 0;
 end
 
@@ -28,8 +27,9 @@ end
 
 always @(posedge clk)
 begin
-	parity_bit <= serial_in_synced;
 	parity_value <= ^(received_data);
 end
+
+assign parity_bit = serial_in_synced;
 
 endmodule
