@@ -347,11 +347,12 @@ begin
 		end
 
 		else if((!had_been_enabled) && ($past(had_been_enabled))) begin  // Tx finished transmission
-			assert($past(serial_out) == 1);
 		
 			if(first_clock_passed) begin
-		    	assert(($past(o_busy)) && (!o_busy));
-		    			
+				assert($past(serial_out) == 1);
+			
+				assert(($past(o_busy)) && (!o_busy));
+						
 				if($past(enable)) begin
 					assert(o_busy);
 				end
