@@ -124,14 +124,15 @@ begin
 
 	else if(baud_clk) begin
 		if(transmission_had_started | had_been_enabled) begin
-			cnt <= cnt + 1;
+			if(cnt < NUMBER_OF_BITS) cnt <= cnt + 1;
+			else cnt <= 0;
 		end
 		transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
 	end   
 	
 	else begin
 	
-        if((enable && (!had_been_enabled)) || ((transmission_had_started) && (cnt == NUMBER_OF_BITS + 1))) begin
+        if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;  
 			transmission_had_started <= 0;
     	end
@@ -194,7 +195,6 @@ begin
  
         if(enable && (!had_been_enabled)) begin           
     	    had_been_enabled <= 1;
-    	    assert(data_is_valid == 0);
     	    
     	    if($past(reset)) begin
     	    	assert(&shift_reg == 1);
@@ -241,7 +241,7 @@ begin
 			else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission which signifies the end of UART transmission
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
 				
-				if(baud_clk) had_been_enabled <= 0;
+				had_been_enabled <= 0;
 				
 				assert(serial_out == 1); // stop bit
 				
@@ -295,9 +295,7 @@ begin
     	    
     	else begin  // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
     	    assert(cnt == 0);
-    	    assert(data_is_valid == 0);
     	    assert(serial_out == 1);
-    	    assert(state == Rx_IDLE);
     	    
     	    if(!had_been_enabled) begin
 				if(first_clock_passed && ($past(cnt) == (NUMBER_OF_BITS - 1))) begin  // Tx had just finished
