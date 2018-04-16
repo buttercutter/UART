@@ -138,11 +138,13 @@ begin
     	end
     end
     
-    if(first_clock_passed) begin
-    	if(($past(had_been_enabled)) && ($past(baud_clk)) && (!reset) && !($past(reset)) && !($past(transmission_had_started))) begin
-	   		assert(transmission_had_started);
-	   	end
-    end
+    if((first_clock_passed) && ($past(had_been_enabled)) && ($past(baud_clk)) && (!reset) && !($past(reset)) && !($past(transmission_had_started))) begin
+		assert(transmission_had_started);
+	end
+	   	
+	else begin
+		assert(!transmission_had_started);
+	end
 end
 
 wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0] i_data_index [(INPUT_DATA_WIDTH-1) : 0];
@@ -209,9 +211,7 @@ begin
 			assert(serial_out == 1);
 			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
 			
-			if($past(baud_clk)) assert(o_busy == 1);
-
-			else assert(!o_busy);
+			assert(o_busy == 1);
 		end
 
 		else if(transmission_had_started) begin
@@ -362,6 +362,7 @@ begin
 		end
 		
 		else begin  // Tx had not been enabled yet
+			assert(cnt == 0);
 			assert(!o_busy);
 			assert(serial_out == 1);
 		end
