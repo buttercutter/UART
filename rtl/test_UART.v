@@ -210,6 +210,8 @@ begin
 			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
 			
 			if($past(baud_clk)) assert(o_busy == 1);
+
+			else assert(!o_busy);
 		end
 
 		else if(transmission_had_started) begin
@@ -269,8 +271,10 @@ begin
 				end
 			end
 			
-			else begin // if(cnt > (NUMBER_OF_BITS + 1)) begin  // UART Rx internal states
+			else begin  // UART Rx internal states
 				
+				assert(cnt == 0);  // cnt gets reset to zero
+
 				if(state == Rx_START_BIT) begin
 					assert(data_is_valid == 0);
 					assert(serial_in_synced == 0);				
