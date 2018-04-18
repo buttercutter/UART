@@ -324,6 +324,7 @@ begin
 
 				else begin  // Tx is waiting to be enabled for the first time
 					assert(&shift_reg == 1);
+					assert(state == Rx_IDLE);  // rx is idle too since this is a loopback
 				end
     	    end
     	end
@@ -386,7 +387,7 @@ begin
 
     if(data_is_valid) begin   // state == Rx_STOP_BIT
         assert(received_data == i_data);
-        assert(cnt < NUMBER_OF_BITS*CLOCKS_PER_BIT);
+        assert(cnt <= NUMBER_OF_BITS);
     end
 
 	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(transmission_had_started)) && ($past(baud_clk))) begin
