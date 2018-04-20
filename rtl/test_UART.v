@@ -72,15 +72,15 @@ localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock do
 localparam CLOCKS_PER_BIT = 8;
 
 reg had_been_enabled;   // a signal to latch Tx 'enable' signal
-reg[($clog2((2*NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of transmitter clock cycles (baud_clk) incurred between assertion of 'transmission_had_started' signal from Tx and assertion of 'data_is_valid' signal from Rx
+reg[($clog2((2*NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of transmitter clock cycles (baud_clk) incurred between assertion of 'tx_in_progress' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
-reg transmission_had_started; 
+reg tx_in_progress; 
 reg first_clock_passed;
 
 initial begin
 	had_been_enabled = 0;  
 	cnt = 0;
-	transmission_had_started = 0;
+	tx_in_progress = 0;
 	first_clock_passed = 0;
 end
 
@@ -119,38 +119,38 @@ always @(posedge clk)
 begin
     if(reset) begin
         cnt <= 0;
-		transmission_had_started <= 0;
+		tx_in_progress <= 0;
     end
 
 	else if(baud_clk) begin
-		if(transmission_had_started | had_been_enabled) begin
+		if(tx_in_progress | had_been_enabled) begin
 			if(cnt < NUMBER_OF_BITS) cnt <= cnt + 1;
 			else cnt <= 0;
 		end
-		transmission_had_started <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
+		tx_in_progress <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
 	end   
 	
 	else begin
 	
         if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;  
-			transmission_had_started <= 0;
+			tx_in_progress <= 0;
     	end
     end
     
-    if((first_clock_passed) && (($past(transmission_had_started) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(transmission_had_started)))) begin
-		assert(transmission_had_started);
+    if((first_clock_passed) && (($past(tx_in_progress) && !($past(had_been_enabled)) && !($past(reset))) || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled))
+		assert(tx_in_progress);
 	end
 	   	
 	else begin
-		assert(!transmission_had_started);
+		assert(!tx_in_progress);
 	end
 end
 
 wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0] i_data_index [(INPUT_DATA_WIDTH-1) : 0];
 wire [(INPUT_DATA_WIDTH-1) : 0] Tx_shift_reg_assertion;
 
-wire tx_shift_reg_contains_data_bits = ((transmission_had_started) && (cnt >= 1) && (cnt < (INPUT_DATA_WIDTH + 1)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
+wire tx_shift_reg_contains_data_bits = ((tx_in_progress) && (cnt >= 1) && (cnt < (INPUT_DATA_WIDTH + 1)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
 	
 // for induction purpose, checks whether the Tx PISO shift_reg is shifting out all 'INPUT_DATA_WIDTH' data bits correctly
 
@@ -206,7 +206,7 @@ begin
 	    	assert(o_busy == 0);
         end
 
-		else if((!transmission_had_started) && (had_been_enabled)) begin // waiting for the start of UART transmission
+		else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
 			
 			assert(serial_out == 1);
 			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
@@ -214,7 +214,7 @@ begin
 			assert(o_busy == 1);
 		end
 
-		else if(transmission_had_started) begin
+		else if(tx_in_progress) begin
 			if(cnt == 1) begin
 				assert(serial_out == 0);  // start bit
 				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});
@@ -392,7 +392,7 @@ begin
         assert(cnt <= NUMBER_OF_BITS);
     end
 
-	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (transmission_had_started) && ($past(transmission_had_started)) && ($past(baud_clk))) begin
+	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end
