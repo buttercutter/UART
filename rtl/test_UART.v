@@ -138,7 +138,7 @@ begin
     	end
     end
     
-    if((first_clock_passed) && ($past(had_been_enabled)) && ($past(baud_clk)) && (!reset) && !($past(reset)) && !($past(transmission_had_started))) begin
+    if((first_clock_passed) && (($past(transmission_had_started) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(transmission_had_started)))) begin
 		assert(transmission_had_started);
 	end
 	   	
@@ -302,7 +302,7 @@ begin
     	    assert(serial_out == 1);
     	    
     	    if(!had_been_enabled) begin
-				if(first_clock_passed && ($past(cnt) == (NUMBER_OF_BITS - 1))) begin  // Tx had just finished
+				if(first_clock_passed && ($past(cnt) == NUMBER_OF_BITS)) begin  // Tx had just finished
 					if($past(reset)) begin
 						assert(&shift_reg == 1);
 					end					
@@ -320,6 +320,8 @@ begin
 					else begin
 						assert(shift_reg == 0);
 					end
+					
+					assert($past(state) == Rx_IDLE);
 				end
 
 				else begin  // Tx is waiting to be enabled for the first time
