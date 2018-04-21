@@ -150,7 +150,7 @@ end
 wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0] i_data_index [(INPUT_DATA_WIDTH-1) : 0];
 wire [(INPUT_DATA_WIDTH-1) : 0] Tx_shift_reg_assertion;
 
-wire tx_shift_reg_contains_data_bits = ((tx_in_progress) && (cnt >= 1) && (cnt < (INPUT_DATA_WIDTH + 1)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
+wire tx_shift_reg_contains_data_bits = ((tx_in_progress) && (cnt >= 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
 	
 // for induction purpose, checks whether the Tx PISO shift_reg is shifting out all 'INPUT_DATA_WIDTH' data bits correctly
 
@@ -281,7 +281,7 @@ begin
 				end
 
 				else if((state > Rx_START_BIT) && (state < Rx_PARITY_BIT)) begin // data bits
-					assert(data_is_valid == 1);				
+					assert(data_is_valid == 0);				
 				end
 	
 				else if(state == Rx_PARITY_BIT) begin
@@ -296,6 +296,8 @@ begin
 						assert(data_is_valid == 1);
 						assert(serial_in_synced == 1);
 					end
+					
+					else assert(data_is_valid == 0);
 				end
 			end
     	end
