@@ -134,11 +134,11 @@ begin
 	
         if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;  
-			tx_in_progress <= 0;
+			//tx_in_progress <= 0;
     	end
     end
     
-    if((first_clock_passed) && (($past(tx_in_progress) && !($past(had_been_enabled)) && !($past(reset))) || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled))
+    if((first_clock_passed) && (!($past(baud_clk)) && ($past(tx_in_progress) && !($past(had_been_enabled)) && !($past(reset))) || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
 		assert(tx_in_progress);
 	end
 	   	
@@ -291,8 +291,11 @@ begin
 						
 				else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 					assert(state == Rx_STOP_BIT);
-					assert(data_is_valid == 1);
-					assert(serial_in_synced == 1);
+					
+					if(($past(state) == Rx_STOP_BIT) && (state == Rx_STOP_BIT)) begin
+						assert(data_is_valid == 1);
+						assert(serial_in_synced == 1);
+					end
 				end
 			end
     	end
@@ -321,7 +324,13 @@ begin
 						assert(shift_reg == 0);
 					end
 					
-					assert($past(state) == Rx_IDLE);
+					if($past(baud_clk, NUMBER_OF_RX_SYNCHRONIZERS) || ($past(state) == Rx_IDLE) || $past(reset)) begin
+						assert(state == Rx_IDLE);
+					end
+					
+					else begin
+						assert(($past(state) == Rx_STOP_BIT) && (state == Rx_STOP_BIT));
+					end
 				end
 
 				else begin  // Tx is waiting to be enabled for the first time
