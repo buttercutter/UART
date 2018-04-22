@@ -1,0 +1,34 @@
+[*]
+[*] GTKWave Analyzer v3.3.89 (w)1999-2018 BSI
+[*] Sun Apr 22 03:52:48 2018
+[*]
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.vcd"
+[dumpfile_mtime] "Sun Apr 22 03:52:27 2018"
+[dumpfile_size] 5379653
+[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.gtkw"
+[timestart] 0
+[size] 1920 995
+[pos] -1 -1
+*-17.148134 730425 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] UART_tb.
+[treeopen] UART_tb.dut.
+[treeopen] UART_tb.dut.uart.
+[sst_width] 229
+[signals_width] 259
+[sst_expanded] 1
+[sst_vpaned_height] 278
+@28
+UART_tb.dut.clk
+UART_tb.dut.data_is_valid
+UART_tb.dut.enable
+UART_tb.dut.i_data[7:0]
+UART_tb.dut.o_busy
+@29
+UART_tb.dut.received_data[7:0]
+@28
+UART_tb.dut.reset
+UART_tb.dut.rx_error
+UART_tb.dut.serial_in
+UART_tb.dut.serial_out
+[pattern_trace] 1
+[pattern_trace] 0
