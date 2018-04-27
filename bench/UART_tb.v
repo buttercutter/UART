@@ -1,7 +1,7 @@
 module UART_tb;
 
 	parameter CLK_PERIOD_HALF = 5;
-	parameter NUM_OF_CLK = 1000000;
+	parameter NUM_OF_CLK = 1200000;
 	parameter INPUT_DATA_WIDTH = 8;
 
 	reg clk, reset, enable;

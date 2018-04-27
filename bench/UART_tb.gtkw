@@ -1,34 +1,60 @@
 [*]
 [*] GTKWave Analyzer v3.3.89 (w)1999-2018 BSI
-[*] Sun Apr 22 03:52:48 2018
+[*] Fri Apr 27 16:34:47 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.vcd"
-[dumpfile_mtime] "Sun Apr 22 03:52:27 2018"
-[dumpfile_size] 5379653
+[dumpfile_mtime] "Fri Apr 27 16:34:43 2018"
+[dumpfile_size] 6497534
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.gtkw"
 [timestart] 0
 [size] 1920 995
 [pos] -1 -1
-*-17.148134 730425 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.253515 320795 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] UART_tb.
 [treeopen] UART_tb.dut.
 [treeopen] UART_tb.dut.uart.
-[sst_width] 229
-[signals_width] 259
-[sst_expanded] 1
+[treeopen] UART_tb.dut.uart.rx.
+[treeopen] UART_tb.dut.uart.tx.
+[sst_width] 51
+[signals_width] 278
+[sst_expanded] 0
 [sst_vpaned_height] 278
 @28
 UART_tb.dut.clk
-UART_tb.dut.data_is_valid
+UART_tb.dut.reset
+UART_tb.dut.uart.tx.baud_clk
 UART_tb.dut.enable
 UART_tb.dut.i_data[7:0]
-UART_tb.dut.o_busy
 @29
+UART_tb.dut.uart.tx.tx.shift_reg[10:0]
+@28
+UART_tb.dut.o_busy
+UART_tb.dut.serial_out
+UART_tb.dut.serial_in
+UART_tb.dut.uart.rx.cp.serial_in_synced
+UART_tb.dut.data_is_valid
+@c00028
 UART_tb.dut.received_data[7:0]
 @28
-UART_tb.dut.reset
+(0)UART_tb.dut.received_data[7:0]
+(1)UART_tb.dut.received_data[7:0]
+(2)UART_tb.dut.received_data[7:0]
+(3)UART_tb.dut.received_data[7:0]
+(4)UART_tb.dut.received_data[7:0]
+(5)UART_tb.dut.received_data[7:0]
+(6)UART_tb.dut.received_data[7:0]
+(7)UART_tb.dut.received_data[7:0]
+@1401200
+-group_end
+@28
+UART_tb.dut.uart.rx.rx.sampling_strobe
 UART_tb.dut.rx_error
-UART_tb.dut.serial_in
-UART_tb.dut.serial_out
+UART_tb.dut.uart.rx.cp.is_parity_stage
+UART_tb.dut.uart.rx.cp.parity_bit
+UART_tb.dut.uart.rx.cp.parity_value
+UART_tb.dut.uart.rx.rx.start_detected
+UART_tb.dut.uart.rx.rx.data_is_available
+@22
+UART_tb.dut.uart.rx.rx.state[3:0]
 [pattern_trace] 1
 [pattern_trace] 0

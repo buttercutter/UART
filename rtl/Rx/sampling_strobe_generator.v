@@ -4,7 +4,7 @@ input clk, start_detected;
 output reg sampling_strobe;
 
 `ifdef FORMAL
-    parameter CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equivalently 1/600MHz divided by 1/48MHz
+    parameter CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equivalently 1/600Hz divided by 1/48MHz
 `else
     parameter CLOCKS_PER_BIT = 5000; // number of system clock in one UART bit, or equivalently 1/9600Hz divided by 1/48MHz
 `endif

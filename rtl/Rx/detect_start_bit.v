@@ -1,17 +1,12 @@
-module detect_start_bit(clk, reset, serial_in_synced, start_detected
-`ifdef FORMAL
-	, state
-`endif
-); // just (a falling edge detector + a counter) to detect UART start bit correctly
+module detect_start_bit(clk, reset, serial_in_synced, start_detected, state); // just (a falling edge detector + a counter) to detect UART start bit correctly
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
+
 localparam ALL_BITS_RECEIVED = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+localparam Rx_IDLE = 4'b0000;
 
-`ifdef FORMAL
 input [($clog2(ALL_BITS_RECEIVED)-1) : 0] state;
-`endif
-
 input clk, reset, serial_in_synced;
 output reg start_detected; 
 
@@ -32,7 +27,7 @@ begin
 	end
 	
 	else begin
-		if(falling_edge) begin  // (start bit) 
+		if(falling_edge && (state == Rx_IDLE)) begin  // (start bit) 
 			start_detected <= 1;
 		end
 		
