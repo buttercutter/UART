@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.89 (w)1999-2018 BSI
-[*] Sat Apr 28 01:07:30 2018
+[*] Sat Apr 28 07:11:06 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.vcd"
-[dumpfile_mtime] "Sat Apr 28 01:06:37 2018"
-[dumpfile_size] 6497513
+[dumpfile_mtime] "Sat Apr 28 06:51:02 2018"
+[dumpfile_size] 6497585
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.gtkw"
-[timestart] 320503
+[timestart] 0
 [size] 1920 995
 [pos] -1 -1
-*-6.253515 320775 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.253515 320795 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] UART_tb.
 [treeopen] UART_tb.dut.
 [treeopen] UART_tb.dut.uart.
@@ -28,12 +28,11 @@ UART_tb.dut.i_data[7:0]
 UART_tb.dut.uart.tx.tx.shift_reg[10:0]
 UART_tb.dut.o_busy
 UART_tb.dut.serial_out
-@29
 UART_tb.dut.uart.rx.sync.serial_in
 UART_tb.dut.uart.rx.sync.serial_in_reg
 UART_tb.dut.uart.rx.sync.serial_in_reg2
 UART_tb.dut.uart.rx.sync.serial_in_synced
-@28
+@29
 UART_tb.dut.data_is_valid
 @c00028
 UART_tb.dut.received_data[7:0]
@@ -48,17 +47,15 @@ UART_tb.dut.received_data[7:0]
 (7)UART_tb.dut.received_data[7:0]
 @1401200
 -group_end
-@29
-UART_tb.dut.uart.rx.rx.sampling_strobe
 @28
+UART_tb.dut.uart.rx.rx.sampling_strobe
 UART_tb.dut.rx_error
 UART_tb.dut.uart.rx.cp.is_parity_stage
 UART_tb.dut.uart.rx.cp.parity_bit
 UART_tb.dut.uart.rx.cp.parity_value
 UART_tb.dut.uart.rx.rx.start_detected
-@29
 UART_tb.dut.uart.rx.rx.data_is_available
-@23
+@22
 UART_tb.dut.uart.rx.rx.state[3:0]
 [pattern_trace] 1
 [pattern_trace] 0

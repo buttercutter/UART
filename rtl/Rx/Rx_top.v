@@ -22,7 +22,7 @@ wire serial_in_synced;
 wire sampling_strobe;
 
 // 3 flip-flop synchronizer
-synchronizer sync (.clk(sampling_strobe), .reset(reset), .serial_in(serial_in), .serial_in_synced(serial_in_synced));
+synchronizer sync (.clk(clk), .sampling_strobe(sampling_strobe), .reset(reset), .serial_in(serial_in), .serial_in_synced(serial_in_synced));
 
 // determines when to sample data
 RxUART rx (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .received_data(received_data), .sampling_strobe(sampling_strobe)
@@ -32,6 +32,6 @@ RxUART rx (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .data_
 );
 
 // even parity check
-check_parity cp (.clk(sampling_strobe), .reset(reset), .serial_in_synced(serial_in_synced), .received_data(received_data), .is_parity_stage(is_parity_stage), .rx_error(rx_error));
+check_parity cp (.clk(clk), .sampling_strobe(sampling_strobe), .reset(reset), .serial_in_synced(serial_in_synced), .received_data(received_data), .is_parity_stage(is_parity_stage), .rx_error(rx_error));
 
 endmodule
