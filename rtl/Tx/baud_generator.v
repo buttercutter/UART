@@ -20,8 +20,15 @@ initial cnt = 0;
 
 always @(posedge clk)
 begin
-    ck_stb <= (cnt == (CLOCKS_PER_BIT - 1)); 
-    cnt <= cnt + 1;
+	if(cnt == (CLOCKS_PER_BIT - 1)) begin
+    	ck_stb <= 1; 
+    	cnt <= 0;
+    end
+    
+    else begin
+    	ck_stb <= 0; 
+    	cnt <= cnt + 1;
+    end
 end
 
 assign baud_clk = ck_stb;

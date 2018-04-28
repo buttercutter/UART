@@ -27,9 +27,7 @@ end
 
 always @(posedge clk)
 begin
-	if(sampling_strobe) begin 
-		parity_value <= ^(received_data);
-	end
+	parity_value <= ^(received_data);
 end
 
 assign parity_bit = serial_in_synced;
