@@ -41,7 +41,7 @@ begin
 	else begin
     	data_is_valid <= (state == Rx_STOP_BIT);  // so as to align with rx_error
     	is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
-    	data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // data states
+    	data_is_available <= (sampling_strobe && (state == Rx_START_BIT)) || ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // data states
     end
 end
 
