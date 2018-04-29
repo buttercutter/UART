@@ -240,7 +240,7 @@ begin
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) < Rx_PARITY_BIT);					
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);		
 				
-				assert(data_is_valid == 0);					
+				//assert(data_is_valid == 0);					
 				assert(o_busy == 1);				
 			end
 			
@@ -250,7 +250,7 @@ begin
 
 				assert(serial_out == (^i_data));
 				assert(shift_reg == 1);
-				assert(data_is_valid == 0);					
+				//assert(data_is_valid == 0);					
 				assert(o_busy == 1);				
 			end
 			
