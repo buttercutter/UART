@@ -1,7 +1,7 @@
 `default_nettype none
 
 // for connecting Tx and Rx together
-`define LOOPBACK 1
+//`define LOOPBACK 1
 
 module test_UART(clk, reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
@@ -340,12 +340,12 @@ begin
 						assert(shift_reg == 0);
 					end
 					
-					if($past(baud_clk, NUMBER_OF_RX_SYNCHRONIZERS) || ($past(state) == Rx_IDLE) || $past(reset)) begin
+					if(($past(state) == Rx_IDLE) || $past(reset)) begin
 						assert(state == Rx_IDLE);
 					end
 					
 					else begin
-						assert(($past(state) == Rx_STOP_BIT) && (state == Rx_STOP_BIT));
+						assert(state != Rx_START_BIT);
 					end
 				end
 

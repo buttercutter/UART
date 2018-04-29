@@ -27,24 +27,38 @@ initial begin
 end
 
 `ifdef FORMAL
+
+parameter CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equivalently 1/600kHz divided by 1/48MHz
+
 reg first_clock_passed = 0;
+reg had_reset = 0;  // this signal is for checking if reset signal gets asserted in between two sampling_strobe pulses
 
 always @(posedge clk)	first_clock_passed <= 1;
 
 
 always @(posedge clk)
 begin
-	if(reset) begin
+	if(first_clock_passed && $past(reset)) begin
+		had_reset <= 1;
+	
 		assert(serial_in_reg == 1);
 		assert(serial_in_reg2 == 1);
 		assert(serial_in_synced == 1);
 	end
 	
-	else if(sampling_strobe) begin
-		if(first_clock_passed) begin
+	else if(first_clock_passed && sampling_strobe) begin
+		if(!had_reset) begin // reset signal gets asserted in between two sampling_strobe pulses
 			// for induction
-			assert(serial_in_reg == $past(serial_in)); 
-	 		assert(serial_in_reg2 == $past(serial_in_reg));
+			assert(serial_in_reg == $past(serial_in, CLOCKS_PER_BIT)); 
+	 		assert(serial_in_reg2 == $past(serial_in_reg, CLOCKS_PER_BIT));
+	 	end
+	 	
+	 	else begin
+	 		had_reset <= 0; 
+	 	
+			assert(serial_in_reg == 1);
+			assert(serial_in_reg2 == 1);
+			assert(serial_in_synced == 1);	 	
 	 	end
 	end
 end
