@@ -32,31 +32,18 @@ output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 `ifdef FORMAL
 localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + PARITY_ENABLED + 2;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
+wire serial_in_synced, start_detected;
 `endif
 
 UART uart(.clk(clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
-	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg)
+	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected)
 `endif
 );
 
 assign serial_in = serial_out; // tx goes to rx, so that we know that our UART works at least in terms of logic-wise
 
 `ifdef FORMAL
-
-wire serial_in_reg, serial_in_reg2, serial_in_synced;
-
-initial begin
-	serial_in_reg = 0;
-	serial_in_reg2 = 0;
-	serial_in_synced = 0;
-end
-
-always @(posedge clk) begin
-	serial_in_reg <= serial_in;
-	serial_in_reg2 <= serial_in_reg;
-	serial_in_synced <= serial_in_reg2;
-end
 
 localparam Rx_IDLE       = 4'b0000;
 localparam Rx_START_BIT  = 4'b0001;
@@ -325,8 +312,8 @@ begin
     	    assert(cnt == 0);
     	    assert(serial_out == 1);
     	    
-    	    if(!had_been_enabled) begin
-				if(first_clock_passed && ($past(cnt) == NUMBER_OF_BITS)) begin  // Tx had just finished
+    	    if(!had_been_enabled && first_clock_passed) begin
+				if($past(cnt) == NUMBER_OF_BITS) begin  // Tx had just finished
 					if($past(reset)) begin
 						assert(&shift_reg == 1);
 					end					
@@ -336,7 +323,7 @@ begin
 					end
 				end
 
-				else if(first_clock_passed && ($past(shift_reg) == 0)) begin  // Tx is waiting to be enabled again after a transmission
+				else if($past(shift_reg) == 0) begin  // Tx is waiting to be enabled again after a transmission
 					if($past(reset)) begin
 						assert(&shift_reg == 1);
 					end
@@ -345,7 +332,7 @@ begin
 						assert(shift_reg == 0);
 					end
 					
-					if(($past(state) == Rx_IDLE) || $past(reset)) begin
+					if((($past(state) == Rx_IDLE) && !$past(start_detected)) || $past(reset)) begin
 						assert(state == Rx_IDLE);
 					end
 					
@@ -356,7 +343,14 @@ begin
 
 				else begin  // Tx is waiting to be enabled for the first time
 					assert(&shift_reg == 1);
-					assert(state == Rx_IDLE);  // rx is idle too since this is a loopback
+					
+					if(($past(state) == Rx_IDLE) && $past(start_detected) && !$past(reset)) begin
+						assert(state == Rx_START_BIT);
+					end
+					
+					else begin
+						assert(state == Rx_IDLE);  // rx is idle too since this is a loopback
+					end
 				end
     	    end
     	end
@@ -365,13 +359,13 @@ end
 
 always @(posedge clk)
 begin	
-	if(!$past(reset) && $past(baud_clk)) begin
+	if(!$past(reset) && $past(baud_clk) && first_clock_passed) begin
 		if((had_been_enabled) && (!$past(had_been_enabled))) begin  // Tx starts transmission now
 			assert(!$past(o_busy));
 			assert(o_busy);  
 		end
 
-		else if(((had_been_enabled) && ($past(had_been_enabled))) || tx_in_progress) begin  // Tx is in the midst of transmission
+		else if(((had_been_enabled) && ($past(had_been_enabled))) || $past(tx_in_progress)) begin  // Tx is in the midst of transmission
 			if(($past(shift_reg) == 0) && (shift_reg == 0)) begin
 				assert(!o_busy);
 			end

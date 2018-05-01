@@ -1,7 +1,8 @@
 module rx_state(clk, reset, start_detected, sampling_strobe, data_is_available, data_is_valid, is_parity_stage, state);  // FSM for UART Rx
 
 parameter INPUT_DATA_WIDTH = 8;
-localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
+parameter PARITY_ENABLED = 1;
+localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + PARITY_ENABLED + 2;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 
 input clk, reset, start_detected, sampling_strobe;
 output reg data_is_available;   // in data states

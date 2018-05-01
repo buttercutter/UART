@@ -1,6 +1,6 @@
 module Rx_top(clk, reset, serial_in, received_data, rx_error, data_is_valid
 `ifdef FORMAL
-	, state
+	, state, serial_in_synced, start_detected
 `endif
 );  // serial input, parallel output
 
@@ -14,6 +14,8 @@ output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 `ifdef FORMAL
 localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 output [($clog2(NUMBER_OF_BITS)-1) : 0] state;
+output serial_in_synced;
+output start_detected;
 `endif
 
 wire data_is_available;
@@ -27,7 +29,7 @@ synchronizer sync (.clk(clk), .sampling_strobe(sampling_strobe), .reset(reset), 
 // determines when to sample data
 RxUART rx (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .received_data(received_data), .sampling_strobe(sampling_strobe)
 `ifdef FORMAL
-	, .state(state)
+	, .state(state), .start_detected(start_detected)
 `endif
 );
 

@@ -1,6 +1,6 @@
 module RxUART(clk, reset, serial_in_synced, data_is_available, data_is_valid, is_parity_stage, received_data, sampling_strobe
 `ifdef FORMAL
-	, state
+	, state, start_detected
 `endif
 );  // manages UART Rx deserializer-related control signal
 
@@ -16,6 +16,7 @@ output sampling_strobe; // determines when to sample the incoming Rx
 
 `ifdef FORMAL
 output [($clog2(NUMBER_OF_BITS)-1) : 0] state;
+output start_detected;
 `endif
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;
