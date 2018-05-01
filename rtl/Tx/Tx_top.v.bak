@@ -15,7 +15,7 @@ input enable;     // this 'enable transmission' signal is active HIGH
 input[(INPUT_DATA_WIDTH-1):0] i_data; 	// parallel input
 
 output serial_out;  // serial output from serializer (TxUART)
-output o_busy;	// busy transmitting
+output reg o_busy;	// busy transmitting
 
 `ifdef FORMAL
 	output baud_clk;  // default 9600bps baudrate clock

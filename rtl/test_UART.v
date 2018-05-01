@@ -289,7 +289,12 @@ begin
 				
 				assert(cnt == 0);  // cnt gets reset to zero
 
-				if(state == Rx_START_BIT) begin
+				if(state == Rx_IDLE) begin
+					assert(data_is_valid == 0);
+					assert(serial_in_synced == 1);				
+				end
+
+				else if(state == Rx_START_BIT) begin
 					assert(data_is_valid == 0);
 					assert(serial_in_synced == 0);				
 				end
@@ -366,7 +371,7 @@ begin
 			assert(o_busy);  
 		end
 
-		else if((had_been_enabled) && ($past(had_been_enabled))) begin  // Tx is in the midst of transmission
+		else if(((had_been_enabled) && ($past(had_been_enabled))) || tx_in_progress) begin  // Tx is in the midst of transmission
 			if(($past(shift_reg) == 0) && (shift_reg == 0)) begin
 				assert(!o_busy);
 			end
