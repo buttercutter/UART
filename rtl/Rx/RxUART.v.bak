@@ -8,9 +8,9 @@ parameter INPUT_DATA_WIDTH = 8;
 localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 
 input clk, reset, serial_in_synced;
-output data_is_available; // if asserted HIGH, it is ok to sample the serial_in
-output data_is_valid;   // all 8-bit data have been sampled, please note that valid does not mean no data corruption
-output is_parity_stage; // is the parity bit being received now ?
+output reg data_is_available; // if asserted HIGH, it is ok to sample the serial_in
+output reg data_is_valid;   // all 8-bit data have been sampled, please note that valid does not mean no data corruption
+output reg is_parity_stage; // is the parity bit being received now ?
 output [(INPUT_DATA_WIDTH-1):0]received_data;   // deserialized data
 output sampling_strobe; // determines when to sample the incoming Rx
 
