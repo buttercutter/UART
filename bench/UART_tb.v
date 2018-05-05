@@ -1,7 +1,7 @@
 module UART_tb;
 
 	parameter CLK_PERIOD_HALF = 5;
-	parameter NUM_OF_CLK = 800000;
+	parameter NUM_OF_CLK = 1800000;
 	parameter INPUT_DATA_WIDTH = 8;
 
 	reg clk, reset, enable;
@@ -35,14 +35,15 @@ module UART_tb;
 		$dumpfile("UART_tb.vcd");
 		$dumpvars;
 		
-    	@(posedge clk); 
-    	enable <= 1;
-    	i_data <= 'b10100011;
-    	
-    	@(posedge clk); 
-    	enable <= 0;
+		@(posedge clk);
+    	i_data = 'b10100011;
 		
 		#(NUM_OF_CLK) $finish;
 	end
+	
+	always @(posedge clk)
+	begin
+    	enable <= 1;
+    end
 	
 endmodule
