@@ -13,7 +13,7 @@ begin
 		serial_in_synced <= 1; // third FF
 	end
 	
-	else if(sampling_strobe) begin
+	else begin
 		serial_in_reg <= serial_in;  	// first FF
 		serial_in_reg2 <= serial_in_reg;	// second FF
 		serial_in_synced <= serial_in_reg2; // third FF
