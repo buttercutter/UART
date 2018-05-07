@@ -40,7 +40,7 @@ begin
 	end
 	
 	else begin
-    	data_is_valid <= (state == Rx_STOP_BIT) && is_parity_stage;  // data_is_valid should only ever be one clock pulse long, because the UART needs to be a component of a larger system.  That system will be running at the system clock rate.  If the "output is valid" line is high more than once per byte, it will read that many copies of the same byte have been read. 
+    	data_is_valid <= (state == Rx_PARITY_BIT) && sampling_strobe;  // data_is_valid should only ever be one clock pulse long, because the UART needs to be a component of a larger system.  That system will be running at the system clock rate.  If the "output is valid" line is high more than once per byte, it will read that many copies of the same byte have been read. 
     	is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
     	data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // (about to enter first data state) OR (data states)
     end

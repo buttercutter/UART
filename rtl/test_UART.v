@@ -126,6 +126,8 @@ begin
     	    cnt <= 0;  
 			//tx_in_progress <= 0;
     	end
+    	
+    	//tx_in_progress <= ((cnt == 0) && (!had_been_enabled)) ? 0 : 1;
     end
     
     if((first_clock_passed) && (!($past(baud_clk)) && ($past(tx_in_progress) && !($past(had_been_enabled)) && !($past(reset))) || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
@@ -216,6 +218,9 @@ begin
 		end
 
 		else if(tx_in_progress) begin
+		
+			if(((cnt >= 1) && (cnt <= NUMBER_OF_BITS-1)) || ((cnt == NUMBER_OF_BITS) && ($past(cnt) == NUMBER_OF_BITS-1))) assert(had_been_enabled);
+		
 			if(cnt == 1) begin
 				assert(serial_out == 0);  // start bit
 				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});
@@ -298,9 +303,8 @@ begin
 				else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 					assert(state == Rx_STOP_BIT);
 					
-					if(($past(state) == Rx_STOP_BIT) && (state == Rx_STOP_BIT)) begin
+					if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
 						assert(data_is_valid == 1);
-						assert(serial_in_synced == 1);
 					end
 					
 					else assert(data_is_valid == 0);
