@@ -129,12 +129,16 @@ begin
         if((cnt == NUMBER_OF_BITS) && !had_been_enabled) begin
         	tx_in_progress <= 0;
         end
+
+		else tx_in_progress <= had_been_enabled;
     end
     
-    if((first_clock_passed) && (!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled) && !($past(reset)) 
+    if((first_clock_passed) && 
+	   (($past(had_been_enabled) && !($past(reset)))
+	|| (!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
     || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
     || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) 
-    || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
+    || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((Tx is just enabled) OR (just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
 		assert(tx_in_progress);
 	end
 	   	
@@ -288,10 +292,10 @@ begin
 				if(state == Rx_IDLE) begin
 					assert(data_is_valid == 0);
 					
-					if(!$past(tx_in_progress, NUMBER_OF_RX_SYNCHRONIZERS))
+					//if(!$past(tx_in_progress, NUMBER_OF_RX_SYNCHRONIZERS) || !$past(first_clock_passed, NUMBER_OF_RX_SYNCHRONIZERS))
 						assert(serial_in_synced == 1);
-					else
-						assert(serial_in_synced == 0);				
+					//else
+						//assert(serial_in_synced == 0);				
 				end
 
 				else if(state == Rx_START_BIT) begin
