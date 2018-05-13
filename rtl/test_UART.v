@@ -124,13 +124,17 @@ begin
 	
         if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;  
-			//tx_in_progress <= 0;
     	end
     	
-    	//tx_in_progress <= ((cnt == 0) && (!had_been_enabled)) ? 0 : 1;
+        if((cnt == NUMBER_OF_BITS) && !had_been_enabled) begin
+        	tx_in_progress <= 0;
+        end
     end
     
-    if((first_clock_passed) && (!($past(baud_clk)) && ($past(tx_in_progress) && !($past(had_been_enabled)) && !($past(reset))) || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
+    if((first_clock_passed) && (!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled) && !($past(reset)) 
+    || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
+    || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) 
+    || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
 		assert(tx_in_progress);
 	end
 	   	
@@ -283,7 +287,11 @@ begin
 
 				if(state == Rx_IDLE) begin
 					assert(data_is_valid == 0);
-					assert(serial_in_synced == 1);				
+					
+					if(!$past(tx_in_progress, NUMBER_OF_RX_SYNCHRONIZERS))
+						assert(serial_in_synced == 1);
+					else
+						assert(serial_in_synced == 0);				
 				end
 
 				else if(state == Rx_START_BIT) begin
@@ -313,7 +321,11 @@ begin
     	end
     	    
     	else begin  // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
-    	    assert(cnt == 0);
+    	    
+    	    if($past(enable) && !($past(had_been_enabled))) begin
+	    	    assert(cnt == 0);
+	    	end
+	    	
     	    assert(serial_out == 1);
     	    
     	    if(!had_been_enabled && first_clock_passed) begin
@@ -393,7 +405,7 @@ begin
 		end
 		
 		else begin  // Tx had not been enabled yet
-			assert(cnt == 0);
+			//assert(cnt == 0);
 			assert(!o_busy);
 			assert(serial_out == 1);
 		end
