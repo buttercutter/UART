@@ -117,7 +117,10 @@ begin
 			if(cnt < NUMBER_OF_BITS) cnt <= cnt + 1;
 			else cnt <= 0;
 		end
-		tx_in_progress <= had_been_enabled;  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
+		
+		else cnt <= 0;
+		
+		tx_in_progress <= (had_been_enabled || enable);  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
 	end   
 	
 	else begin
@@ -130,15 +133,14 @@ begin
         	tx_in_progress <= 0;
         end
 
-		else tx_in_progress <= had_been_enabled;
+		//else tx_in_progress <= had_been_enabled;
     end
     
     if((first_clock_passed) && 
-	   (($past(had_been_enabled) && !($past(reset)))
-	|| (!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
+	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
     || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
-    || ($past(had_been_enabled)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) 
-    || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((Tx is just enabled) OR (just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
+    || ($past(had_been_enabled) || $past(enable)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) 
+    || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
 		assert(tx_in_progress);
 	end
 	   	
@@ -257,7 +259,8 @@ begin
 			else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission which signifies the end of UART transmission
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
 				
-				had_been_enabled <= 0;
+				if($past(enable)) had_been_enabled <= 1;
+				else had_been_enabled <= 0;
 				
 				assert(serial_out == 1); // stop bit
 				

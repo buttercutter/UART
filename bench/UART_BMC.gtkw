@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.66 (w)1999-2015 BSI
-[*] Sun May 13 13:13:46 2018
+[*] GTKWave Analyzer v3.3.89 (w)1999-2018 BSI
+[*] Sun May 13 15:44:56 2018
 [*]
-[dumpfile] "/home/phung/Documents/phung/UART/bench/UART_BMC.vcd"
-[dumpfile_mtime] "Sun May 13 13:13:04 2018"
-[dumpfile_size] 153119
-[savefile] "/home/phung/Documents/phung/UART/bench/UART_BMC.gtkw"
-[timestart] 0
-[size] 1920 1130
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.vcd"
+[dumpfile_mtime] "Sun May 13 15:31:18 2018"
+[dumpfile_size] 151823
+[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_BMC.gtkw"
+[timestart] 2
+[size] 1920 995
 [pos] 1836 0
-*-7.142769 1000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-7.145643 990 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
@@ -27,9 +27,7 @@ smt_step
 test_UART.reset
 test_UART.uart.tx.baud_clk
 test_UART.enable
-@29
 test_UART.had_been_enabled
-@28
 test_UART.tx_in_progress
 test_UART.tx_shift_reg_contains_data_bits
 test_UART.Tx_shift_reg_assertion[7:0]
