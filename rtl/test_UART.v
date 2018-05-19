@@ -1,7 +1,7 @@
 `default_nettype none
 
 // for connecting Tx and Rx together
-//`define LOOPBACK 1
+`define LOOPBACK 1
 
 module test_UART(clk, reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
@@ -118,6 +118,8 @@ begin
 			else cnt <= 0;
 		end
 		
+		//else if(enable) cnt <= cnt + 1;
+		
 		else cnt <= 0;
 		
 		tx_in_progress <= (had_been_enabled || enable);  // Tx only operates at every rising edge of 'baud_clk' (Tx's clock)
@@ -153,9 +155,14 @@ end
 // In a Tx->Rx joint proof, we want to assert that all the bits received by the receiver at any given point in time are equal to all the bits sent by the transmitter 
 
 always @(posedge clk) begin
-	if(cnt == state...) begin
-		assert(received_data[] == shift_reg[]);
+	if((cnt == 0) && (state == Rx_IDLE) && ($past(state) == Rx_IDLE) && ($past(state, CLOCKS_PER_BIT) != Rx_STOP_BIT)) begin
+		assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
 	end
+	
+	/*else if() begin
+		assert();
+		assert();
+	end*/
 end
 
 `endif

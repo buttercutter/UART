@@ -29,7 +29,11 @@ detect_start_bit dsb (.clk(clk), .reset(reset), .serial_in_synced(serial_in_sync
 rx_state rx_fsm (.clk(clk), .reset(reset), .start_detected(start_detected), .sampling_strobe(sampling_strobe), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .state(state));
 
 // handles data sampling
-SIPO_shift_register SIPO (.clk(clk), .sampling_strobe(sampling_strobe), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .received_data(received_data)); 
+SIPO_shift_register SIPO (.clk(clk), 
+`ifdef FORMAL
+	.reset(reset), .data_is_valid(data_is_valid),
+`endif	
+.sampling_strobe(sampling_strobe), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .received_data(received_data)); 
 
 // computes the signal 'sampling_strobe' which is basically similar to sampling clock
 sampling_strobe_generator ssg (.clk(clk), .start_detected(start_detected), .sampling_strobe(sampling_strobe));
