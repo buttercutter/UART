@@ -155,33 +155,39 @@ end
 // In a Tx->Rx joint proof, we want to assert that all the bits received by the receiver at any given point in time are equal to all the bits sent by the transmitter 
 
 always @(posedge clk) begin
+	
+end
+
+
+always @(posedge clk) begin
 	if(first_clock_passed && $past(sampling_strobe)) begin
-		if(cnt == 0) begin
-			if(($past(reset)) || ((state == Rx_IDLE) && ($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
+		if(state == Rx_IDLE) begin
+			if(($past(reset)) || (($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
 				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
 			end
 			
 			else assert(received_data == i_data);
 		end
 		
-		/*else if((cnt > 0) && (cnt < NUMBER_OF_RX_SYNCHRONIZERS)) begin
+		else if(state == Rx_START_BIT)
 			assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
-		end
-		
-		else if((cnt == NUMBER_OF_RX_SYNCHRONIZERS)) begin
-
-		end*/
-		
-		if(state == Rx_DATA_BIT_0)
+			
+		else if(state == Rx_DATA_BIT_0)
 			assert(received_data == {INPUT_DATA_WIDTH{1'b0}});  // Rx shift reg is updated one 'sampling_strobe' cycle later than 'serial_in_synced'
-
+			
+		else if(state == Rx_STOP_BIT) begin
+			if(data_is_valid)
+				assert(received_data == i_data);
+			else
+				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
+		end
 	end		
 end
 
 
 generate
 
-genvar cnt_idx;
+genvar cnt_idx;  // for induction, checks the relationship between 'state' and 'received_data'
 
 for(cnt_idx=Rx_DATA_BIT_1; (cnt_idx < Rx_STOP_BIT); cnt_idx=cnt_idx+1) begin
 
