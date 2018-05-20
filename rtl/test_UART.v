@@ -32,12 +32,12 @@ output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 `ifdef FORMAL
 localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + PARITY_ENABLED + 2;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
-wire serial_in_synced, start_detected;
+wire serial_in_synced, start_detected, sampling_strobe;
 `endif
 
 UART uart(.clk(clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
-	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected)
+	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
 `endif
 );
 
@@ -89,7 +89,7 @@ assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) :
 
 always @(posedge clk)
 begin
-	assert(cnt < NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1);
+	assert(cnt <= NUMBER_OF_BITS);
 	assert(stop_bit_location < NUMBER_OF_BITS);
 	
 	if(first_clock_passed) begin
@@ -155,15 +155,47 @@ end
 // In a Tx->Rx joint proof, we want to assert that all the bits received by the receiver at any given point in time are equal to all the bits sent by the transmitter 
 
 always @(posedge clk) begin
-	if((cnt == 0) && (state == Rx_IDLE) && ($past(state) == Rx_IDLE) && ($past(state, CLOCKS_PER_BIT) != Rx_STOP_BIT)) begin
-		assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
+	if(first_clock_passed && $past(sampling_strobe)) begin
+		if(cnt == 0) begin
+			if(($past(reset)) || ((state == Rx_IDLE) && ($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
+				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
+			end
+			
+			else assert(received_data == i_data);
+		end
+		
+		/*else if((cnt > 0) && (cnt < NUMBER_OF_RX_SYNCHRONIZERS)) begin
+			assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
+		end
+		
+		else if((cnt == NUMBER_OF_RX_SYNCHRONIZERS)) begin
+
+		end*/
+		
+		if(state == Rx_DATA_BIT_0)
+			assert(received_data == {INPUT_DATA_WIDTH{1'b0}});  // Rx shift reg is updated one 'sampling_strobe' cycle later than 'serial_in_synced'
+
+	end		
+end
+
+
+generate
+
+genvar cnt_idx;
+
+for(cnt_idx=Rx_DATA_BIT_1; (cnt_idx < Rx_STOP_BIT); cnt_idx=cnt_idx+1) begin
+
+	always @(posedge clk) begin
+		if(first_clock_passed && $past(sampling_strobe)) begin
+			if(state == cnt_idx) begin
+				assert(received_data == {i_data[cnt_idx-NUMBER_OF_RX_SYNCHRONIZERS:0] , {(INPUT_DATA_WIDTH-cnt_idx+NUMBER_OF_RX_SYNCHRONIZERS-1){1'b0}}});
+			end
+		end
 	end
 	
-	/*else if() begin
-		assert();
-		assert();
-	end*/
 end
+
+endgenerate
 
 `endif
 
@@ -222,12 +254,17 @@ begin
     	    	assert(&shift_reg == 1);
     	    end
     	    
+    	    if((|shift_reg == 0) && (stop_bit_location == 0))  // just finished transmission
+    	    	assert(cnt == NUMBER_OF_BITS);
+    	    else 
+    	    	assert(cnt == 0);
+    	    
 	    	assert(serial_out == 1);
 	    	assert(o_busy == 0);
         end
 
 		else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
-			
+			assert(cnt == 0);
 			assert(serial_out == 1);
 			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
 			

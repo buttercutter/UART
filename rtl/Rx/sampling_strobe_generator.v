@@ -53,15 +53,17 @@ end
 
 always @(posedge clk)
 begin
-	assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
+	assert(counter < CLOCKS_PER_BIT); // for induction
 	
 	if(first_clock_passed) begin
+
+		assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
 			
 		if(!($past(start_detected))) begin
 			assert((counter - $past(counter)) == 1'b1);  // to keep the increasing trend for induction test purpose such that sampling_strobe occurs at the correct period interval 
 		end
 	
-		if($past(counter) == (CLOCKS_PER_BIT-1)) begin
+		if(($past(counter) == (CLOCKS_PER_BIT-1)) && (counter == 0)) begin
 			assert(sampling_strobe); // sampling_strobe is HIGH at the right cycle, for induction check purpose
 		end
 		

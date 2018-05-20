@@ -1,6 +1,6 @@
 module Rx_top(clk, reset, serial_in, received_data, rx_error, data_is_valid
 `ifdef FORMAL
-	, state, serial_in_synced, start_detected
+	, state, serial_in_synced, start_detected, sampling_strobe
 `endif
 );  // serial input, parallel output
 
@@ -16,6 +16,7 @@ localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits,
 output [($clog2(NUMBER_OF_BITS)-1) : 0] state;
 output serial_in_synced;
 output start_detected;
+output sampling_strobe;
 `endif
 
 wire data_is_available;

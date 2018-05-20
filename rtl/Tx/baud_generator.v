@@ -46,14 +46,17 @@ end
 
 always @(posedge clk)
 begin
+	assert(cnt < CLOCKS_PER_BIT);
+
 	if(first_clock_passed) begin
 		assert((baud_clk && $past(baud_clk)) == 0);  // asserts that baud_clk is only single pulse HIGH
 		
-		if($past(cnt) == (CLOCKS_PER_BIT - 1)) assert(ck_stb);
-	end
-	
-	if(baud_clk) begin
-		assert(cnt == 0);
+		assert((cnt - $past(cnt)) == 1'b1);  // to keep the increasing trend for induction test purpose such that baud_clk occurs at the correct period interval 
+		
+		if(($past(cnt) == (CLOCKS_PER_BIT - 1)) && (cnt == 0)) 
+			assert(baud_clk);
+		else 
+			assert(!baud_clk);
 	end
 end
 
