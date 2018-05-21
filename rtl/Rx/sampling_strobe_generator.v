@@ -19,7 +19,7 @@ end
 always @(posedge clk)
 begin
     if(start_detected)
-		counter <= (CLOCKS_PER_BIT >> 1);  // when start bit is detected, we only need to advance half an UART bit to sample at the middle of the UART start bit
+		counter <= (CLOCKS_PER_BIT >> 1) + 1;  // when start bit is detected, we only need to advance half an UART bit to sample at the middle of the UART start bit
 		
 	else begin
 		if(counter == (CLOCKS_PER_BIT-1)) begin

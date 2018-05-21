@@ -8,7 +8,7 @@ localparam Rx_IDLE = 4'b0000;
 
 input [($clog2(ALL_BITS_RECEIVED)-1) : 0] state;
 input clk, reset, serial_in_synced;
-output reg start_detected; 
+output start_detected; 
 
 reg previously_idle;
 
@@ -20,7 +20,7 @@ begin
 	previously_idle = 1;
 end
 
-always @(posedge clk)
+always @(*)
 begin
 	if(reset) begin
 		start_detected <= 0;		

@@ -154,8 +154,15 @@ end
 `ifdef LOOPBACK
 // In a Tx->Rx joint proof, we want to assert that all the bits received by the receiver at any given point in time are equal to all the bits sent by the transmitter 
 
-always @(posedge clk) begin
-	
+always @(posedge clk) begin  // for induction, checks the relationship between Tx 'cnt' and Rx 'state'
+	if(first_clock_passed) begin
+		if(cnt == 0) begin
+			if((!(!tx_in_progress && $past(tx_in_progress)) || (had_been_enabled && !($past(enable) && (!$past(had_been_enabled)))) || !o_busy) && (received_data == 0) || $past(reset))
+				assert(state == Rx_IDLE);
+			else
+				assert(state == Rx_STOP_BIT);
+		end
+	end
 end
 
 
