@@ -14,11 +14,27 @@ reg previously_idle;
 
 wire falling_edge = (!serial_in_synced) && (previously_idle);
 
-assign start_detected = (reset) ? 0 : (falling_edge && (state == Rx_IDLE));
-
 initial 
 begin
+	start_detected = 0;
 	previously_idle = 1;
+end
+
+always @(*)
+begin
+	if(reset) begin
+		start_detected <= 0;		
+	end
+	
+	else begin
+		if(falling_edge && (state == Rx_IDLE)) begin  // (start bit) 
+			start_detected <= 1;
+		end
+		
+		else begin
+			start_detected <= 0;
+		end
+	end
 end
 
 always @(posedge clk)
