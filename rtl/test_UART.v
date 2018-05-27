@@ -156,11 +156,23 @@ end
 
 always @(posedge clk) begin  // for induction, checks the relationship between Tx 'cnt' and Rx 'state'
 	if(first_clock_passed) begin
-		if(cnt == 0) begin
-			if((!(!tx_in_progress && $past(tx_in_progress)) || (had_been_enabled && !($past(enable) && (!$past(had_been_enabled)))) || !o_busy) && (received_data == 0) || $past(reset))
-				assert(state == Rx_IDLE);
+		if(state == Rx_IDLE) begin
+			if(serial_in == 1)
+				assert(cnt == 0);
 			else
-				assert(state == Rx_STOP_BIT);
+				assert(cnt == 1);
+		end	
+		
+		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
+			assert(cnt == state);
+		end
+		
+		else begin // (state == Rx_STOP_BIT)
+			if(tx_in_progress || !had_been_enabled)
+				assert(cnt == state);
+			else begin
+				assert(cnt == 0);
+			end
 		end
 	end
 end
