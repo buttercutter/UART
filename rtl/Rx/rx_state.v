@@ -6,7 +6,7 @@ localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + PARITY_ENABLED + 2;   // 1 start 
 
 input clk, reset, start_detected, sampling_strobe;
 output reg data_is_available;   // in data states
-output reg is_parity_stage;
+output is_parity_stage;
 output reg data_is_valid;	// finished all data states
 output reg [($clog2(NUMBER_OF_BITS)-1) : 0] state;
 
@@ -26,22 +26,22 @@ localparam Rx_STOP_BIT   = 4'b1011;
 
 initial begin
     data_is_available = 0;
-    is_parity_stage = 0;
     data_is_valid = 0;
     state = 0;
 end
+
+assign is_parity_stage = (reset) ? 0 : (state == Rx_PARITY_BIT);  // parity state
 
 always @(posedge clk)
 begin
 	if(reset) begin
 		data_is_valid <= 0;
-		is_parity_stage <= 0;
 		data_is_available <= 0;
 	end
 	
 	else begin
     	data_is_valid <= (state == Rx_PARITY_BIT) && sampling_strobe;  // data_is_valid should only ever be one clock pulse long, because the UART needs to be a component of a larger system.  That system will be running at the system clock rate.  If the "output is valid" line is high more than once per byte, it will read that many copies of the same byte have been read. 
-    	is_parity_stage  <= (state == Rx_PARITY_BIT);  // parity state
+    	
     	data_is_available <= ((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7)); // (about to enter first data state) OR (data states)
     end
 end

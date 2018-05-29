@@ -297,8 +297,18 @@ begin
 		end
 
 		else if(tx_in_progress) begin
-		
-			if(((cnt >= 1) && (cnt <= NUMBER_OF_BITS-1)) || ((cnt == NUMBER_OF_BITS) && ($past(cnt) == NUMBER_OF_BITS-1))) assert(had_been_enabled);
+			if(cnt == 0) begin
+				if(first_clock_passed) begin
+			 		if (!$past(enable) && !$past(had_been_enabled)) 
+			 			assert(!had_been_enabled);
+			 		else
+			 			assert(had_been_enabled);
+			 	end
+			 	
+			 	else assert(!had_been_enabled); // not enabled at the beginning of time
+			end
+			
+			else if(((cnt >= 1) && (cnt <= NUMBER_OF_BITS-1)) || ((cnt == NUMBER_OF_BITS) && ($past(cnt) == NUMBER_OF_BITS-1))) assert(had_been_enabled);
 		
 			if(cnt == 1) begin
 				assert(serial_out == 0);  // start bit
