@@ -321,7 +321,7 @@ begin
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) < Rx_PARITY_BIT);					
 				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);		
 				
-				//assert(data_is_valid == 0);					
+				assert(shift_reg[stop_bit_location] == 1);					
 				assert(o_busy == 1);				
 			end
 			
