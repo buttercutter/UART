@@ -138,11 +138,11 @@ begin
 		//else tx_in_progress <= had_been_enabled;
     end
     
-    if((first_clock_passed) && 
-	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
-    || ($past(tx_in_progress) && $past(had_been_enabled) && !($past(reset))) 
-    || ($past(had_been_enabled) || $past(enable)) && ($past(baud_clk)) && !($past(reset)) && !($past(tx_in_progress)) 
-    || (($past(baud_clk)) && $past(had_been_enabled) && !($past(reset))))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
+    if((first_clock_passed) && !($past(reset)) && 
+	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled)) 
+    || ($past(tx_in_progress) && $past(had_been_enabled)) 
+    || ($past(had_been_enabled) || $past(enable)) && ($past(baud_clk)) && !($past(tx_in_progress)) 
+    || (($past(baud_clk)) && $past(had_been_enabled)))) begin  // ((just finished transmitting the END bit, but baud_clk still not asserted yet) OR (still busy transmitting) OR (just enabled) OR (END bit finishes transmission with baud_clk asserted, and Tx is enabled immediately after this))
 		assert(tx_in_progress);
 	end
 	   	
@@ -179,7 +179,7 @@ end
 
 
 always @(posedge clk) begin
-	if(first_clock_passed && $past(sampling_strobe)) begin
+	if(first_clock_passed) begin
 		if(state == Rx_IDLE) begin
 			if(($past(reset)) || (($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
 				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
@@ -211,7 +211,7 @@ genvar cnt_idx;  // for induction, checks the relationship between 'state' and '
 for(cnt_idx=Rx_DATA_BIT_1; (cnt_idx < Rx_STOP_BIT); cnt_idx=cnt_idx+1) begin
 
 	always @(posedge clk) begin
-		if(first_clock_passed && $past(sampling_strobe)) begin
+		if(first_clock_passed) begin
 			if(state == cnt_idx) begin
 				assert(received_data == {i_data[cnt_idx-NUMBER_OF_RX_SYNCHRONIZERS:0] , {(INPUT_DATA_WIDTH-cnt_idx+NUMBER_OF_RX_SYNCHRONIZERS-1){1'b0}}});
 			end
