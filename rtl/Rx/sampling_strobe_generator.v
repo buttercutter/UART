@@ -63,7 +63,11 @@ begin
 			assert((counter - $past(counter)) == 1'b1);  // to keep the increasing trend for induction test purpose such that sampling_strobe occurs at the correct period interval 
 		end
 	
-		if(($past(counter) == (CLOCKS_PER_BIT-1)) && (counter == 0)) begin
+		else begin
+			assert(counter == (CLOCKS_PER_BIT >> 1) + 1);
+		end
+	
+		if($past(counter) == (CLOCKS_PER_BIT-1)) begin
 			assert(sampling_strobe); // sampling_strobe is HIGH at the right cycle, for induction check purpose
 		end
 		

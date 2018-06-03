@@ -6,7 +6,7 @@ all: $(TARGET)
 DESIGN_FILES = $(wildcard $(RTLSRC)/*.v) $(wildcard $(RTLSRC)/*/*.v)
 
 induction: $(TARGET).smt2
-	yosys-smtbmc -s yices --presat --dump-vcd $(TARGET)_induction.vcd -i -t 10 $(TARGET).smt2	
+	yosys-smtbmc -s yices --presat --dump-vcd $(TARGET)_induction.vcd -i -t 26 $(TARGET).smt2	
 	
 bmc: $(TARGET).smt2
 	yosys-smtbmc -s yices --presat --dump-vcd $(TARGET)_BMC.vcd -t 2000 $(TARGET).smt2

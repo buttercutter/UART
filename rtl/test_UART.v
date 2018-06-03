@@ -227,7 +227,7 @@ endgenerate
 wire [($clog2(INPUT_DATA_WIDTH + NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS) - 1) : 0] i_data_index [(INPUT_DATA_WIDTH-1) : 0];
 wire [(INPUT_DATA_WIDTH-1) : 0] Tx_shift_reg_assertion;
 
-wire tx_shift_reg_contains_data_bits = ((tx_in_progress) && (cnt >= 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
+wire tx_shift_reg_contains_data_bits = ((tx_in_progress) && (cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED)));  // shift_reg is one clock cycle before the data bits get registered to serial_out
 	
 // for induction purpose, checks whether the Tx PISO shift_reg is shifting out all 'INPUT_DATA_WIDTH' data bits correctly
 
@@ -244,7 +244,7 @@ generate
 
 		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (!(Tx_shift_reg_index <= (INPUT_DATA_WIDTH - cnt))) || (!tx_shift_reg_contains_data_bits) || (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
 		
-		always @(posedge clk) begin 
+		always @(posedge clk) begin 			
 			assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
 		end
 		
@@ -261,6 +261,23 @@ generate
 				end
 			end
 		end*/
+	end
+endgenerate
+
+generate
+	genvar Tx_index;	
+
+	for(Tx_index = 1; (Tx_index > 1) && (Tx_index < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)); Tx_index=Tx_index+1) 
+	begin 
+
+		always@(posedge clk) begin
+			if(!reset && tx_in_progress) begin
+				if(cnt == Tx_index) begin  // during UART data bits transmission
+						
+					assert(shift_reg == {{cnt{0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]});
+				end
+			end
+		end
 	end
 endgenerate
 							
@@ -318,8 +335,7 @@ begin
 			
 			else if((cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1))) begin  // during UART data bits transmission
 				
-				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) < Rx_PARITY_BIT);					
-				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) >= Rx_DATA_BIT_0);		
+				//assert(shift_reg == {{cnt{0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]});
 				
 				assert(shift_reg[stop_bit_location] == 1);					
 				assert(o_busy == 1);				
