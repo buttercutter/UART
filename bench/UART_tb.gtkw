@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.89 (w)1999-2018 BSI
-[*] Sun May  6 03:10:54 2018
+[*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
+[*] Sat Jun  9 01:38:04 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.vcd"
-[dumpfile_mtime] "Sun May  6 03:09:17 2018"
-[dumpfile_size] 9636809
+[dumpfile_mtime] "Sat Jun  9 01:37:36 2018"
+[dumpfile_size] 12100672
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.gtkw"
 [timestart] 0
 [size] 1920 995
 [pos] -1 -1
-*-17.838465 75055 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.160410 75055 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] UART_tb.
 [treeopen] UART_tb.dut.
 [treeopen] UART_tb.dut.uart.

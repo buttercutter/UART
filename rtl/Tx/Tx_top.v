@@ -34,7 +34,7 @@ TxUART tx (.clk(clk), .reset(reset), .baud_clk(baud_clk), .enable(enable), .i_da
 );
 
 // baud rate generator, default = 9600bps
-baud_generator bg (.clk(clk), .baud_clk(baud_clk));
+baud_generator bg (.clk(clk), .reset(reset), .baud_clk(baud_clk));
 
 // FIFO tx_fifo (clk, reset, enqueue, dequeue, flush, i_value, almost_full, almost_empty, o_value);
 

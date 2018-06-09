@@ -79,6 +79,8 @@ begin
 	first_clock_passed <= 1;
 end
 
+always @(*) if(!first_clock_passed) assume(reset);
+
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_two = stop_bit_location_plus_one + 1;
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location;
@@ -274,7 +276,7 @@ generate
 			if(!reset && tx_in_progress) begin
 				if(cnt == Tx_index) begin  // during UART data bits transmission
 						
-					assert(shift_reg == {{cnt{0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]});
+					assert(shift_reg == {{(Tx_index){1'b0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]});
 				end
 			end
 		end
