@@ -21,6 +21,7 @@ output serial_out;
 `ifdef FORMAL
 wire baud_clk;
 wire [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] shift_reg;  // Tx internal PISO
+reg [(INPUT_DATA_WIDTH+PARITY_ENABLED+1):0] expected_shift_reg;
 `endif
 
 // receiver signals
@@ -273,10 +274,11 @@ generate
 	begin 
 
 		always@(posedge clk) begin
-			if(!reset && tx_in_progress) begin
+			if(!reset && tx_in_progress && first_clock_passed) begin
 				if(cnt == Tx_index) begin  // during UART data bits transmission
-						
-					assert(shift_reg == {{(Tx_index){1'b0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]});
+					expected_shift_reg <= {{(Tx_index){1'b0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]};
+					
+					assert(shift_reg == $past(expected_shift_reg));
 				end
 			end
 		end
@@ -337,8 +339,8 @@ begin
 			
 			else if((cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1))) begin  // during UART data bits transmission
 				
-				//assert(shift_reg == {{cnt{0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]});
-				
+				assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0 } >> cnt);
+				if($past(baud_clk)) assert(serial_out == $past(shift_reg[0]));
 				assert(shift_reg[stop_bit_location] == 1);					
 				assert(o_busy == 1);				
 			end

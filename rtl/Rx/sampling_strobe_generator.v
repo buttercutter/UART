@@ -45,7 +45,7 @@ begin
 	end
 	
 	else begin
-		if(counter == (CLOCKS_PER_BIT-1))
+		if((counter == (CLOCKS_PER_BIT-1)) && (!start_detected))
 			sampling_strobe <= 1;
 		else
 			sampling_strobe <= 0;
@@ -82,7 +82,7 @@ begin
 			assert(counter == (CLOCKS_PER_BIT >> 1) + 1);
 		end
 	
-		if($past(counter) == (CLOCKS_PER_BIT-1) && !($past(reset))) begin
+		if((counter == 0) && ($past(counter) == (CLOCKS_PER_BIT-1)) && !($past(reset))) begin
 			assert(sampling_strobe); // sampling_strobe is HIGH at the right cycle, for induction check purpose
 		end
 		
