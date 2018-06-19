@@ -1,12 +1,23 @@
-module SIPO_shift_register(clk, serial_in, data_is_available, received_data);  // manages sampling-related data signal using SIPO shift register
+module SIPO_shift_register(clk, reset, data_is_valid, sampling_strobe, serial_in_synced, data_is_available, received_data);  // manages sampling-related data signal using SIPO shift register
 
-input clk, serial_in, data_is_available;
-output reg [7:0] received_data; // SIPO
+parameter INPUT_DATA_WIDTH = 8;
+
+input clk, sampling_strobe, serial_in_synced, data_is_available;
+input reset, data_is_valid;
+
+output reg [(INPUT_DATA_WIDTH-1):0] received_data; // SIPO
 
 always @(posedge clk)
 begin
-    if(data_is_available)
-    	received_data <= { serial_in , received_data[7:1] };  // LSB received first by UART definition
+	if(reset || data_is_valid)
+		received_data <= {INPUT_DATA_WIDTH{1'b0}};
+
+    else if(sampling_strobe && data_is_available)
+    	received_data <= { serial_in_synced , received_data[(INPUT_DATA_WIDTH-1):1] };  // LSB received first by UART definition
+end
+
+initial begin
+	received_data = {INPUT_DATA_WIDTH{1'b0}};
 end
 
 endmodule

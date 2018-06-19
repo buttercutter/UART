@@ -1,27 +1,35 @@
-module check_parity(clk, serial_in, received_data, data_is_valid, is_parity_stage, rx_error); // even parity checker
+module check_parity(clk, sampling_strobe, reset, serial_in_synced, received_data, is_parity_stage, rx_error); // even parity checker
 
-input clk, serial_in, data_is_valid, is_parity_stage;
-input [7:0] received_data;
-output reg rx_error = 0; 
+parameter INPUT_DATA_WIDTH = 8;
+
+input clk, sampling_strobe, reset, serial_in_synced, is_parity_stage;
+input [(INPUT_DATA_WIDTH-1) : 0] received_data;
+output reg rx_error; // parity error indicator
 
 reg parity_value; // this is being computed from the received 8-bit data
-reg parity_bit;  // this bit is received directly through UART
+wire parity_bit;  // this bit is received directly through UART
 
-always @(posedge clk)
-begin
-    parity_value <= ^(received_data);
+initial begin
+	parity_value = 0;
+	rx_error = 0;
 end
 
 always @(posedge clk)
 begin
-    if (is_parity_stage)
-	parity_bit <= serial_in;
+	if(reset) begin
+		rx_error <= 0;
+	end
+
+	else if(sampling_strobe) begin
+		rx_error <= (is_parity_stage) && (parity_bit != parity_value);
+	end
 end
 
 always @(posedge clk)
 begin
-    if ((data_is_valid) && (parity_bit != parity_value))
-	rx_error <= 1;
+	parity_value <= ^(received_data);
 end
+
+assign parity_bit = serial_in_synced;
 
 endmodule
