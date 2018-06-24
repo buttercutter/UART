@@ -3,13 +3,13 @@
 // for connecting Tx and Rx together
 `define LOOPBACK 1
 
-module test_UART(clk, reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
+module test_UART(reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 parameter PARITY_TYPE = 0;  // 0 = even parity, 1 = odd parity
 
-input clk;
+//input clk;
 input reset;
 
 // transmitter signals
@@ -36,7 +36,7 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 wire serial_in_synced, start_detected, sampling_strobe;
 `endif
 
-UART uart(.clk(clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
+UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
 	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
 `endif
@@ -63,24 +63,53 @@ localparam NUMBER_OF_RX_SYNCHRONIZERS = 3; // three FF synhronizers for clock do
 localparam CLOCKS_PER_BIT = 8;
 
 reg had_been_enabled;   // a signal to latch Tx 'enable' signal
-reg[($clog2((2*NUMBER_OF_BITS + NUMBER_OF_RX_SYNCHRONIZERS + 1)*CLOCKS_PER_BIT)-1) : 0] cnt;  // to track the number of transmitter clock cycles (baud_clk) incurred between assertion of 'tx_in_progress' signal from Tx and assertion of 'data_is_valid' signal from Rx
+reg[($clog2(NUMBER_OF_BITS)-1) : 0] cnt;  // to track the number of transmitter clock cycles (baud_clk) incurred between assertion of 'tx_in_progress' signal from Tx and assertion of 'data_is_valid' signal from Rx
 
 reg tx_in_progress; 
-reg first_clock_passed;
+reg first_clock_passed_tx, first_clock_passed_rx;
 
 initial begin
 	had_been_enabled = 0;  
 	cnt = 0;
 	tx_in_progress = 0;
-	first_clock_passed = 0;
+	first_clock_passed_tx = 0;
+	first_clock_passed_rx = 0;
 end
 
-always @(posedge clk)
+
+// refer to https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/ for feasible ratio of tx_clk/rx_clk
+
+localparam rx_clk_increment = 135407835933;  // rx_clk is slower than $global_clock by a factor of 1.015
+localparam counter_rx_clk_bit_width = 37; // (2^37)/1.015 = 135407835933.004926108
+reg	[counter_rx_clk_bit_width-1:0]	counter_rx_clk;
+reg rx_clk;
+
+always @($global_clock)  // generation of rx_clk which is 1.5% frequency deviation from tx_clk
 begin
-	first_clock_passed <= 1;
+	{ rx_clk, counter_rx_clk } <= counter_rx_clk + rx_clk_increment; // the actual rx_clk has frequency of tx_clk's frequency divided by ((2^37)÷135407835933) , or equivalently, rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
 end
 
-always @(*) if(!first_clock_passed) assume(reset);
+localparam tx_clk_increment = 2;  // this helps to generate a clock with the same frequency as $global_clock
+reg	counter_tx_clk;
+reg tx_clk;
+
+always @($global_clock)  // generation of tx_clk
+begin
+	{ tx_clk, counter_tx_clk } <= counter_tx_clk + tx_clk_increment;
+end
+
+
+always @(posedge tx_clk)
+begin
+	first_clock_passed_tx <= 1;
+end
+
+always @(posedge rx_clk)
+begin
+	first_clock_passed_rx <= 1;
+end
+
+always @(*) if(!first_clock_passed_tx || !first_clock_passed_rx) assume(reset);
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_two = stop_bit_location_plus_one + 1;
@@ -90,25 +119,25 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] parity_bit_location = stop_bit_location - 
 assign stop_bit_location = (cnt < NUMBER_OF_BITS) ? (NUMBER_OF_BITS - 1 - cnt) : 0;  // if not during UART transmission, set to zero as default for no specific reason
 
 
-always @(posedge clk)
+always @(posedge tx_clk)
 begin
 	assert(cnt <= NUMBER_OF_BITS);
 	assert(stop_bit_location < NUMBER_OF_BITS);
 	
-	if(first_clock_passed) begin
+	if(first_clock_passed_tx) begin
 		if($past(reset) == 0) begin 
 			if(cnt < NUMBER_OF_BITS) begin
 				assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
 			end
 		end
 
-		if($past(first_clock_passed) == 0) begin
+		if($past(first_clock_passed_tx) == 0) begin
 			assert($past(&shift_reg) == 1);
 		end
 	end
 end
 
-always @(posedge clk)
+always @(posedge tx_clk)
 begin
     if(reset) begin
         cnt <= 0;
@@ -141,7 +170,7 @@ begin
 		//else tx_in_progress <= had_been_enabled;
     end
     
-    if((first_clock_passed) && !($past(reset)) && 
+    if((first_clock_passed_tx) && !($past(reset)) && 
 	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled)) 
     || ($past(tx_in_progress) && $past(had_been_enabled)) 
     || ($past(had_been_enabled) || $past(enable)) && ($past(baud_clk)) && !($past(tx_in_progress)) 
@@ -157,8 +186,8 @@ end
 `ifdef LOOPBACK
 // In a Tx->Rx joint proof, we want to assert that all the bits received by the receiver at any given point in time are equal to all the bits sent by the transmitter 
 
-always @(posedge clk) begin  // for induction, checks the relationship between Tx 'cnt' and Rx 'state'
-	if(first_clock_passed) begin
+always @($global_clock) begin  // for induction, checks the relationship between Tx 'cnt' and Rx 'state'
+	if(first_clock_passed_tx || first_clock_passed_rx) begin
 		if(state == Rx_IDLE) begin
 			if(serial_in == 1)
 				assert(cnt == 0);
@@ -181,8 +210,8 @@ always @(posedge clk) begin  // for induction, checks the relationship between T
 end
 
 
-always @(posedge clk) begin
-	if(first_clock_passed) begin
+always @($global_clock) begin
+	if(first_clock_passed_tx || first_clock_passed_rx) begin
 		if(state == Rx_IDLE) begin
 			if(($past(reset)) || (($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
 				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
@@ -213,8 +242,8 @@ genvar cnt_idx;  // for induction, checks the relationship between 'state' and '
 
 for(cnt_idx=Rx_DATA_BIT_1; (cnt_idx < Rx_STOP_BIT); cnt_idx=cnt_idx+1) begin
 
-	always @(posedge clk) begin
-		if(first_clock_passed) begin
+	always @($global_clock) begin
+		if(first_clock_passed_tx || first_clock_passed_rx) begin
 			if(state == cnt_idx) begin
 				assert(received_data == {i_data[cnt_idx-NUMBER_OF_RX_SYNCHRONIZERS:0] , {(INPUT_DATA_WIDTH-cnt_idx+NUMBER_OF_RX_SYNCHRONIZERS-1){1'b0}}});
 			end
@@ -247,7 +276,7 @@ generate
 
 		assign Tx_shift_reg_assertion[Tx_shift_reg_index] = (!(Tx_shift_reg_index <= (INPUT_DATA_WIDTH - cnt))) || (!tx_shift_reg_contains_data_bits) || (shift_reg[Tx_shift_reg_index] == i_data[i_data_index[Tx_shift_reg_index]]);    
 		
-		always @(posedge clk) begin 			
+		always @(posedge tx_clk) begin 			
 			assert(Tx_shift_reg_assertion[Tx_shift_reg_index]);
 		end
 		
@@ -273,8 +302,8 @@ generate
 	for(Tx_index = 1; (Tx_index > 1) && (Tx_index < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)); Tx_index=Tx_index+1) 
 	begin 
 
-		always@(posedge clk) begin
-			if(!reset && tx_in_progress && first_clock_passed) begin
+		always@(posedge tx_clk) begin
+			if(!reset && tx_in_progress && first_clock_passed_tx) begin
 				if(cnt == Tx_index) begin  // during UART data bits transmission
 					expected_shift_reg <= {{(Tx_index){1'b0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]};
 					
@@ -285,7 +314,7 @@ generate
 	end
 endgenerate
 							
-always @(posedge clk)
+always @(posedge tx_clk)
 begin
     if(reset) begin
     	had_been_enabled <= 0;
@@ -319,7 +348,7 @@ begin
 
 		else if(tx_in_progress) begin
 			if(cnt == 0) begin
-				if(first_clock_passed) begin
+				if(first_clock_passed_tx) begin
 			 		if (!$past(enable) && !$past(had_been_enabled)) 
 			 			assert(!had_been_enabled);
 			 		else
@@ -434,7 +463,7 @@ begin
 	    	
     	    assert(serial_out == 1);
     	    
-    	    if(!had_been_enabled && first_clock_passed) begin
+    	    if(!had_been_enabled && first_clock_passed_tx) begin
 				if($past(cnt) == NUMBER_OF_BITS) begin  // Tx had just finished
 					if($past(reset)) begin
 						assert(&shift_reg == 1);
@@ -479,9 +508,9 @@ begin
     end
 end
 
-always @(posedge clk)
+always @(posedge tx_clk)
 begin	
-	if(!$past(reset) && $past(baud_clk) && first_clock_passed) begin
+	if(!$past(reset) && $past(baud_clk) && first_clock_passed_tx) begin
 		if((had_been_enabled) && (!$past(had_been_enabled))) begin  // Tx starts transmission now
 			assert(!$past(o_busy));
 			assert(o_busy);  
@@ -499,7 +528,7 @@ begin
 
 		else if((!had_been_enabled) && ($past(had_been_enabled))) begin  // Tx finished transmission
 		
-			if(first_clock_passed) begin
+			if(first_clock_passed_tx) begin
 				assert($past(serial_out) == 1);
 			
 				assert(($past(o_busy)) && (!o_busy));
@@ -518,7 +547,7 @@ begin
 	end
 end
 
-always @(posedge clk)
+always @($global_clock)
 begin
     if(reset | o_busy) begin
         assume(enable == 0);
@@ -529,7 +558,7 @@ begin
 	end
 end
 
-always @(posedge clk)
+always @(posedge rx_clk)
 begin
     assert(!rx_error);   // no parity error
 
@@ -538,7 +567,7 @@ begin
         assert(cnt <= NUMBER_OF_BITS);
     end
 
-	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
+	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed_rx) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end

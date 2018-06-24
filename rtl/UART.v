@@ -1,4 +1,4 @@
-module UART(clk, reset, serial_out, enable, i_data, o_busy, serial_in, received_data, data_is_valid, rx_error
+module UART(tx_clk, rx_clk, reset, serial_out, enable, i_data, o_busy, serial_in, received_data, data_is_valid, rx_error
 `ifdef FORMAL
 	, state, baud_clk, shift_reg, serial_in_synced, start_detected, sampling_strobe
 `endif
@@ -7,7 +7,7 @@ module UART(clk, reset, serial_out, enable, i_data, o_busy, serial_in, received_
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 
-input clk;
+input tx_clk, rx_clk;
 input reset; 
 
 // transmitter signals
@@ -36,14 +36,14 @@ output sampling_strobe;
 `endif
 
 // UART transmitter
-Tx_top tx (.clk(clk), .reset(reset), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_out(serial_out)
+Tx_top tx (.clk(tx_clk), .reset(reset), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_out(serial_out)
 `ifdef FORMAL
 	, .baud_clk(baud_clk), .shift_reg(shift_reg)
 `endif
 );
 
 // UART receiver
-Rx_top rx (.clk(clk), .reset(reset), .serial_in(serial_in), .received_data(received_data), .rx_error(rx_error), .data_is_valid(data_is_valid)
+Rx_top rx (.clk(rx_clk), .reset(reset), .serial_in(serial_in), .received_data(received_data), .rx_error(rx_error), .data_is_valid(data_is_valid)
 `ifdef FORMAL
 	, .state(state), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
 `endif
