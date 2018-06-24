@@ -86,7 +86,13 @@ reg rx_clk;
 
 always @($global_clock)  // generation of rx_clk which is 1.5% frequency deviation from tx_clk
 begin
-	{ rx_clk, counter_rx_clk } <= counter_rx_clk + rx_clk_increment; // the actual rx_clk has frequency of tx_clk's frequency divided by ((2^37)÷135407835933) , or equivalently, rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
+	if(reset) begin
+		rx_clk <= 0;
+		counter_rx_clk <= 0;	
+	end
+	
+	else
+		{ rx_clk, counter_rx_clk } <= counter_rx_clk + rx_clk_increment; // the actual rx_clk has frequency of tx_clk's frequency divided by ((2^37)÷135407835933) , or equivalently, rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
 end
 
 localparam tx_clk_increment = 2;  // this helps to generate a clock with the same frequency as $global_clock
@@ -95,7 +101,49 @@ reg tx_clk;
 
 always @($global_clock)  // generation of tx_clk
 begin
-	{ tx_clk, counter_tx_clk } <= counter_tx_clk + tx_clk_increment;
+	if(reset) begin
+		tx_clk <= 0;
+		counter_tx_clk <= 0;
+	end
+		
+	else
+		{ tx_clk, counter_tx_clk } <= counter_tx_clk + tx_clk_increment;
+end
+
+always @($global_clock)
+begin
+	assert(counter_tx_clk <= 1);
+
+	if(first_clock_passed_tx) begin
+		assert((tx_clk && $past(tx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
+		
+		if($past(reset)) assert(counter_tx_clk == 0);
+		
+		else assert((counter_tx_clk - $past(counter_tx_clk)) == tx_clk_increment);  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
+		
+		if((&($past(counter_tx_clk)+tx_clk_increment-1)) && (counter_tx_clk == 0) && !($past(reset))) 
+			assert(tx_clk);
+		else 
+			assert(!tx_clk);
+	end
+end
+
+always @($global_clock)
+begin
+	//assert(counter_rx_clk < (1 << (counter_rx_clk_bit_width-1)));
+
+	if(first_clock_passed_rx) begin
+		assert((rx_clk && $past(rx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
+		
+		if($past(reset)) assert(counter_rx_clk == 0);
+		
+		else assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
+		
+		if((&($past(counter_rx_clk)+rx_clk_increment-1)) && (counter_rx_clk == 0) && !($past(reset))) 
+			assert(rx_clk);
+		else 
+			assert(!rx_clk);
+	end
 end
 
 
