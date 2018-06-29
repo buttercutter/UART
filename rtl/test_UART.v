@@ -3,14 +3,14 @@
 // for connecting Tx and Rx together
 `define LOOPBACK 1
 
-module test_UART(reset, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
+module test_UART(reset_tx, reset_rx, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 parameter PARITY_TYPE = 0;  // 0 = even parity, 1 = odd parity
 
 //input clk;
-input reset;
+input reset_tx, reset_rx;
 
 // transmitter signals
 input enable;
@@ -36,7 +36,7 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 wire serial_in_synced, start_detected, sampling_strobe;
 `endif
 
-UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset(reset), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
+UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
 	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
 `endif
@@ -86,7 +86,7 @@ reg rx_clk;
 
 always @($global_clock)  // generation of rx_clk which is 1.5% frequency deviation from tx_clk
 begin
-	if(reset) begin
+	if(reset_rx) begin
 		rx_clk <= 0;
 		counter_rx_clk <= 0;	
 	end
@@ -101,7 +101,7 @@ reg tx_clk;
 
 always @($global_clock)  // generation of tx_clk
 begin
-	if(reset) begin
+	if(reset_tx) begin
 		tx_clk <= 0;
 		counter_tx_clk <= 0;
 	end
@@ -117,11 +117,11 @@ begin
 	if(first_clock_passed_tx) begin
 		assert((tx_clk && $past(tx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
 		
-		if($past(reset)) assert(counter_tx_clk == 0);
+		if($past(reset_tx)) assert(counter_tx_clk == 0);
 		
 		else assert((counter_tx_clk - $past(counter_tx_clk)) == tx_clk_increment);  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
 		
-		if((&($past(counter_tx_clk)+tx_clk_increment-1)) && (counter_tx_clk == 0) && !($past(reset))) 
+		if((&($past(counter_tx_clk)+tx_clk_increment-1)) && (counter_tx_clk == 0) && !($past(reset_tx))) 
 			assert(tx_clk);
 		else 
 			assert(!tx_clk);
@@ -135,11 +135,11 @@ begin
 	if(first_clock_passed_rx) begin
 		assert((rx_clk && $past(rx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
 		
-		if($past(reset)) assert(counter_rx_clk == 0);
+		if($past(reset_rx)) assert(counter_rx_clk == 0);
 		
 		else assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
 		
-		if((&($past(counter_rx_clk)+rx_clk_increment-1)) && (counter_rx_clk == 0) && !($past(reset))) 
+		if((&($past(counter_rx_clk)+rx_clk_increment-1)) && (counter_rx_clk == 0) && !($past(reset_rx))) 
 			assert(rx_clk);
 		else 
 			assert(!rx_clk);
@@ -157,7 +157,16 @@ begin
 	first_clock_passed_rx <= 1;
 end
 
-always @(*) if(!first_clock_passed_tx || !first_clock_passed_rx) assume(reset);
+always @(*) 
+begin
+	if(!first_clock_passed_tx)  assume(reset_tx);
+	
+	else assert(serial_out == 1);
+		
+	if(!first_clock_passed_rx)	assume(reset_rx);
+	
+	else assert(serial_in == 1);
+end
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_two = stop_bit_location_plus_one + 1;
@@ -173,7 +182,7 @@ begin
 	assert(stop_bit_location < NUMBER_OF_BITS);
 	
 	if(first_clock_passed_tx) begin
-		if($past(reset) == 0) begin 
+		if($past(reset_tx) == 0) begin 
 			if(cnt < NUMBER_OF_BITS) begin
 				assert(stop_bit_location == (NUMBER_OF_BITS - 1 - cnt));
 			end
@@ -187,7 +196,7 @@ end
 
 always @(posedge tx_clk)
 begin
-    if(reset) begin
+    if(reset_tx) begin
         cnt <= 0;
 		tx_in_progress <= 0;
     end
@@ -218,7 +227,7 @@ begin
 		//else tx_in_progress <= had_been_enabled;
     end
     
-    if((first_clock_passed_tx) && !($past(reset)) && 
+    if((first_clock_passed_tx) && !($past(reset_tx)) && 
 	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled)) 
     || ($past(tx_in_progress) && $past(had_been_enabled)) 
     || ($past(had_been_enabled) || $past(enable)) && ($past(baud_clk)) && !($past(tx_in_progress)) 
@@ -261,7 +270,7 @@ end
 always @($global_clock) begin
 	if(first_clock_passed_tx || first_clock_passed_rx) begin
 		if(state == Rx_IDLE) begin
-			if(($past(reset)) || (($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
+			if(($past(reset_rx)) || (($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
 				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
 			end
 			
@@ -351,7 +360,7 @@ generate
 	begin 
 
 		always@(posedge tx_clk) begin
-			if(!reset && tx_in_progress && first_clock_passed_tx) begin
+			if(!reset_tx && tx_in_progress && first_clock_passed_tx) begin
 				if(cnt == Tx_index) begin  // during UART data bits transmission
 					expected_shift_reg <= {{(Tx_index){1'b0}} , 1'b1, (^i_data), i_data[INPUT_DATA_WIDTH-1:cnt-1]};
 					
@@ -364,7 +373,7 @@ endgenerate
 							
 always @(posedge tx_clk)
 begin
-    if(reset) begin
+    if(reset_tx) begin
     	had_been_enabled <= 0;
     end   
 
@@ -373,7 +382,7 @@ begin
         if(enable && (!had_been_enabled)) begin           
     	    had_been_enabled <= 1;
     	    
-    	    if($past(reset)) begin
+    	    if($past(reset_tx)) begin
     	    	assert(&shift_reg == 1);
     	    end
     	    
@@ -513,7 +522,7 @@ begin
     	    
     	    if(!had_been_enabled && first_clock_passed_tx) begin
 				if($past(cnt) == NUMBER_OF_BITS) begin  // Tx had just finished
-					if($past(reset)) begin
+					if($past(reset_tx)) begin
 						assert(&shift_reg == 1);
 					end					
 
@@ -523,7 +532,7 @@ begin
 				end
 
 				else if($past(shift_reg) == 0) begin  // Tx is waiting to be enabled again after a transmission
-					if($past(reset)) begin
+					if($past(reset_tx)) begin
 						assert(&shift_reg == 1);
 					end
 					
@@ -531,7 +540,7 @@ begin
 						assert(shift_reg == 0);
 					end
 					
-					if((($past(state) == Rx_IDLE) && !$past(start_detected)) || $past(reset)) begin
+					if((($past(state) == Rx_IDLE) && !$past(start_detected)) || $past(reset_rx)) begin
 						assert(state == Rx_IDLE);
 					end
 					
@@ -543,7 +552,7 @@ begin
 				else begin  // Tx is waiting to be enabled for the first time
 					assert(&shift_reg == 1);
 					
-					if(($past(state) == Rx_IDLE) && $past(start_detected) && !$past(reset)) begin
+					if(($past(state) == Rx_IDLE) && $past(start_detected) && !$past(reset_rx)) begin
 						assert(state == Rx_START_BIT);
 					end
 					
@@ -558,7 +567,7 @@ end
 
 always @(posedge tx_clk)
 begin	
-	if(!$past(reset) && $past(baud_clk) && first_clock_passed_tx) begin
+	if(!$past(reset_tx) && $past(baud_clk) && first_clock_passed_tx) begin
 		if((had_been_enabled) && (!$past(had_been_enabled))) begin  // Tx starts transmission now
 			assert(!$past(o_busy));
 			assert(o_busy);  
@@ -597,7 +606,7 @@ end
 
 always @($global_clock)
 begin
-    if(reset | o_busy) begin
+    if(reset_tx | o_busy) begin
         assume(enable == 0);
     end
 	
@@ -615,7 +624,7 @@ begin
         assert(cnt <= NUMBER_OF_BITS);
     end
 
-	if((!$past(reset)) && (state <= Rx_STOP_BIT) && (first_clock_passed_rx) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
+	if((!$past(reset_tx)) && (state <= Rx_STOP_BIT) && (first_clock_passed_rx) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
 	end
 end

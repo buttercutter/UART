@@ -88,6 +88,8 @@ end
     always @(posedge clk) 
     begin
     	first_clock_passed <= 1;
+   
+   		if(first_clock_passed && $past(reset)) assert(state == Rx_IDLE);
     
         assert(state <= Rx_STOP_BIT);
     
