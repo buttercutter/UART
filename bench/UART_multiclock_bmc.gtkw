@@ -1,0 +1,71 @@
+[*]
+[*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
+[*] Sat Jun 30 12:59:50 2018
+[*]
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART/engine_0/trace.vcd"
+[dumpfile_mtime] "Sat Jun 30 12:58:10 2018"
+[dumpfile_size] 10769
+[savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_multiclock_bmc.gtkw"
+[timestart] 0
+[size] 1920 995
+[pos] -101 -101
+*-3.683995 20 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test_UART.
+[sst_width] 51
+[signals_width] 388
+[sst_expanded] 0
+[sst_vpaned_height] 278
+@28
+smt_clock
+@421
+smt_step
+@22
+test_UART.Tx_shift_reg_assertion[7:0]
+@28
+test_UART.baud_clk
+@22
+test_UART.cnt[3:0]
+@28
+test_UART.counter_rx_clk[1:0]
+test_UART.counter_tx_clk
+test_UART.data_is_valid
+test_UART.enable
+test_UART.first_clock_passed_rx
+test_UART.first_clock_passed_tx
+test_UART.had_been_enabled
+@22
+test_UART.i_data[7:0]
+test_UART.i_data_index<0>[4:0]
+test_UART.i_data_index<1>[4:0]
+test_UART.i_data_index<2>[4:0]
+test_UART.i_data_index<3>[4:0]
+test_UART.i_data_index<4>[4:0]
+test_UART.i_data_index<5>[4:0]
+test_UART.i_data_index<6>[4:0]
+test_UART.i_data_index<7>[4:0]
+@28
+test_UART.o_busy
+@22
+test_UART.received_data[7:0]
+@28
+test_UART.reset_rx
+test_UART.reset_tx
+test_UART.rx_clk
+test_UART.rx_error
+test_UART.sampling_strobe
+test_UART.serial_in
+test_UART.serial_in_synced
+test_UART.serial_out
+@22
+test_UART.shift_reg[10:0]
+@28
+test_UART.start_detected
+@22
+test_UART.state[3:0]
+test_UART.stop_bit_location[3:0]
+@28
+test_UART.tx_clk
+test_UART.tx_in_progress
+test_UART.tx_shift_reg_contains_data_bits
+[pattern_trace] 1
+[pattern_trace] 0

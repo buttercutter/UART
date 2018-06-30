@@ -79,10 +79,10 @@ end
 
 // refer to https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/ for feasible ratio of tx_clk/rx_clk
 
-localparam rx_clk_increment = 135407835933;  // rx_clk is slower than $global_clock by a factor of 1.015
-localparam counter_rx_clk_bit_width = 37; // (2^37)/1.015 = 135407835933.004926108
-reg	[counter_rx_clk_bit_width-1:0]	counter_rx_clk;
-reg rx_clk;
+localparam rx_clk_increment = 2;  // rx_clk is slower than tx_clk by a factor of 1.015 or equivalently slower than $global_clock by a factor of (1.015*2)
+localparam counter_rx_clk_bit_width = 2; // (2^2)/(1.015*2) = 1.97044335 ~= 2
+reg	[counter_rx_clk_bit_width-1:0]	counter_rx_clk = 0;
+reg rx_clk = 0;
 
 always @($global_clock)  // generation of rx_clk which is 1.5% frequency deviation from tx_clk
 begin
@@ -92,57 +92,84 @@ begin
 	end
 	
 	else
-		{ rx_clk, counter_rx_clk } <= counter_rx_clk + rx_clk_increment; // the actual rx_clk has frequency of tx_clk's frequency divided by ((2^37)÷135407835933) , or equivalently, rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
+		{ rx_clk, counter_rx_clk } <= counter_rx_clk + rx_clk_increment; // the actual rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
 end
 
-localparam tx_clk_increment = 2;  // this helps to generate a clock with the same frequency as $global_clock
-reg	counter_tx_clk;
-reg tx_clk;
+localparam TX_CLK_THRESHOLD = 2;  // divides $global_clock by 2 to obtain ck_stb which is just a clock enable signal
 
-always @($global_clock)  // generation of tx_clk
+reg [($clog2(TX_CLK_THRESHOLD)-1):0] counter_tx_clk = 0;
+reg tx_clk = 0;
+
+always @($global_clock)
 begin
-	if(reset_tx) begin
-		tx_clk <= 0;
-		counter_tx_clk <= 0;
-	end
-		
-	else
-		{ tx_clk, counter_tx_clk } <= counter_tx_clk + tx_clk_increment;
+	if(reset_tx) counter_tx_clk <= 1; 
+	
+	else begin
+		if(tx_clk)
+		  	counter_tx_clk <= 1;    
+		else
+		  	counter_tx_clk <= counter_tx_clk + 1;
+	end	  	
 end
 
 always @($global_clock)
 begin
-	assert(counter_tx_clk <= 1);
+	if(reset_tx) tx_clk <= 0;
+
+	else tx_clk <= (counter_tx_clk == TX_CLK_THRESHOLD-1'b1);
+end
+
+always @($global_clock)
+begin
+	assert(counter_tx_clk <= (TX_CLK_THRESHOLD - 1));
 
 	if(first_clock_passed_tx) begin
-		assert((tx_clk && $past(tx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
-		
-		if($past(reset_tx)) assert(counter_tx_clk == 0);
-		
-		else assert((counter_tx_clk - $past(counter_tx_clk)) == tx_clk_increment);  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
-		
-		if((&($past(counter_tx_clk)+tx_clk_increment-1)) && (counter_tx_clk == 0) && !($past(reset_tx))) 
-			assert(tx_clk);
-		else 
-			assert(!tx_clk);
+		if($past(reset_tx)) begin
+			assert(tx_clk == 0);
+			assert(counter_tx_clk == 1);
+		end
+
+		else begin
+			assert((tx_clk && $past(tx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
+			
+			assert((($past(counter_tx_clk) - counter_tx_clk) == 1) || ((counter_tx_clk - $past(counter_tx_clk)) == 1));  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
+			
+			if(($past(counter_tx_clk) == TX_CLK_THRESHOLD-1'b1) && (counter_tx_clk == 1)) 
+				assert(tx_clk);
+			else 
+				assert(!tx_clk);
+		end
 	end
 end
 
 always @($global_clock)
 begin
-	//assert(counter_rx_clk < (1 << (counter_rx_clk_bit_width-1)));
+	assert(counter_rx_clk < (1 << counter_rx_clk_bit_width));
 
 	if(first_clock_passed_rx) begin
-		assert((rx_clk && $past(rx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
-		
-		if($past(reset_rx)) assert(counter_rx_clk == 0);
-		
-		else assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
-		
-		if((&($past(counter_rx_clk)+rx_clk_increment-1)) && (counter_rx_clk == 0) && !($past(reset_rx))) 
-			assert(rx_clk);
-		else 
-			assert(!rx_clk);
+		if($past(reset_rx)) begin
+			assert(rx_clk == 0);
+			assert(counter_rx_clk == 0);
+		end
+
+		else begin	
+			assert((rx_clk && $past(rx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
+			
+			if($past(reset_rx)) assert(counter_rx_clk == 0);
+			
+			else begin // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
+				if(counter_rx_clk == 0)
+					assert(($past(counter_rx_clk) - counter_rx_clk) == rx_clk_increment);
+				
+				else
+					assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  
+			end
+			
+			if((($past(counter_rx_clk) - counter_rx_clk) == rx_clk_increment) && (counter_rx_clk == 0)) 
+				assert(rx_clk);
+			else 
+				assert(!rx_clk);
+		end
 	end
 end
 
@@ -371,6 +398,14 @@ generate
 	end
 endgenerate
 							
+always @($global_clock)
+begin
+    if(first_clock_passed_tx && $past(reset_tx)) begin
+    	assert(&shift_reg == 1);
+    	assert(cnt == 0);
+    end	
+end
+							
 always @(posedge tx_clk)
 begin
     if(reset_tx) begin
@@ -381,10 +416,6 @@ begin
  
         if(enable && (!had_been_enabled)) begin           
     	    had_been_enabled <= 1;
-    	    
-    	    if($past(reset_tx)) begin
-    	    	assert(&shift_reg == 1);
-    	    end
     	    
     	    if((|shift_reg == 0) && (stop_bit_location == 0))  // just finished transmission
     	    	assert(cnt == NUMBER_OF_BITS);

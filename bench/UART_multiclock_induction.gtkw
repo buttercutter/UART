@@ -1,15 +1,18 @@
 [*]
 [*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
-[*] Thu Jun 28 16:25:57 2018
+[*] Sat Jun 30 14:52:36 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART/engine_0/trace_induct.vcd"
-[dumpfile_mtime] "Thu Jun 28 16:23:57 2018"
-[dumpfile_size] 141367
+[dumpfile_mtime] "Sat Jun 30 14:50:52 2018"
+[dumpfile_size] 137831
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_multiclock_induction.gtkw"
-[timestart] 0
+[timestart] 3
 [size] 1920 995
 [pos] -1 -1
 *-7.126574 990 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] test_UART.
+[treeopen] test_UART.uart.
+[treeopen] test_UART.uart.rx.
 [sst_width] 51
 [signals_width] 367
 [sst_expanded] 0
@@ -20,52 +23,54 @@ smt_clock
 smt_step
 @28
 test_UART.serial_out
+@29
+test_UART.reset_tx
+@28
 test_UART.tx_clk
+@24
+test_UART.counter_tx_clk
+@28
+test_UART.reset_rx
 test_UART.rx_clk
+@24
+test_UART.counter_rx_clk[1:0]
 @22
 test_UART.Tx_shift_reg_assertion[7:0]
-@28
-test_UART.counter_tx_clk
+@29
 test_UART.baud_clk
-@23
-test_UART.cnt[3:0]
 @22
-test_UART.counter_rx_clk[36:0]
+test_UART.cnt[3:0]
 @28
 test_UART.data_is_valid
+@29
 test_UART.enable
+@28
 test_UART.first_clock_passed_rx
 test_UART.first_clock_passed_tx
+@29
 test_UART.had_been_enabled
+@28
 test_UART.i_data[7:0]
 test_UART.received_data[7:0]
-@22
-test_UART.i_data_index<0>[4:0]
-test_UART.i_data_index<1>[4:0]
-test_UART.i_data_index<2>[4:0]
-test_UART.i_data_index<3>[4:0]
-test_UART.i_data_index<4>[4:0]
-test_UART.i_data_index<5>[4:0]
-test_UART.i_data_index<6>[4:0]
-test_UART.i_data_index<7>[4:0]
-@28
 test_UART.o_busy
 test_UART.rx_error
-test_UART.sampling_strobe
-test_UART.serial_in
 test_UART.serial_in_synced
-@23
+@22
 test_UART.shift_reg[10:0]
 @28
 test_UART.start_detected
 @22
 test_UART.state[3:0]
-@23
 test_UART.stop_bit_location[3:0]
-@28
+@29
 test_UART.tx_in_progress
+@28
 test_UART.tx_shift_reg_contains_data_bits
-test_UART.reset_rx
-test_UART.reset_tx
+test_UART.uart.rx.sync.serial_in
+test_UART.uart.rx.sync.serial_in_reg
+test_UART.uart.rx.sync.serial_in_reg2
+test_UART.uart.rx.sync.serial_in_synced
+test_UART.uart.rx.sync.had_reset
+test_UART.uart.rx.sync.sampling_strobe
 [pattern_trace] 1
 [pattern_trace] 0
