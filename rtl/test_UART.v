@@ -253,7 +253,10 @@ begin
 
 		//else tx_in_progress <= had_been_enabled;
     end
-    
+end
+
+always @($global_clock)
+begin    
     if((first_clock_passed_tx) && !($past(reset_tx)) && 
 	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled)) 
     || ($past(tx_in_progress) && $past(had_been_enabled)) 
@@ -406,7 +409,7 @@ begin
     end	
 end
 							
-always @(posedge tx_clk)
+always @($global_clock)
 begin
     if(reset_tx) begin
     	had_been_enabled <= 0;
