@@ -1,6 +1,6 @@
 [options]
 mode prove
-depth 100
+depth 200
 
 multiclock on
 

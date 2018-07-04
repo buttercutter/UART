@@ -134,7 +134,7 @@ begin
 			
 			assert((($past(counter_tx_clk) - counter_tx_clk) == 1) || ((counter_tx_clk - $past(counter_tx_clk)) == 1));  // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
 			
-			if(($past(counter_tx_clk) == TX_CLK_THRESHOLD-1'b1) && (counter_tx_clk == 1)) 
+			if($past(counter_tx_clk) == TX_CLK_THRESHOLD-1'b1) // && (counter_tx_clk == 1)) 
 				assert(tx_clk);
 			else 
 				assert(!tx_clk);
@@ -275,22 +275,32 @@ end
 
 always @($global_clock) begin  // for induction, checks the relationship between Tx 'cnt' and Rx 'state'
 	if(first_clock_passed_tx || first_clock_passed_rx) begin
-		if(state == Rx_IDLE) begin
-			if(serial_in == 1)
-				assert(cnt == 0);
-			else
-				assert(cnt == 1);
-		end	
-		
-		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
-			assert(cnt == state);
+		if($past(reset_tx)) begin
+			assert(cnt == 0);
 		end
 		
-		else begin // (state == Rx_STOP_BIT)
-			if(tx_in_progress || !had_been_enabled)
+		else begin
+			if((state == Rx_IDLE) && ($past(state) == Rx_IDLE)) begin
+				if(serial_in == 1)
+					assert(cnt == 0);
+				else
+					assert(cnt == 1);
+			end	
+			
+			else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
+				assert(cnt == NUMBER_OF_BITS);
+			end
+			
+			else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
 				assert(cnt == state);
-			else begin
-				assert(cnt == 0);
+			end
+			
+			else begin // (state == Rx_STOP_BIT)
+				if(tx_in_progress || !had_been_enabled)
+					assert(cnt == state);
+				else begin
+					assert(cnt == 0);
+				end
 			end
 		end
 	end
@@ -565,7 +575,7 @@ begin
 					end
 				end
 
-				else if($past(shift_reg) == 0) begin  // Tx is waiting to be enabled again after a transmission
+				if($past(shift_reg) == 0) begin  // Tx is waiting to be enabled again after a transmission
 					if($past(reset_tx)) begin
 						assert(&shift_reg == 1);
 					end
@@ -583,8 +593,8 @@ begin
 					end
 				end
 
-				else begin  // Tx is waiting to be enabled for the first time
-					assert(&shift_reg == 1);
+				else begin //if(&shift_reg == 1) begin  // Tx is waiting to be enabled for the first time
+					assert(cnt == 0);
 					
 					if(($past(state) == Rx_IDLE) && $past(start_detected) && !$past(reset_rx)) begin
 						assert(state == Rx_START_BIT);

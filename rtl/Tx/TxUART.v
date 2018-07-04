@@ -83,7 +83,7 @@ begin
 	first_clock_passed <= 1;
 end
 
-always @(posedge clk) 
+always @($global_clock) 
 begin
 	if(first_clock_passed && ($past(first_clock_passed) == 0)) begin    // for induction check purpose
 		assert($past(o_busy) == 0);  // initially not busy

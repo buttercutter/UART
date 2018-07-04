@@ -1,18 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
-[*] Sun Jul  1 01:02:17 2018
+[*] Wed Jul  4 16:50:55 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART/engine_0/trace_induct.vcd"
-[dumpfile_mtime] "Sun Jul  1 00:51:47 2018"
-[dumpfile_size] 137831
+[dumpfile_mtime] "Wed Jul  4 16:28:57 2018"
+[dumpfile_size] 269031
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_multiclock_induction.gtkw"
-[timestart] 841
-[size] 960 995
-[pos] -50 -1
-*-6.126574 990 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 1510
+[size] 1920 995
+[pos] -51 -1
+*-6.118704 2000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
+[treeopen] test_UART.uart.tx.
 [sst_width] 51
 [signals_width] 367
 [sst_expanded] 0
@@ -23,7 +24,9 @@ smt_clock
 smt_step
 @28
 test_UART.serial_out
+@29
 test_UART.reset_tx
+@28
 test_UART.tx_clk
 @24
 test_UART.counter_tx_clk
@@ -36,39 +39,42 @@ test_UART.counter_rx_clk[1:0]
 test_UART.Tx_shift_reg_assertion[7:0]
 @28
 test_UART.baud_clk
-@23
+@22
 test_UART.cnt[3:0]
 @28
 test_UART.data_is_valid
 test_UART.enable
-@29
 test_UART.first_clock_passed_rx
 test_UART.first_clock_passed_tx
-@28
 test_UART.had_been_enabled
 test_UART.i_data[7:0]
 test_UART.received_data[7:0]
 test_UART.o_busy
 test_UART.rx_error
 test_UART.serial_in_synced
-@22
 test_UART.shift_reg[10:0]
-@28
 test_UART.start_detected
-@23
-test_UART.state[3:0]
 @22
+test_UART.state[3:0]
 test_UART.stop_bit_location[3:0]
 @28
 test_UART.tx_in_progress
 test_UART.tx_shift_reg_contains_data_bits
-@29
 test_UART.uart.rx.sync.serial_in
-@28
 test_UART.uart.rx.sync.serial_in_reg
 test_UART.uart.rx.sync.serial_in_reg2
 test_UART.uart.rx.sync.serial_in_synced
 test_UART.uart.rx.sync.had_reset
 test_UART.uart.rx.sync.sampling_strobe
+test_UART.uart.tx.first_clock_passed
+@22
+test_UART.uart.tx.i_data[7:0]
+@28
+test_UART.uart.tx.parity_bit
+test_UART.uart.tx.bg.ck_stb
+@25
+test_UART.uart.tx.bg.cnt[2:0]
+@29
+test_UART.uart.tx.bg.first_clock_passed
 [pattern_trace] 1
 [pattern_trace] 0
