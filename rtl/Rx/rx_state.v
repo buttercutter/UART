@@ -102,6 +102,20 @@ end
         //if (state == Rx_STOP_BIT)
             //assume(reset == 0);  // this is to assume for induction test because Tx internal registers are not reset/initialized properly at time = 0, such that data_is_valid signal will not be asserted in the next clock cycle after the "FIRST" stop bit state
     end
+    
+	always @(posedge clk)
+	begin
+		if(first_clock_passed) begin
+			if($past(reset)) begin
+				assert(data_is_valid == 0);
+			end
+			
+			else begin
+				assert(data_is_valid == (($past(state) == Rx_PARITY_BIT) && $past(sampling_strobe)));  
+			end
+		end
+	end
+
 `endif
 
 endmodule

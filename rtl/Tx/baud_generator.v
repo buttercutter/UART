@@ -57,7 +57,7 @@ begin
 	end
 end
 
-always @($global_clock)
+always @(posedge clk)
 begin
 	assert(cnt < CLOCKS_PER_BIT);
 

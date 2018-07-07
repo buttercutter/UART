@@ -188,11 +188,11 @@ always @(*)
 begin
 	if(!first_clock_passed_tx)  assume(reset_tx);
 	
-	else assert(serial_out == 1);
+	//else assert(serial_out == 1);
 		
 	if(!first_clock_passed_rx)	assume(reset_rx);
 	
-	else assert(serial_in == 1);
+	//else assert(serial_in == 1);
 end
 
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] stop_bit_location_plus_one = stop_bit_location + 1;
@@ -255,7 +255,7 @@ begin
     end
 end
 
-always @($global_clock)
+always @(posedge tx_clk)
 begin    
     if((first_clock_passed_tx) && !($past(reset_tx)) && 
 	  ((!($past(baud_clk)) && $past(tx_in_progress) && $past(had_been_enabled)) 
@@ -412,7 +412,7 @@ generate
 	end
 endgenerate
 							
-always @($global_clock)
+always @(posedge tx_clk)
 begin
     if(first_clock_passed_tx && $past(reset_tx)) begin
     	assert(&shift_reg == 1);
