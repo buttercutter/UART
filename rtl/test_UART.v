@@ -273,34 +273,35 @@ end
 `ifdef LOOPBACK
 // In a Tx->Rx joint proof, we want to assert that all the bits received by the receiver at any given point in time are equal to all the bits sent by the transmitter 
 
+always @(posedge tx_clk) begin
+	if(first_clock_passed_tx && $past(reset_tx)) begin
+		assert(cnt == 0);
+	end
+end
+
 always @($global_clock) begin  // for induction, checks the relationship between Tx 'cnt' and Rx 'state'
 	if(first_clock_passed_tx || first_clock_passed_rx) begin
-		if($past(reset_tx)) begin
-			assert(cnt == 0);
+	
+		if((state == Rx_IDLE) && ($past(state) == Rx_IDLE)) begin
+			if(serial_in == 1)
+				assert(cnt == 0);
+			else
+				assert(cnt == 1);
+		end	
+		
+		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
+			assert(cnt == NUMBER_OF_BITS);
 		end
 		
-		else begin
-			if((state == Rx_IDLE) && ($past(state) == Rx_IDLE)) begin
-				if(serial_in == 1)
-					assert(cnt == 0);
-				else
-					assert(cnt == 1);
-			end	
-			
-			else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
-				assert(cnt == NUMBER_OF_BITS);
-			end
-			
-			else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
+		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
+			assert(cnt == state);
+		end
+		
+		else begin // (state == Rx_STOP_BIT)
+			if(tx_in_progress || !had_been_enabled)
 				assert(cnt == state);
-			end
-			
-			else begin // (state == Rx_STOP_BIT)
-				if(tx_in_progress || !had_been_enabled)
-					assert(cnt == state);
-				else begin
-					assert(cnt == 0);
-				end
+			else begin
+				assert(cnt == 0);
 			end
 		end
 	end
