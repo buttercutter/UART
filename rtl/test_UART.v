@@ -419,6 +419,22 @@ begin
     	assert(cnt == 0);
     end	
 end
+			
+always @(posedge tx_clk)
+begin
+	if(first_clock_passed_tx) begin
+		if($past(reset_tx)) begin
+			assert(!had_been_enabled);
+		end   
+
+		else begin
+		    if($past(enable) && ((!$past(had_been_enabled)) || ($past(cnt) == NUMBER_OF_BITS))) 
+		    	assert(had_been_enabled);
+			
+			else assert(!had_been_enabled);
+		end		
+	end	
+end	
 							
 always @($global_clock)
 begin

@@ -91,7 +91,7 @@ end
    
    		if(first_clock_passed && $past(reset)) assert(state == Rx_IDLE);
     
-        assert(state <= Rx_STOP_BIT);
+        if(first_clock_passed) assert(state <= Rx_STOP_BIT);
     
     	if((state >= Rx_DATA_BIT_0) && (state <= Rx_DATA_BIT_7) && (!reset)) begin // for induction
     		assert(data_is_available);
