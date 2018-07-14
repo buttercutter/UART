@@ -188,9 +188,13 @@ always @(*)
 begin
 	if(!first_clock_passed_tx)  assume(reset_tx);
 	
+	else if(!tx_clk) assume(!reset_tx); // reset_tx is "synchronous" to tx_clk
+	
 	//else assert(serial_out == 1);
 		
 	if(!first_clock_passed_rx)	assume(reset_rx);
+	
+	else if(!rx_clk) assume(!reset_rx); // reset_rx is "synchronous" to rx_clk
 	
 	//else assert(serial_in == 1);
 end
