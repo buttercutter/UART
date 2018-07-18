@@ -432,10 +432,10 @@ begin
 		end   
 
 		else begin
-		    if(($past(enable) && (!$past(had_been_enabled))) || (($past(tx_in_progress)) && ($past(cnt) == NUMBER_OF_BITS) && ($past(enable)))) 
-		    	assert(had_been_enabled);
+		    if(($past(tx_in_progress)) && ($past(cnt) == NUMBER_OF_BITS) && !($past(enable))) 
+		    	assert(!had_been_enabled);
 			
-			else assert(!had_been_enabled);
+			else assert(had_been_enabled);
 		end		
 	end	
 end	
@@ -552,7 +552,7 @@ always @(posedge rx_clk)
 begin
 	if(tx_in_progress) begin  // UART Rx internal states
 		
-		assert(cnt == 0);  // cnt gets reset to zero
+		//assert(cnt == 0);  // cnt gets reset to zero
 
 		if(state == Rx_IDLE) begin
 			assert(data_is_valid == 0);
