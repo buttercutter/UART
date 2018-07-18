@@ -432,202 +432,228 @@ begin
 		end   
 
 		else begin
-		    if($past(enable) && ((!$past(had_been_enabled)) || ($past(cnt) == NUMBER_OF_BITS))) 
+		    if(($past(enable) && (!$past(had_been_enabled))) || (($past(tx_in_progress)) && ($past(cnt) == NUMBER_OF_BITS) && ($past(enable)))) 
 		    	assert(had_been_enabled);
 			
 			else assert(!had_been_enabled);
 		end		
 	end	
 end	
-							
-always @($global_clock)
+	
+always @(posedge tx_clk)
 begin
-    if(reset_tx) begin
-    	had_been_enabled <= 0;
-    end   
-
-    else begin
- 
-        if(enable && (!had_been_enabled)) begin           
-    	    had_been_enabled <= 1;
-    	    
-    	    if((|shift_reg == 0) && (stop_bit_location == 0))  // just finished transmission
-    	    	assert(cnt == NUMBER_OF_BITS);
-    	    else 
-    	    	assert(cnt == 0);
-    	    
-	    	assert(serial_out == 1);
-	    	assert(o_busy == 0);
-        end
-
-		else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
-			assert(cnt == 0);
-			assert(serial_out == 1);
-			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
+    if(reset_tx) had_been_enabled <= 0;
+    
+    else if(enable && (!had_been_enabled)) had_been_enabled <= 1;
+    
+    else if(tx_in_progress && (cnt == NUMBER_OF_BITS)) begin  // UART stop bit transmission which signifies the end of UART transmission
 			
+		if(enable) had_been_enabled <= 1;
+		else had_been_enabled <= 0;
+	end
+	
+	//else had_been_enabled <= 0;
+end
+							
+always @(posedge tx_clk)
+begin
+    if(enable && (!had_been_enabled)) begin           
+	    
+	    if((|shift_reg == 0) && (stop_bit_location == 0))  // just finished transmission
+	    	assert(cnt == NUMBER_OF_BITS);
+	    else 
+	    	assert(cnt == 0);
+	    
+    	assert(serial_out == 1);
+    	assert(o_busy == 0);
+    end
+
+	else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
+		assert(cnt == 0);
+		assert(serial_out == 1);
+		assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0});  // ^data is even parity bit
+		
+		assert(o_busy == 1);
+	end
+
+	else if(tx_in_progress) begin
+		if(cnt == 0) begin
+			if(first_clock_passed_tx) begin
+		 		if (!$past(enable) && !$past(had_been_enabled)) 
+		 			assert(!had_been_enabled);
+		 		else
+		 			assert(had_been_enabled);
+		 	end
+		 	
+		 	else assert(!had_been_enabled); // not enabled at the beginning of time
+		end
+		
+		else if(((cnt >= 1) && (cnt <= NUMBER_OF_BITS-1)) || ((cnt == NUMBER_OF_BITS) && ($past(cnt) == NUMBER_OF_BITS-1))) assert(had_been_enabled);
+	
+		if(cnt == 1) begin
+			assert(serial_out == 0);  // start bit
+			assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});
 			assert(o_busy == 1);
 		end
-
-		else if(tx_in_progress) begin
-			if(cnt == 0) begin
-				if(first_clock_passed_tx) begin
-			 		if (!$past(enable) && !$past(had_been_enabled)) 
-			 			assert(!had_been_enabled);
-			 		else
-			 			assert(had_been_enabled);
-			 	end
-			 	
-			 	else assert(!had_been_enabled); // not enabled at the beginning of time
-			end
-			
-			else if(((cnt >= 1) && (cnt <= NUMBER_OF_BITS-1)) || ((cnt == NUMBER_OF_BITS) && ($past(cnt) == NUMBER_OF_BITS-1))) assert(had_been_enabled);
 		
-			if(cnt == 1) begin
-				assert(serial_out == 0);  // start bit
-				assert(shift_reg == {1'b0, 1'b1, (^i_data), i_data});
-				assert(o_busy == 1);
-			end
+		else if((cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1))) begin  // during UART data bits transmission
 			
-			else if((cnt > 1) && (cnt < (INPUT_DATA_WIDTH + PARITY_ENABLED + 1))) begin  // during UART data bits transmission
-				
-				assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0 } >> cnt);
-				if($past(baud_clk)) assert(serial_out == $past(shift_reg[0]));
-				assert(shift_reg[stop_bit_location] == 1);					
-				assert(o_busy == 1);				
-			end
-			
-			else if(cnt == (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)) begin  // during UART parity bit transmission
-			
-				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_PARITY_BIT);
+			assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0 } >> cnt);
+			if($past(baud_clk)) assert(serial_out == $past(shift_reg[0]));
+			assert(shift_reg[stop_bit_location] == 1);					
+			assert(o_busy == 1);				
+		end
+		
+		else if(cnt == (INPUT_DATA_WIDTH + PARITY_ENABLED + 1)) begin  // during UART parity bit transmission
+		
+			//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_PARITY_BIT);
 
-				assert(serial_out == (^i_data));
-				assert(shift_reg == 1);
-				//assert(data_is_valid == 0);					
-				assert(o_busy == 1);				
+			assert(serial_out == (^i_data));
+			assert(shift_reg == 1);
+			//assert(data_is_valid == 0);					
+			assert(o_busy == 1);				
+		end
+		
+		else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission which signifies the end of UART transmission
+			
+			assert(serial_out == 1); // stop bit
+			
+			if(($past(enable) && !($past(o_busy)) && (had_been_enabled)) | (shift_reg != 0)) begin 	// Tx is requested to start next series of data transmission OR Tx is now being prepared for the next series
+				
+				assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0} );   // transmit LSB first: 1 = stop bit, parity_bit, data_bits, 0 = start bit 
 			end
 			
-			else if(cnt == NUMBER_OF_BITS) begin  // UART stop bit transmission which signifies the end of UART transmission
-				//assert((state - cnt + NUMBER_OF_RX_SYNCHRONIZERS) == Rx_STOP_BIT);
+			else begin
+				assert(shift_reg == 0);
+			end
+			
+			if($past(shift_reg) == 1) begin
+				assert(o_busy);
+			end
+			
+			else begin
+				if(($past(enable) && !($past(o_busy)) && (had_been_enabled)) | (shift_reg != 0)) begin
+					assert(o_busy);
+				end
 				
-				if($past(enable)) had_been_enabled <= 1;
-				else had_been_enabled <= 0;
+				else begin
+					assert(!o_busy);
+				end
+			end
+		end
+		
+		else begin  // UART Rx internal states
+			assert(cnt == 0);  // cnt gets reset to zero
+		end
+	end
+end
+
+always @(posedge rx_clk) 
+begin
+	if(tx_in_progress) begin  // UART Rx internal states
+		
+		assert(cnt == 0);  // cnt gets reset to zero
+
+		if(state == Rx_IDLE) begin
+			assert(data_is_valid == 0);
+			
+			//if(!$past(tx_in_progress, NUMBER_OF_RX_SYNCHRONIZERS) || !$past(first_clock_passed, NUMBER_OF_RX_SYNCHRONIZERS))
+				assert(serial_in_synced == 1);
+			//else
+				//assert(serial_in_synced == 0);				
+		end
+
+		else if(state == Rx_START_BIT) begin
+			assert(data_is_valid == 0);
+			assert(serial_in_synced == 0);				
+		end
+
+		else if((state > Rx_START_BIT) && (state < Rx_PARITY_BIT)) begin // data bits
+			assert(data_is_valid == 0);				
+		end
+
+		else if(state == Rx_PARITY_BIT) begin
+			assert(data_is_valid == 0);
+			assert(serial_in_synced == ^i_data);			
+		end
 				
-				assert(serial_out == 1); // stop bit
+		else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
+			assert(state == Rx_STOP_BIT);
+			
+			if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
+				assert(data_is_valid == 1);
+			end
+			
+			else assert(data_is_valid == 0);
+		end
+	end
+	    
+	else begin  // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
+		if(!had_been_enabled) 
+		begin
+			if(shift_reg == 0) begin
+				if((($past(state) == Rx_IDLE) && !$past(start_detected)) || $past(reset_rx)) begin
+					assert(state == Rx_IDLE);
+				end
 				
-				if(($past(enable) && !($past(o_busy)) && (had_been_enabled)) | (shift_reg != 0)) begin 	// Tx is requested to start next series of data transmission OR Tx is now being prepared for the next series
-					
-					assert(shift_reg == {1'b1, (^i_data), i_data, 1'b0} );   // transmit LSB first: 1 = stop bit, parity_bit, data_bits, 0 = start bit 
+				else begin
+					assert(state != Rx_START_BIT);
+				end		
+			end	  
+		
+			else begin //if(&shift_reg == 1) begin  // Tx is waiting to be enabled for the first time
+				assert(cnt == 0);
+				assert(&shift_reg == 1);
+				
+				if(($past(state) == Rx_IDLE) && $past(start_detected) && !$past(reset_rx)) begin
+					assert(state == Rx_START_BIT);
+				end
+				
+				else begin
+					assert(state == Rx_IDLE);  // rx is idle too since this is a loopback
+				end
+			end		
+		end  
+	end
+end
+
+always @(posedge tx_clk)
+begin
+	if(!tx_in_progress) // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
+	begin
+	    if($past(enable) && !($past(had_been_enabled))) begin
+    	    assert(cnt == 0);
+    	end
+    	
+	    assert(serial_out == 1);
+	    
+	    if(!had_been_enabled && first_clock_passed_tx) begin
+			if($past(cnt) == NUMBER_OF_BITS) begin  // Tx had just finished
+				if($past(reset_tx)) begin
+					assert(&shift_reg == 1);
+				end					
+
+				else begin
+					assert(shift_reg == 0);
+				end
+			end
+
+			if($past(shift_reg) == 0) begin  // Tx is waiting to be enabled again after a transmission
+				if($past(reset_tx)) begin
+					assert(&shift_reg == 1);
 				end
 				
 				else begin
 					assert(shift_reg == 0);
 				end
-				
-				if($past(shift_reg) == 1) begin
-					assert(o_busy);
-				end
-				
-				else begin
-					if(($past(enable) && !($past(o_busy)) && (had_been_enabled)) | (shift_reg != 0)) begin
-						assert(o_busy);
-					end
-					
-					else begin
-						assert(!o_busy);
-					end
-				end
 			end
-			
-			else begin  // UART Rx internal states
-				
-				assert(cnt == 0);  // cnt gets reset to zero
 
-				if(state == Rx_IDLE) begin
-					assert(data_is_valid == 0);
-					
-					//if(!$past(tx_in_progress, NUMBER_OF_RX_SYNCHRONIZERS) || !$past(first_clock_passed, NUMBER_OF_RX_SYNCHRONIZERS))
-						assert(serial_in_synced == 1);
-					//else
-						//assert(serial_in_synced == 0);				
-				end
-
-				else if(state == Rx_START_BIT) begin
-					assert(data_is_valid == 0);
-					assert(serial_in_synced == 0);				
-				end
-
-				else if((state > Rx_START_BIT) && (state < Rx_PARITY_BIT)) begin // data bits
-					assert(data_is_valid == 0);				
-				end
-	
-				else if(state == Rx_PARITY_BIT) begin
-					assert(data_is_valid == 0);
-					assert(serial_in_synced == ^i_data);			
-				end
-						
-				else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
-					assert(state == Rx_STOP_BIT);
-					
-					if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
-						assert(data_is_valid == 1);
-					end
-					
-					else assert(data_is_valid == 0);
-				end
+			else begin //if(&shift_reg == 1) begin  // Tx is waiting to be enabled for the first time
+				assert(cnt == 0);
+				assert(&shift_reg == 1);
 			end
-    	end
-    	    
-    	else begin  // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
-    	    
-    	    if($past(enable) && !($past(had_been_enabled))) begin
-	    	    assert(cnt == 0);
-	    	end
-	    	
-    	    assert(serial_out == 1);
-    	    
-    	    if(!had_been_enabled && first_clock_passed_tx) begin
-				if($past(cnt) == NUMBER_OF_BITS) begin  // Tx had just finished
-					if($past(reset_tx)) begin
-						assert(&shift_reg == 1);
-					end					
-
-					else begin
-						assert(shift_reg == 0);
-					end
-				end
-
-				if($past(shift_reg) == 0) begin  // Tx is waiting to be enabled again after a transmission
-					if($past(reset_tx)) begin
-						assert(&shift_reg == 1);
-					end
-					
-					else begin
-						assert(shift_reg == 0);
-					end
-					
-					if((($past(state) == Rx_IDLE) && !$past(start_detected)) || $past(reset_rx)) begin
-						assert(state == Rx_IDLE);
-					end
-					
-					else begin
-						assert(state != Rx_START_BIT);
-					end
-				end
-
-				else begin //if(&shift_reg == 1) begin  // Tx is waiting to be enabled for the first time
-					assert(cnt == 0);
-					
-					if(($past(state) == Rx_IDLE) && $past(start_detected) && !$past(reset_rx)) begin
-						assert(state == Rx_START_BIT);
-					end
-					
-					else begin
-						assert(state == Rx_IDLE);  // rx is idle too since this is a loopback
-					end
-				end
-    	    end
-    	end
-    end
+	    end
+	end
 end
 
 always @(posedge tx_clk)
@@ -669,13 +695,19 @@ begin
 	end
 end
 
-always @($global_clock)
+// All inputs synchronous to a particular clock should have such following assumption.
+always @($global_clock) if (!$rose(tx_clk)) assume($stable(enable)); 
+always @($global_clock) if (!$rose(tx_clk)) assume($stable(i_data)); 
+always @($global_clock) if (!$rose(tx_clk)) assume($stable(reset_tx)); 
+always @($global_clock) if (!$rose(rx_clk)) assume($stable(reset_rx)); 
+
+always @(posedge tx_clk)
 begin
     if(reset_tx | o_busy) begin
         assume(enable == 0);
     end
 	
-	if((!data_is_valid) || ((!$past(data_is_valid)) && (data_is_valid)) || (state == Rx_STOP_BIT) || ((data_is_valid) && ($past(state) == Rx_STOP_BIT))) begin
+	if((had_been_enabled) || (!data_is_valid) || ((!$past(data_is_valid)) && (data_is_valid)) || (state == Rx_STOP_BIT) || ((data_is_valid) && ($past(state) == Rx_STOP_BIT))) begin
 		assume($past(i_data) == i_data);  // must not change until Rx and Tx data comparison is done
 	end
 end
@@ -683,6 +715,8 @@ end
 always @(posedge rx_clk)
 begin
     assert(!rx_error);   // no parity error
+
+	assert((data_is_valid && $past(data_is_valid)) == 0);  // data_is_valid is only one clock pulse high
 
     if(data_is_valid) begin   // state == Rx_STOP_BIT
         assert(received_data == i_data);
