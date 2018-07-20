@@ -312,8 +312,8 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 end
 
 
-always @($global_clock) begin
-	if(first_clock_passed_tx || first_clock_passed_rx) begin
+always @(posedge rx_clk) begin
+	if(first_clock_passed_rx) begin
 		if(state == Rx_IDLE) begin
 			if(($past(reset_rx)) || (($past(state) == Rx_IDLE)) || ($past(state, CLOCKS_PER_BIT) == Rx_STOP_BIT)) begin
 				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
@@ -720,6 +720,14 @@ always @(posedge tx_clk)
 begin
     if(reset_tx | o_busy) begin
         assume(enable == 0);
+    end
+    
+    if(first_clock_passed_tx && $past(enable)) begin
+    	assert(data_reg == $past(i_data));
+    end
+    
+    else begin
+    	assert(data_reg == $past(data_reg));  // data_reg only changes when enable signal is asserted
     end
 end
 

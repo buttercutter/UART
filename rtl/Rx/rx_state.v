@@ -108,6 +108,7 @@ end
 		if(first_clock_passed) begin
 			if($past(reset)) begin
 				assert(data_is_valid == 0);
+				assert(state == Rx_IDLE);
 			end
 			
 			else begin
