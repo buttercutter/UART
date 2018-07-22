@@ -294,7 +294,9 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		end	
 		
 		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
-			assert(cnt == NUMBER_OF_BITS);
+			
+			if(!had_been_enabled) assert(cnt == NUMBER_OF_BITS);
+			else assert(cnt == 0);
 		end
 		
 		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
@@ -462,9 +464,9 @@ begin
 		end
 		
 		else begin
-			data_reg <= {INPUT_DATA_WIDTH{1'b1}};
+			data_reg <= data_reg;
 		 	had_been_enabled <= 0;
-		 end
+		end
 	end
 	
 	//else had_been_enabled <= 0;
