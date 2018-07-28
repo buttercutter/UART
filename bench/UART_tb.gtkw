@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
-[*] Sat Jul 28 02:03:43 2018
+[*] Sat Jul 28 02:31:38 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.vcd"
-[dumpfile_mtime] "Sat Jul 28 02:02:16 2018"
+[dumpfile_mtime] "Sat Jul 28 02:30:26 2018"
 [dumpfile_size] 11904406
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_tb.gtkw"
 [timestart] 0
 [size] 1920 995
 [pos] -1 -1
-*-18.160410 750025 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.160410 2150115 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] UART_tb.
 [treeopen] UART_tb.dut.
 [treeopen] UART_tb.dut.uart.
@@ -23,12 +23,12 @@
 @28
 UART_tb.dut.clk
 UART_tb.reset_rx
-@29
 UART_tb.reset_tx
-@28
 UART_tb.dut.uart.tx.baud_clk
 UART_tb.dut.enable
+@29
 UART_tb.dut.i_data[7:0]
+@28
 UART_tb.dut.uart.tx.tx.shift_reg[10:0]
 UART_tb.dut.o_busy
 UART_tb.dut.serial_out
@@ -36,9 +36,11 @@ UART_tb.dut.uart.rx.sync.serial_in
 UART_tb.dut.uart.rx.sync.serial_in_reg
 UART_tb.dut.uart.rx.sync.serial_in_reg2
 UART_tb.dut.uart.rx.sync.serial_in_synced
+@29
 UART_tb.dut.data_is_valid
+@28
 UART_tb.dut.uart.rx.rx.sampling_strobe
-@c00028
+@c00029
 UART_tb.dut.received_data[7:0]
 @28
 (0)UART_tb.dut.received_data[7:0]
@@ -49,7 +51,7 @@ UART_tb.dut.received_data[7:0]
 (5)UART_tb.dut.received_data[7:0]
 (6)UART_tb.dut.received_data[7:0]
 (7)UART_tb.dut.received_data[7:0]
-@1401200
+@1401201
 -group_end
 @28
 UART_tb.dut.rx_error

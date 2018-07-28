@@ -248,12 +248,10 @@ begin
     end
 
 	else if(baud_clk) begin
-		if(tx_in_progress | had_been_enabled) begin
+		if(tx_in_progress || had_been_enabled) begin
 			if(cnt < NUMBER_OF_BITS) cnt <= cnt + 1;
 			else cnt <= 0;
 		end
-		
-		//else if(enable) cnt <= cnt + 1;
 		
 		else cnt <= 0;
 		
@@ -261,11 +259,10 @@ begin
 	end   
 	
 	else begin
-	
         if(enable && (!had_been_enabled)) begin
     	    cnt <= 0;  
     	end
-    	
+    	   	
         if((cnt == NUMBER_OF_BITS) && !had_been_enabled) begin
         	tx_in_progress <= 0;
         end
@@ -309,9 +306,8 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		end	
 		
 		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
-			
-			if(!had_been_enabled) assert(cnt == NUMBER_OF_BITS);
-			else assert(cnt == 0);
+			if(had_been_enabled) assert(cnt == 0);
+			else assert(cnt == NUMBER_OF_BITS);
 		end
 		
 		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
@@ -322,7 +318,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 			if(tx_in_progress || !had_been_enabled)
 				assert(cnt == state);
 			else begin
-				assert(cnt == 0);
+				assert((cnt == 0) || (cnt == NUMBER_OF_BITS));
 			end
 		end
 	end
@@ -362,7 +358,7 @@ genvar cnt_idx;  // for induction, checks the relationship between 'state' and '
 for(cnt_idx=Rx_DATA_BIT_1; (cnt_idx < Rx_STOP_BIT); cnt_idx=cnt_idx+1) begin
 
 	always @($global_clock) begin
-		if(first_clock_passed_tx || first_clock_passed_rx) begin
+		if((first_clock_passed_tx && !$past(reset_tx)) && (first_clock_passed_rx && !$past(reset_rx))) begin
 			if(state == cnt_idx) begin
 				assert(received_data == {data_reg[cnt_idx-NUMBER_OF_RX_SYNCHRONIZERS:0] , {(INPUT_DATA_WIDTH-cnt_idx+NUMBER_OF_RX_SYNCHRONIZERS-1){1'b0}}});
 			end
@@ -501,7 +497,7 @@ begin
     end
 
 	else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
-		assert(cnt == 0);
+		assert((cnt == 0) || (cnt == NUMBER_OF_BITS));
 		assert(serial_out == 1);
 		assert(shift_reg == {1'b1, (^data_reg), data_reg, 1'b0});  // ^data is even parity bit
 		
@@ -597,7 +593,7 @@ begin
 
 		else if(state == Rx_START_BIT) begin
 			assert(data_is_valid == 0);
-			assert(serial_in_synced == 0);				
+			assert(serial_in == 0);				
 		end
 
 		else if((state > Rx_START_BIT) && (state < Rx_PARITY_BIT)) begin // data bits
@@ -606,11 +602,12 @@ begin
 
 		else if(state == Rx_PARITY_BIT) begin
 			assert(data_is_valid == 0);
-			assert(serial_in_synced == ^data_reg);			
+			assert(serial_in == ^data_reg);			
 		end
 				
 		else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 			assert(state == Rx_STOP_BIT);
+			assert(serial_in == 1);
 			
 			if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
 				assert(data_is_valid == 1);
@@ -654,7 +651,7 @@ begin
 	if(!tx_in_progress) // UART Tx is idling, still waiting for ((next enable signal) && (baud_clk))
 	begin
 	    if($past(enable) && !($past(had_been_enabled))) begin
-    	    assert(cnt == 0);
+    	    assert((cnt == 0) || (cnt == NUMBER_OF_BITS));
     	end
     	
 	    assert(serial_out == 1);
