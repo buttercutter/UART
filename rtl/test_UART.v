@@ -3,13 +3,13 @@
 // for connecting Tx and Rx together
 `define LOOPBACK 1
 
-module test_UART(reset_tx, reset_rx, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
+module test_UART(clk, reset_tx, reset_rx, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 parameter PARITY_TYPE = 0;  // 0 = even parity, 1 = odd parity
 
-//input clk;
+input clk;
 input reset_tx, reset_rx;
 
 // transmitter signals
@@ -76,6 +76,7 @@ initial begin
 	first_clock_passed_rx = 0;
 end
 
+`endif
 
 // refer to https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/ for feasible ratio of tx_clk/rx_clk
 
@@ -84,7 +85,11 @@ localparam counter_rx_clk_bit_width = 2; // (2^2)/(1.015*2) = 1.97044335 ~= 2
 reg	[counter_rx_clk_bit_width-1:0]	counter_rx_clk = 0;
 reg rx_clk = 0;
 
+`ifdef FORMAL
 always @($global_clock)  // generation of rx_clk which is 1.5% frequency deviation from tx_clk
+`else
+always @(posedge clk)
+`endif
 begin
 	if(reset_rx) begin
 		rx_clk <= 0;
@@ -100,7 +105,11 @@ localparam TX_CLK_THRESHOLD = 2;  // divides $global_clock by 2 to obtain ck_stb
 reg [($clog2(TX_CLK_THRESHOLD)-1):0] counter_tx_clk = 0;
 reg tx_clk = 0;
 
+`ifdef FORMAL
 always @($global_clock)
+`else
+always @(posedge clk)
+`endif
 begin
 	if(reset_tx) counter_tx_clk <= 1; 
 	
@@ -112,12 +121,18 @@ begin
 	end	  	
 end
 
+`ifdef FORMAL
 always @($global_clock)
+`else
+always @(posedge clk)
+`endif
 begin
 	if(reset_tx) tx_clk <= 0;
 
 	else tx_clk <= (counter_tx_clk == TX_CLK_THRESHOLD-1'b1);
 end
+
+`ifdef FORMAL
 
 always @($global_clock)
 begin
@@ -434,7 +449,7 @@ begin
 		end   
 
 		else begin
-		    if(($past(tx_in_progress)) && ($past(cnt) == NUMBER_OF_BITS) && !($past(enable))) 
+		    if((($past(tx_in_progress)) && ($past(cnt) == NUMBER_OF_BITS) && !($past(enable))) || (!$past(had_been_enabled) && !tx_in_progress && !$past(enable))) 
 		    	assert(!had_been_enabled);
 			
 			else assert(had_been_enabled);
@@ -574,10 +589,10 @@ begin
 		if(state == Rx_IDLE) begin
 			assert(data_is_valid == 0);
 			
-			//if(!$past(tx_in_progress, NUMBER_OF_RX_SYNCHRONIZERS) || !$past(first_clock_passed, NUMBER_OF_RX_SYNCHRONIZERS))
+			if($past(serial_in, NUMBER_OF_RX_SYNCHRONIZERS)) // || !$past(first_clock_passed, NUMBER_OF_RX_SYNCHRONIZERS))
 				assert(serial_in_synced == 1);
-			//else
-				//assert(serial_in_synced == 0);				
+			else
+				assert(serial_in_synced == 0);	// start bit falling edge		
 		end
 
 		else if(state == Rx_START_BIT) begin

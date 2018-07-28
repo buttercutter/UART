@@ -4,14 +4,15 @@ module UART_tb;
 	parameter NUM_OF_CLK = 1500000;
 	parameter INPUT_DATA_WIDTH = 8;
 
-	reg clk, reset, enable;
+	reg clk, reset_tx, reset_rx, enable;
 	reg [(INPUT_DATA_WIDTH-1):0] i_data;
 	wire serial_out, o_busy, data_is_valid, rx_error;
 	wire [(INPUT_DATA_WIDTH-1):0] received_data;
 
 	test_UART dut (
 		.clk(clk), 
-		.reset(reset), 
+		.reset_tx(reset_tx), 
+		.reset_rx(reset_rx),
 		.serial_out(serial_out), 
 		.enable(enable), 
 		.i_data(i_data), 
@@ -24,7 +25,8 @@ module UART_tb;
 	initial 
 	begin 
 		clk = 0; 
-		reset = 1; 
+		reset_tx = 1; 
+		reset_rx = 1;
 	 	enable = 0; 
 		i_data = {INPUT_DATA_WIDTH{1'b1}};
 	end 
@@ -37,25 +39,32 @@ module UART_tb;
 		
 		@(posedge clk);
 		@(posedge clk);
-		reset = 0;
+		reset_tx = 0;
+		reset_rx = 0;
 		
 		@(posedge clk);
-    	i_data = 'b10100011;
+	    	i_data = 'b10100011;
 		
 		#(NUM_OF_CLK >> 1);
 		
 		@(posedge clk);
-		reset = 1;		
+		reset_tx = 1;		
 		
 		@(posedge clk);
-		reset = 0;
+		reset_tx = 0;
+		
+                @(posedge clk);
+                reset_rx = 1;
+
+                @(posedge clk);
+                reset_rx = 0;
 		
 		#(NUM_OF_CLK) $finish;
 	end
 	
 	always @(posedge clk)
 	begin
-    	enable <= 1;
-    end
+    		enable <= 1;
+    	end
 	
 endmodule

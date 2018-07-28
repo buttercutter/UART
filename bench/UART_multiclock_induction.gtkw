@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
-[*] Sat Jul 21 05:11:12 2018
+[*] Sat Jul 28 02:08:06 2018
 [*]
 [dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART/engine_0/trace_induct.vcd"
-[dumpfile_mtime] "Sat Jul 21 04:11:53 2018"
-[dumpfile_size] 205743
+[dumpfile_mtime] "Sat Jul 28 02:03:47 2018"
+[dumpfile_size] 273727
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_multiclock_induction.gtkw"
-[timestart] 1342
+[timestart] 1885
 [size] 960 995
-[pos] -51 -1
-*-6.118704 1490 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 1769 0
+*-5.689775 1980 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] test_UART.
 [treeopen] test_UART.uart.
 [treeopen] test_UART.uart.rx.
@@ -26,33 +26,29 @@ smt_step
 @28
 test_UART.serial_out
 test_UART.reset_tx
-@29
 test_UART.tx_clk
 @24
 test_UART.counter_tx_clk
 @28
 test_UART.reset_rx
-@29
 test_UART.rx_clk
 @24
 test_UART.counter_rx_clk[1:0]
 @22
 test_UART.Tx_shift_reg_assertion[7:0]
-@29
+@28
 test_UART.baud_clk
-@23
+@22
 test_UART.cnt[3:0]
 @28
 test_UART.data_is_valid
-@29
 test_UART.enable
-@28
+@29
 test_UART.data_reg[7:0]
+@28
 test_UART.first_clock_passed_rx
 test_UART.first_clock_passed_tx
-@29
 test_UART.had_been_enabled
-@28
 test_UART.i_data[7:0]
 test_UART.received_data[7:0]
 test_UART.o_busy
@@ -70,7 +66,9 @@ test_UART.tx_shift_reg_contains_data_bits
 test_UART.uart.rx.sync.serial_in
 test_UART.uart.rx.sync.serial_in_reg
 test_UART.uart.rx.sync.serial_in_reg2
+@29
 test_UART.uart.rx.sync.serial_in_synced
+@28
 test_UART.uart.rx.sync.had_reset
 test_UART.uart.rx.sync.sampling_strobe
 test_UART.uart.tx.first_clock_passed
