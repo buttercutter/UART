@@ -36,7 +36,7 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 wire serial_in_synced, start_detected, sampling_strobe;
 `endif
 
-UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .i_data(i_data), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
+UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .i_data(data_reg), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
 	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
 `endif
@@ -499,7 +499,7 @@ begin
 	else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
 		assert((cnt == 0) || (cnt == NUMBER_OF_BITS));
 		assert(serial_out == 1);
-		assert(shift_reg == {1'b1, (^data_reg), data_reg, 1'b0});  // ^data is even parity bit
+		assert(shift_reg == {1'b1, (^($past(data_reg))), $past(data_reg), 1'b0});  // ^data is even parity bit
 		
 		assert(o_busy == 1);
 	end
