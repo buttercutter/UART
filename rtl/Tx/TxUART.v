@@ -91,6 +91,13 @@ begin
 	end
 end
 
+always @(posedge clk) 
+begin
+	if($past(reset)) assert(o_busy == 0);
+
+	else assert(o_busy == (($past(shift_reg) != 0) && !(&$past(shift_reg))) | ($past(enable) && !$past(o_busy)));
+end
+	
 `endif
 
 endmodule
