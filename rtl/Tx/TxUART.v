@@ -68,7 +68,7 @@ begin
     end
 
     else begin
-		o_busy <= ((shift_reg != 0) && !(&shift_reg)) | (enable && !o_busy);   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset)) OR (Tx is about to transmit)
+		o_busy <= ((shift_reg != 0) && !(&shift_reg)) || (enable && !o_busy);   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset)) OR (Tx is about to transmit)
     end
 end
 
@@ -95,9 +95,28 @@ always @(posedge clk)
 begin
 	if($past(reset)) assert(o_busy == 0);
 
-	else assert(o_busy == (($past(shift_reg) != 0) && !(&$past(shift_reg))) | ($past(enable) && !$past(o_busy)));
+	else assert(o_busy == (($past(shift_reg) != 0) && !(&$past(shift_reg))) || ($past(enable) && !$past(o_busy)));
 end
 	
+always @(posedge clk)   
+begin
+    if ($past(reset)) begin
+        assert(shift_reg == ~0);  // set all bits to 1
+    end
+
+    else begin
+        if ($past(enable) & !$past((o_busy))) begin
+            assert(shift_reg == {1'b1, $past(i_data), 1'b0});   // transmit LSB first: 1 = stop bit, 0 = start bit 
+        end
+
+        if ($past(baud_clk)) begin
+            if ($past(o_busy)) begin
+                assert(shift_reg == {1'b0, $past(shift_reg[(INPUT_DATA_WIDTH+PARITY_ENABLED+1):1])});  // puts 0 for stop bit detection, see o_busy signal
+            end
+        end
+    end
+end 	
+
 `endif
 
 endmodule
