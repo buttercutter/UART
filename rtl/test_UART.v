@@ -36,7 +36,7 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 wire serial_in_synced, start_detected, sampling_strobe;
 `endif
 
-UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable_delayed), .i_data(data_reg), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
+UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .i_data(data_reg), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
 	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
 `endif
@@ -456,33 +456,45 @@ begin
 	end	
 end	
 	
-reg [INPUT_DATA_WIDTH-1:0] data_reg = {INPUT_DATA_WIDTH{1'b1}};  // initially all ones, this variable stores the tx data for a particular tx transmission
-	
-reg enable_delayed = 0; // enable signal delayed by one clock cycle
+wire [INPUT_DATA_WIDTH-1:0] data_reg; // this variable stores the tx data for a particular tx transmission
 
-always @(posedge tx_clk) enable_delayed <= enable;  // to keep up with the reg assignment of data_reg from i_data
-
-always @(posedge tx_clk)
+always @(*)
 begin
     if(reset_tx) begin
     	data_reg <= {INPUT_DATA_WIDTH{1'b1}};
-    	had_been_enabled <= 0;
+    	assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
     end
     
     else if(enable && (!had_been_enabled)) begin
     	data_reg <= i_data;  // this is more realistic, we only want i_data whenever enable signal is asserted
+    	assert(data_reg == i_data);
+    end
+    
+    else if(tx_in_progress && (cnt == NUMBER_OF_BITS)) begin  // UART stop bit transmission which signifies the end of UART transmission			
+		if(enable) begin
+			data_reg <= i_data;
+			assert(data_reg == i_data);
+		end
+	end
+end
+
+always @(posedge tx_clk)
+begin
+    if(reset_tx) begin
+    	had_been_enabled <= 0;
+    end
+    
+    else if(enable && (!had_been_enabled)) begin
     	had_been_enabled <= 1;
     end
     
     else if(tx_in_progress && (cnt == NUMBER_OF_BITS)) begin  // UART stop bit transmission which signifies the end of UART transmission
 			
 		if(enable) begin
-			data_reg <= i_data;
 			had_been_enabled <= 1;
 		end
 		
 		else begin
-			data_reg <= data_reg;
 		 	had_been_enabled <= 0;
 		end
 	end
@@ -737,19 +749,22 @@ always @($global_clock) if (!$rose(tx_clk)) assume($stable(i_data));
 always @($global_clock) if (!$rose(tx_clk)) assume($stable(reset_tx)); 
 always @($global_clock) if (!$rose(rx_clk)) assume($stable(reset_rx)); 
 
-always @(posedge tx_clk)
+always @($global_clock)
 begin
     if(reset_tx | o_busy) begin
         assume(enable == 0);
     end
-    
-    if(first_clock_passed_tx && $past(enable)) begin
-    	assert(data_reg == $past(i_data));
-    end
+end
+
+always @(posedge tx_clk)
+begin    
+    if(reset_tx)  assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
     
     else begin
-    	assert(data_reg == $past(data_reg));  // data_reg only changes when enable signal is asserted
-    end
+		if(enable)  assert(data_reg == i_data);
+		
+		else  assert(data_reg == $past(data_reg));  // data_reg only changes when enable signal is asserted
+	end
 end
 
 /*always @(posedge tx_clk)	
