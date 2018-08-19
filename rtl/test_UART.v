@@ -33,12 +33,12 @@ output reg [(INPUT_DATA_WIDTH-1):0] received_data;
 `ifdef FORMAL
 localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + PARITY_ENABLED + 2;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
 wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
-wire serial_in_synced, start_detected, sampling_strobe;
+wire serial_in_synced, start_detected, sampling_strobe, data_is_available;
 `endif
 
 UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .i_data(data_reg), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
 `ifdef FORMAL
-	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe)
+	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe), .data_is_available(data_is_available)
 `endif
 );
 
@@ -306,9 +306,9 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		end	
 		
 		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
-			if(had_been_enabled) assert(cnt == 1);
+			if(had_been_enabled) assert(cnt == 0);
 
-			else if(!had_been_enabled) assert(cnt == 0);
+			//else if(!had_been_enabled) assert(cnt == 0);
 
 			else assert(cnt == NUMBER_OF_BITS);
 		end
@@ -361,7 +361,7 @@ genvar cnt_idx;  // for induction, checks the relationship between 'state' and '
 for(cnt_idx=Rx_DATA_BIT_1; (cnt_idx < Rx_STOP_BIT); cnt_idx=cnt_idx+1) begin
 
 	always @($global_clock) begin
-		if((first_clock_passed_tx && !$past(reset_tx)) && (first_clock_passed_rx && !$past(reset_rx))) begin
+		if((first_clock_passed_tx && !$past(reset_tx) && !reset_tx) && (first_clock_passed_rx && !$past(reset_rx))) begin
 			if(state == cnt_idx) begin
 				assert(received_data == {data_reg[cnt_idx-NUMBER_OF_RX_SYNCHRONIZERS:0] , {(INPUT_DATA_WIDTH-cnt_idx+NUMBER_OF_RX_SYNCHRONIZERS-1){1'b0}}});
 			end
@@ -612,21 +612,24 @@ begin
 
 		else if(state == Rx_START_BIT) begin
 			assert(data_is_valid == 0);
-			assert(serial_in == 0);				
+			assert(serial_in_synced == 0);				
 		end
 
 		else if((state > Rx_START_BIT) && (state < Rx_PARITY_BIT)) begin // data bits
-			assert(data_is_valid == 0);				
+			assert(data_is_valid == 0);	
+			
+			if($past(sampling_strobe) && $past(data_is_available))
+    			assert($past(serial_in_synced) == received_data[INPUT_DATA_WIDTH-1]);		
 		end
 
 		else if(state == Rx_PARITY_BIT) begin
 			assert(data_is_valid == 0);
-			assert(serial_in == ^data_reg);			
+			assert(serial_in_synced == ^data_reg);			
 		end
 				
 		else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 			assert(state == Rx_STOP_BIT);
-			assert(serial_in == 1);
+			assert(serial_in_synced == 1);
 			
 			if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
 				assert(data_is_valid == 1);

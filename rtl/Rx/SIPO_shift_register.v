@@ -20,4 +20,19 @@ initial begin
 	received_data = {INPUT_DATA_WIDTH{1'b0}};
 end
 
+`ifdef FORMAL
+
+always @(posedge clk)
+begin
+	if($past(reset) || $past(data_is_valid))
+		assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
+
+    else if($past(sampling_strobe) && $past(data_is_available))
+    	assert(received_data == { $past(serial_in_synced) , $past(received_data[(INPUT_DATA_WIDTH-1):1] )});
+    
+    else assert(received_data == $past(received_data));
+end
+
+`endif
+
 endmodule
