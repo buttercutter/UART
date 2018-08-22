@@ -619,12 +619,14 @@ begin
 			assert(data_is_valid == 0);	
 			
 			if($past(sampling_strobe) && $past(data_is_available))
-    			assert($past(serial_in_synced) == received_data[INPUT_DATA_WIDTH-1]);		
+    			assert($past(serial_in_synced) == received_data[INPUT_DATA_WIDTH-1]);	
+    			
+    		else assert($past(serial_in, NUMBER_OF_RX_SYNCHRONIZERS) == serial_in_synced);	
 		end
 
 		else if(state == Rx_PARITY_BIT) begin
 			assert(data_is_valid == 0);
-			assert(serial_in_synced == ^data_reg);			
+			if(!reset_tx) assert(serial_in == ^data_reg);			
 		end
 				
 		else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
