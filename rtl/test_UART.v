@@ -3,13 +3,21 @@
 // for connecting Tx and Rx together
 `define LOOPBACK 1
 
-module test_UART(clk, reset_tx, reset_rx, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error);
+module test_UART(reset_tx, reset_rx, serial_out, enable, i_data, o_busy, received_data, data_is_valid, rx_error,
+`ifndef FORMAL
+clk
+`endif);
 
 parameter INPUT_DATA_WIDTH = 8;
 parameter PARITY_ENABLED = 1;
 parameter PARITY_TYPE = 0;  // 0 = even parity, 1 = odd parity
 
+`ifndef FORMAL
 input clk;
+wire tx_clk = clk;
+wire rx_clk = clk;
+`endif
+
 input reset_tx, reset_rx;
 
 // transmitter signals
@@ -36,9 +44,11 @@ wire [($clog2(NUMBER_OF_BITS)-1) : 0] state;  // for Rx
 wire serial_in_synced, start_detected, sampling_strobe, data_is_available;
 `endif
 
-UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .i_data(data_reg), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error)
+UART uart(.tx_clk(tx_clk), .rx_clk(rx_clk), .reset_tx(reset_tx), .reset_rx(reset_rx), .serial_out(serial_out), .enable(enable), .o_busy(o_busy), .serial_in(serial_in), .received_data(received_data), .data_is_valid(data_is_valid), .rx_error(rx_error), 
 `ifdef FORMAL
-	, .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe), .data_is_available(data_is_available)
+	.i_data(data_reg), .state(state), .baud_clk(baud_clk), .shift_reg(shift_reg), .serial_in_synced(serial_in_synced), .start_detected(start_detected), .sampling_strobe(sampling_strobe), .data_is_available(data_is_available)
+`else
+	.i_data(i_data)
 `endif
 );
 
@@ -76,7 +86,6 @@ initial begin
 	first_clock_passed_rx = 0;
 end
 
-`endif
 
 // refer to https://www.allaboutcircuits.com/technical-articles/the-uart-baud-rate-clock-how-accurate-does-it-need-to-be/ for feasible ratio of tx_clk/rx_clk
 
@@ -85,11 +94,7 @@ localparam counter_rx_clk_bit_width = 2; // (2^2)/(1.015*2) = 1.97044335 ~= 2
 reg	[counter_rx_clk_bit_width-1:0]	counter_rx_clk = 0;
 reg rx_clk = 0;
 
-`ifdef FORMAL
 always @($global_clock)  // generation of rx_clk which is 1.5% frequency deviation from tx_clk
-`else
-always @(posedge clk)
-`endif
 begin
 	if(reset_rx) begin
 		rx_clk <= 0;
@@ -105,11 +110,7 @@ localparam TX_CLK_THRESHOLD = 2;  // divides $global_clock by 2 to obtain ck_stb
 reg [($clog2(TX_CLK_THRESHOLD)-1):0] counter_tx_clk = 0;
 reg tx_clk = 0;
 
-`ifdef FORMAL
 always @($global_clock)
-`else
-always @(posedge clk)
-`endif
 begin
 	if(reset_tx) counter_tx_clk <= 1; 
 	
@@ -121,18 +122,12 @@ begin
 	end	  	
 end
 
-`ifdef FORMAL
 always @($global_clock)
-`else
-always @(posedge clk)
-`endif
 begin
 	if(reset_tx) tx_clk <= 0;
 
 	else tx_clk <= (counter_tx_clk == TX_CLK_THRESHOLD-1'b1);
 end
-
-`ifdef FORMAL
 
 always @($global_clock)
 begin

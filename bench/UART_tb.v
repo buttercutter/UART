@@ -28,7 +28,7 @@ module UART_tb;
 		reset_tx = 1; 
 		reset_rx = 1;
 	 	enable = 0; 
-		i_data = {INPUT_DATA_WIDTH{1'b1}};
+		i_data = {INPUT_DATA_WIDTH{1'b1}};  // initially all ones when idle
 	end 
 
 	always #(CLK_PERIOD_HALF) clk = !clk;
@@ -38,12 +38,10 @@ module UART_tb;
 		$dumpvars;
 		
 		@(posedge clk);
-		@(posedge clk);
 		reset_tx = 0;
 		reset_rx = 0;
 		
-		@(posedge clk);
-	    	i_data = 'b10100011;
+	    i_data = 'b10100011;
 		
 		#(NUM_OF_CLK >> 1);
 		
@@ -64,7 +62,7 @@ module UART_tb;
 	
 	always @(posedge clk)
 	begin
-    		enable <= 1;
-    	end
+    	enable <= 1;
+    end
 	
 endmodule

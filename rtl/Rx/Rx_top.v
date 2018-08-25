@@ -28,9 +28,9 @@ wire sampling_strobe;
 synchronizer sync (.clk(clk), .reset(reset), .serial_in(serial_in), .serial_in_synced(serial_in_synced));
 
 // determines when to sample data
-RxUART rx (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .data_is_available(data_is_available), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .received_data(received_data), .sampling_strobe(sampling_strobe)
+RxUART rx (.clk(clk), .reset(reset), .serial_in_synced(serial_in_synced), .data_is_valid(data_is_valid), .is_parity_stage(is_parity_stage), .received_data(received_data), .sampling_strobe(sampling_strobe)
 `ifdef FORMAL
-	, .state(state), .start_detected(start_detected)
+	, .state(state), .start_detected(start_detected), .data_is_available(data_is_available)
 `endif
 );
 
