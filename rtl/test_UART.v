@@ -305,7 +305,11 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 
 			//else if(!had_been_enabled) assert(cnt == 0);
 
-			else assert(cnt == NUMBER_OF_BITS);
+			else begin // for phase difference between tx and rx clks
+				if(baud_clk) assert(cnt == NUMBER_OF_BITS);
+				
+				else assert(cnt == 0);
+			end
 		end
 		
 		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
@@ -779,11 +783,6 @@ begin
     assert(!rx_error);   // no parity error
 
 	assert((data_is_valid && $past(data_is_valid)) == 0);  // data_is_valid is only one clock pulse high
-
-    if(data_is_valid) begin   // state == Rx_STOP_BIT
-        assert(received_data == data_reg);
-        assert(cnt <= NUMBER_OF_BITS);
-    end
 
 	if((!$past(reset_tx)) && (state <= Rx_STOP_BIT) && (first_clock_passed_rx) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
 		assert(cnt - $past(cnt) == 1);
