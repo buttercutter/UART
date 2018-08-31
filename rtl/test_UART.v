@@ -301,9 +301,15 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		end	
 		
 		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
-			if(had_been_enabled) assert(cnt == 0);
+			if(had_been_enabled) begin
+				if($past(baud_clk)) begin
+					if($past(enable)) assert(cnt == 0);
 
-			//else if(!had_been_enabled) assert(cnt == 0);
+					else assert(cnt == 1);
+				end
+
+				else assert(cnt == 0);
+			end
 
 			else begin // for phase difference between tx and rx clks
 				if(baud_clk) assert(cnt == NUMBER_OF_BITS);
@@ -630,7 +636,10 @@ begin
 				
 		else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 			assert(state == Rx_STOP_BIT);
-			assert(serial_in_synced == 1);
+
+			if($past(baud_clk)) assert(serial_in == 1);
+
+			else assert(serial_in == 0);
 			
 			if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
 				assert(data_is_valid == 1);
