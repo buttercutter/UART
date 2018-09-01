@@ -350,8 +350,12 @@ always @(posedge rx_clk) begin
 			assert(received_data == {INPUT_DATA_WIDTH{1'b0}});  // Rx shift reg is updated one 'sampling_strobe' cycle later than 'serial_in_synced'
 			
 		else if(state == Rx_STOP_BIT) begin
-			if(data_is_valid)
-				assert(received_data == data_reg);
+			if(data_is_valid) begin
+				if(reset_tx) assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
+				
+				else assert(received_data == data_reg);
+			end
+			
 			else
 				assert(received_data == {INPUT_DATA_WIDTH{1'b0}});
 		end
@@ -636,10 +640,7 @@ begin
 				
 		else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 			assert(state == Rx_STOP_BIT);
-
-			if($past(baud_clk)) assert(serial_in == 1);
-
-			else assert(serial_in == 0);
+			assert(serial_in == 1);
 			
 			if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
 				assert(data_is_valid == 1);
