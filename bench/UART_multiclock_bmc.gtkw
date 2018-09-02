@@ -2,7 +2,7 @@
 [*] GTKWave Analyzer v3.3.91 (w)1999-2018 BSI
 [*] Sat Jun 30 12:59:50 2018
 [*]
-[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART/engine_0/trace.vcd"
+[dumpfile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_proof/engine_0/trace0.vcd"
 [dumpfile_mtime] "Sat Jun 30 12:58:10 2018"
 [dumpfile_size] 10769
 [savefile] "/home/phung/Documents/Grive/Personal/Digital/UART/UART/UART/bench/UART_multiclock_bmc.gtkw"

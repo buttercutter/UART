@@ -34,4 +34,4 @@ iverilog: $(DESIGN_FILES)
 	vvp $(TARGET).vvp
 
 clean::
-	rm -rf $(TARGET) *~ *.yslog *.smt2 *.vcd *.vvp
+	rm -rf $(TARGET) $(TARGET)_proof $(TARGET)_cover *~ *.yslog *.smt2 *.vcd *.vvp
