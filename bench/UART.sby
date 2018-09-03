@@ -1,14 +1,14 @@
 [tasks]
 proof
-cover
+#cover
 
 [options]
 proof: mode prove
 proof: depth 73
 
-cover: mode cover
-cover: depth 20
-cover: append 20
+#cover: mode cover
+#cover: depth 20
+#cover: append 20
 
 multiclock on
 

@@ -101,8 +101,10 @@ begin
 		counter_rx_clk <= 0;	
 	end
 	
-	else
-		{ rx_clk, counter_rx_clk <= (counter_rx_clk <= {counter_rx_clk_bit_width{1'b1}}) ? counter_rx_clk : 0 } <= counter_rx_clk + rx_clk_increment; // the actual rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
+	else begin
+		{ rx_clk, counter_rx_clk} <= counter_rx_clk + rx_clk_increment; // the actual rx_clk is slower than tx_clk by a factor 1.015 or 1.5 percent
+		//if(counter_rx_clk + rx_clk_increment > {counter_rx_clk_bit_width{1'b1}}) counter_rx_clk <= 0; // restarting from zero when the addition result exceeding the maximum bitwidth
+	end
 end
 
 localparam TX_CLK_THRESHOLD = 4;  // divides $global_clock by 4 to obtain ck_stb which is just a clock enable signal
@@ -112,6 +114,8 @@ reg tx_clk = 0;
 
 always @(*) 
 begin
+	assume(!reset_tx);
+	assume(!reset_rx);
 	cover(tx_clk);
 	cover(rx_clk);
 end
@@ -177,11 +181,11 @@ begin
 				if(counter_rx_clk == 0)
 					assert(($past(counter_rx_clk) - counter_rx_clk) == rx_clk_increment);
 				
-				else
+				else if(counter_rx_clk >= rx_clk_increment) 
 					assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  
 			end
 			
-			if((($past(counter_rx_clk) - counter_rx_clk) == rx_clk_increment) && (counter_rx_clk == 0)) 
+			if(counter_rx_clk < rx_clk_increment)
 				assert(rx_clk);
 			else 
 				assert(!rx_clk);
