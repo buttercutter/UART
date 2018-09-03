@@ -175,16 +175,10 @@ begin
 		else begin	
 			assert((rx_clk && $past(rx_clk)) == 0);  // asserts that tx_clk is only single pulse HIGH
 			
-			if($past(reset_rx)) assert(counter_rx_clk == 0);
-			
-			else begin // to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
-				if(counter_rx_clk == 0)
-					assert(($past(counter_rx_clk) - counter_rx_clk) == rx_clk_increment);
-				
-				else if(counter_rx_clk >= rx_clk_increment) 
-					assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  
-			end
-			
+			// to keep the increasing trend for induction test purpose such that tx_clk occurs at the correct period interval 
+			if(counter_rx_clk >= rx_clk_increment) 
+				assert((counter_rx_clk - $past(counter_rx_clk)) == rx_clk_increment);  
+
 			if(counter_rx_clk < rx_clk_increment)
 				assert(rx_clk);
 			else 
