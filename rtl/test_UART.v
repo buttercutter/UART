@@ -319,12 +319,19 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		end
 		
 		else if((state >= Rx_START_BIT) && (state <= Rx_PARITY_BIT)) begin
-			assert(cnt == state);
+			
+			if(sampling_strobe && $past(baud_clk)) assert(cnt == state + 1);
+			
+			else assert(cnt == state);
 		end
 		
 		else begin // (state == Rx_STOP_BIT)
-			if(tx_in_progress || !had_been_enabled)
-				assert(cnt == state);
+			if(tx_in_progress || !had_been_enabled) begin
+				if(sampling_strobe && $past(baud_clk)) assert((cnt == state + 1) || (cnt == 0));
+				
+				else assert(cnt == state);
+			end
+			
 			else begin
 				assert((cnt == 0) || (cnt == NUMBER_OF_BITS));
 			end
@@ -353,7 +360,7 @@ always @(posedge rx_clk) begin
 			if(data_is_valid) begin
 				if(reset_tx) assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
 				
-				else assert(received_data == data_reg);
+				else if(!enable) assert(received_data == data_reg);
 			end
 			
 			else
@@ -636,7 +643,12 @@ begin
 
 			else if(state == Rx_PARITY_BIT) begin
 				assert(data_is_valid == 0);
-				if(!reset_tx) assert(serial_in == ^data_reg);			
+				
+				if($past(reset_tx)) assert(serial_in == 1);		
+				
+				else if(sampling_strobe && $past(baud_clk)) assert(serial_in == 1); // stop bit
+				
+				else assert(serial_in == ^data_reg);
 			end
 					
 			else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
