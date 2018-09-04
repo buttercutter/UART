@@ -244,7 +244,7 @@ begin
 
 	else if(baud_clk) begin
 		if(tx_in_progress || had_been_enabled) begin
-			if(cnt < NUMBER_OF_BITS) cnt <= cnt + 1;
+			if((cnt < NUMBER_OF_BITS) && (state != Rx_STOP_BIT)) cnt <= cnt + 1;
 			else cnt <= 0;
 		end
 		
@@ -327,7 +327,11 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else begin // (state == Rx_STOP_BIT)
 			if(tx_in_progress || !had_been_enabled) begin
-				if(sampling_strobe && $past(baud_clk)) assert((cnt == state + 1) || (cnt == 0));
+				if(sampling_strobe && $past(baud_clk)) begin
+					if($past(had_been_enabled)) assert(cnt == 1);
+
+					else assert((cnt == state + 1) || (cnt == 0));
+				end
 				
 				else assert(cnt == state);
 			end
@@ -653,7 +657,10 @@ begin
 					
 			else begin // if(state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 				assert(state == Rx_STOP_BIT);
-				assert(serial_in == 1);
+				
+				if(sampling_strobe && $past(baud_clk) && !$past(enable)) assert(serial_in == 0);
+
+				else assert(serial_in == 1);
 				
 				if(($past(state) == Rx_PARITY_BIT) && (state == Rx_STOP_BIT)) begin
 					assert(data_is_valid == 1);
