@@ -294,19 +294,15 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 	if(first_clock_passed_tx && first_clock_passed_rx) begin
 	
 		if((state == Rx_IDLE) && ($past(state) == Rx_IDLE)) begin
-			if(serial_in == 1)
-				assert(cnt == 0);
-			else
+			if((($past(baud_clk)) && (serial_in == 0)) || ($past(serial_in) == 0))
 				assert(cnt == 1);
+			else
+				assert(cnt == 0);
 		end	
 		
 		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
 			if(had_been_enabled) begin
-				if($past(baud_clk)) begin
-					if($past(enable)) assert(cnt == 0);
-
-					else assert(cnt == 1);
-				end
+				if($past(baud_clk)) assert(cnt == 0);
 
 				else assert(cnt == 0);
 			end
@@ -328,9 +324,9 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		else begin // (state == Rx_STOP_BIT)
 			if(tx_in_progress || !had_been_enabled) begin
 				if(sampling_strobe && $past(baud_clk)) begin
-					if($past(had_been_enabled)) assert(cnt == 1);
+					/*if($past(had_been_enabled)) assert(cnt == 1);
 
-					else assert((cnt == state + 1) || (cnt == 0));
+					else*/ assert((cnt == state + 1) || (cnt == 0));
 				end
 				
 				else assert(cnt == state);

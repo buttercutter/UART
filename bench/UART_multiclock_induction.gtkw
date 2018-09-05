@@ -1,9 +1,9 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Sep  4 13:14:00 2018
+[*] Wed Sep  5 04:13:34 2018
 [*]
 [dumpfile] "/home/phung/Documents/phung/UART/bench/UART_proof/engine_0/trace_induct.vcd"
-[dumpfile_mtime] "Tue Sep  4 13:04:26 2018"
+[dumpfile_mtime] "Wed Sep  5 04:06:09 2018"
 [dumpfile_size] 279011
 [savefile] "/home/phung/Documents/phung/UART/bench/UART_multiclock_induction.gtkw"
 [timestart] 1758
@@ -51,11 +51,13 @@ test_UART.o_busy
 test_UART.rx_error
 test_UART.shift_reg[10:0]
 test_UART.start_detected
-@22
+@23
 test_UART.state[3:0]
+@22
 test_UART.stop_bit_location[3:0]
-@28
+@29
 test_UART.tx_in_progress
+@28
 test_UART.tx_shift_reg_contains_data_bits
 test_UART.uart.rx.sync.serial_in
 test_UART.uart.rx.sync.serial_in_reg
