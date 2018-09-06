@@ -244,7 +244,7 @@ begin
 
 	else if(baud_clk) begin
 		if(tx_in_progress || had_been_enabled) begin
-			if((cnt < NUMBER_OF_BITS) && (state != Rx_STOP_BIT)) cnt <= cnt + 1;
+			if(cnt < NUMBER_OF_BITS) cnt <= cnt + 1;
 			else cnt <= 0;
 		end
 		
@@ -302,7 +302,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else if((state == Rx_IDLE) && ($past(state) == Rx_STOP_BIT)) begin
 			if(had_been_enabled) begin
-				if($past(baud_clk)) assert(cnt == 0);
+				if($past(baud_clk) || ($past(cnt) == 1)) assert(cnt == 1);
 
 				else assert(cnt == 0);
 			end
@@ -322,11 +322,11 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		end
 		
 		else begin // (state == Rx_STOP_BIT)
-			if(tx_in_progress || !had_been_enabled) begin
-				if(sampling_strobe && $past(baud_clk)) begin
-					/*if($past(had_been_enabled)) assert(cnt == 1);
+			if(($past(state) == Rx_STOP_BIT) && (tx_in_progress || !had_been_enabled)) begin
+				if($past(baud_clk)) begin
+					if($past(had_been_enabled)) assert(cnt == 1);
 
-					else*/ assert((cnt == state + 1) || (cnt == 0));
+					else assert((cnt == state + 1) || (cnt == 0));
 				end
 				
 				else assert(cnt == state);
@@ -531,7 +531,7 @@ begin
     	assert(o_busy == 0);
     end
 
-	else if((!tx_in_progress) && (had_been_enabled)) begin // waiting for the start of UART transmission
+	else if((!tx_in_progress) && (had_been_enabled) && $past(baud_clk)) begin // waiting for the start of UART transmission
 		assert((cnt == 0) || (cnt == NUMBER_OF_BITS));
 		assert(serial_out == 1);
 		assert(shift_reg == {1'b1, ^data_reg, data_reg, 1'b0});  // ^data is even parity bit
@@ -813,7 +813,7 @@ begin
 	assert((data_is_valid && $past(data_is_valid)) == 0);  // data_is_valid is only one clock pulse high
 
 	if((!$past(reset_tx)) && (state <= Rx_STOP_BIT) && (first_clock_passed_rx) && (tx_in_progress) && ($past(tx_in_progress)) && ($past(baud_clk))) begin
-		assert(cnt - $past(cnt) == 1);
+		assert((cnt - $past(cnt) == 1) || ((cnt == 0) && ($past(cnt) == NUMBER_OF_BITS)));
 	end
 end
 
