@@ -54,7 +54,7 @@ begin
 
     else begin
         if (baud_clk) begin
-            if (o_busy) begin
+            if (o_busy && (shift_reg != 0)) begin
 	            serial_out <= shift_reg[0]; 
             end	    
         end        
@@ -67,8 +67,12 @@ begin
     	o_busy <= 0;
     end
 
-    else begin
-		o_busy <= ((shift_reg != 0) && !(&shift_reg)) || (enable && !o_busy);   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset)) OR (Tx is about to transmit)
+	else if(enable && !o_busy) begin
+		o_busy <= 1; // (Tx is about to transmit)
+	end
+
+    else if(baud_clk) begin
+		o_busy <= ((shift_reg != 0) && !(&shift_reg));   // if not reset, ((Tx is busy transmitting when there is pending stop bit) AND (Tx does not just get reset))
     end
 end
 
@@ -96,7 +100,9 @@ begin
 	if(first_clock_passed) begin
 		if($past(reset)) assert(o_busy == 0);
 
-		else assert(o_busy == (($past(shift_reg) != 0) && !(&$past(shift_reg))) || ($past(enable) && !$past(o_busy)));
+		else if($past(enable) && !$past(o_busy)) assert(o_busy);
+
+		else if($past(baud_clk)) assert(o_busy == (($past(shift_reg) != 0) && !(&$past(shift_reg))));
 	end
 end
 	

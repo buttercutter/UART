@@ -329,7 +329,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 					else assert((cnt == state + 1) || (cnt == 0));
 				end
 				
-				else assert(cnt == state);
+				else assert((cnt == state) || (cnt == 0));
 			end
 			
 			else begin
@@ -590,19 +590,11 @@ begin
 				assert(shift_reg == 0);
 			end
 			
-			if($past(shift_reg) == 1) begin
-				assert(o_busy);
-			end
-			
-			else begin
-				if(($past(enable) && !($past(o_busy)) && (had_been_enabled)) | (shift_reg != 0)) begin
-					assert(o_busy);
-				end
-				
-				else begin
-					assert(!o_busy);
-				end
-			end
+			if($past(reset_tx)) assert(o_busy == 0);
+
+			else if($past(enable) && !$past(o_busy)) assert(o_busy);
+
+			else if($past(baud_clk)) assert(o_busy == (($past(shift_reg) != 0) && !(&$past(shift_reg))));
 		end
 		
 		else begin  // UART Rx internal states
