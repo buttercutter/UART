@@ -333,9 +333,9 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 			end
 			
 			else begin
-				if($past(baud_clk)) assert(tx_state == NUMBER_OF_BITS);
+				if($past(baud_clk) || (!$past(baud_clk) && ($past(tx_state) == NUMBER_OF_BITS))) assert(tx_state == NUMBER_OF_BITS);
 				
-				else assert(tx_state == (NUMBER_OF_BITS-1));
+				else assert(tx_state == 0);
 			end
 		end
 	end
@@ -648,9 +648,9 @@ begin
 			else begin // if(rx_state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 				assert(rx_state == Rx_STOP_BIT);
 				
-				if(sampling_strobe && $past(baud_clk) && !$past(enable)) assert(serial_in == 0);
+				if($past(baud_clk)) assert(serial_in == 1); // stop bit
 
-				else assert(serial_in == 1);
+				else assert(serial_in == $past(serial_in));
 				
 				if(($past(rx_state) == Rx_PARITY_BIT) && (rx_state == Rx_STOP_BIT)) begin
 					assert(data_is_valid == 1);
