@@ -329,11 +329,13 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 					else assert((tx_state == rx_state + 1) || (tx_state == 0));
 				end
 				
-				else assert((tx_state == rx_state) || (tx_state == 0));
+				else assert(tx_state == $past(tx_state));
 			end
 			
 			else begin
-				assert((tx_state == 0) || (tx_state == NUMBER_OF_BITS));
+				if($past(baud_clk)) assert(tx_state == NUMBER_OF_BITS);
+				
+				else assert(tx_state == (NUMBER_OF_BITS-1));
 			end
 		end
 	end
