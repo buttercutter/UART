@@ -308,9 +308,9 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 			end
 
 			else begin // for phase difference between tx and rx clks
-				if(baud_clk) assert(tx_state == NUMBER_OF_BITS);
+				if(($past(baud_clk) && ($past(tx_state) == NUMBER_OF_BITS)) || (!$past(baud_clk) && ($past(tx_state) == 0))) assert(tx_state == 0);
 				
-				else assert(tx_state == 0);
+				else assert(tx_state == NUMBER_OF_BITS);
 			end
 		end
 		
