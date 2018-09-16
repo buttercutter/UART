@@ -302,21 +302,19 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else if((rx_state == Rx_IDLE) && ($past(rx_state) == Rx_STOP_BIT)) begin
 			if(had_been_enabled) begin
-				if($past(baud_clk) || ($past(tx_state) == 1)) assert(tx_state == 1);
+				if($past(baud_clk) && $past(had_been_enabled)) assert(tx_state == 1);
 
 				else assert(tx_state == 0);
 			end
 
 			else begin // for phase difference between tx and rx clks
-				if(($past(baud_clk) && ($past(tx_state) == NUMBER_OF_BITS)) || (!$past(baud_clk) && ($past(tx_state) == 0))) assert(tx_state == 0);
-				
-				else assert(tx_state == NUMBER_OF_BITS);
+				assert(tx_state == 0);
 			end
 		end
 		
 		else if((rx_state >= Rx_START_BIT) && (rx_state <= Rx_PARITY_BIT)) begin
 			
-			if($past(baud_clk)) assert((tx_state == rx_state) || (tx_state == rx_state + 1));
+			if($past(baud_clk) || $past(sampling_strobe)) assert((tx_state == rx_state) || (tx_state == rx_state + 1));
 			
 			else assert(tx_state == $past(tx_state));
 		end
