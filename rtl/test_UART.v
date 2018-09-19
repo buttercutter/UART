@@ -302,7 +302,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else if((rx_state == Rx_IDLE) && ($past(rx_state) == Rx_STOP_BIT)) begin
 			if(had_been_enabled) begin
-				if($past(baud_clk) && $past(had_been_enabled)) assert(tx_state == 1);
+				if(($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && ($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS))) && $past(had_been_enabled)) assert(tx_state == 1);
 
 				else assert(tx_state == 0);
 			end
