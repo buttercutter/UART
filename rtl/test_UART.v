@@ -314,14 +314,14 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else if((rx_state >= Rx_START_BIT) && (rx_state <= Rx_PARITY_BIT)) begin
 			
-			if($past(baud_clk) || $past(sampling_strobe)) assert((tx_state == rx_state) || (tx_state == rx_state + 1));
+			if($past(baud_clk) || (!baud_clk && ($past(tx_state) == (tx_state-1))) || $past(sampling_strobe)) assert((tx_state == rx_state) || (tx_state == rx_state + 1));
 			
 			else assert(tx_state == $past(tx_state));
 		end
 		
 		else begin // (rx_state == Rx_STOP_BIT)
 			if(($past(rx_state) == Rx_STOP_BIT) && (tx_in_progress || !had_been_enabled)) begin
-				if($past(baud_clk)) begin
+				if($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == tx_state) && ($past(tx_state, INPUT_DATA_WIDTH) == (tx_state-1)))) begin
 					if($past(had_been_enabled)) assert(tx_state == 1);
 
 					else assert((tx_state == rx_state + 1) || (tx_state == 0));
@@ -472,26 +472,19 @@ begin
 	end	
 end	
 	
-wire [INPUT_DATA_WIDTH-1:0] data_reg; // this variable stores the tx data for a particular tx transmission
+reg [INPUT_DATA_WIDTH-1:0] data_reg; // this variable stores the tx data for a particular tx transmission
 
-always @(*)
+always @(tx_clk)
 begin
     if(reset_tx) begin
     	data_reg <= {INPUT_DATA_WIDTH{1'b1}};
     	assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
     end
     
-    else if(enable && (!had_been_enabled)) begin
+    else if(enable && (!had_been_enabled || (tx_in_progress && (tx_state == NUMBER_OF_BITS)))) begin
     	data_reg <= i_data;  // this is more realistic, we only want i_data whenever enable signal is asserted
     	assert(data_reg == i_data);
     end
-    
-    else if(tx_in_progress && (tx_state == NUMBER_OF_BITS)) begin  // UART stop bit transmission which signifies the end of UART transmission			
-		if(enable) begin
-			data_reg <= i_data;
-			assert(data_reg == i_data);
-		end
-	end
 end
 
 always @(posedge tx_clk)
