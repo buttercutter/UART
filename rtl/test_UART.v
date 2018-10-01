@@ -187,6 +187,10 @@ begin
 	end
 end
 
+reg first_clock_passed_global = 0;
+
+always @($global_clock) first_clock_passed_global <= 1;
+
 always @(posedge tx_clk) first_clock_passed_tx <= 1;
 
 always @(posedge rx_clk) first_clock_passed_rx <= 1;
@@ -290,19 +294,31 @@ always @(posedge tx_clk) begin
 	end
 end
 
+reg co_enable_baud = 0; // both 'enable' and 'baud_clk' signals are asserted at the same instant
+
+always @(posedge tx_clk) begin
+	if(reset_tx) co_enable_baud <= 0;
+	
+	else if(baud_clk) begin
+		if(enable) co_enable_baud <= 1;
+
+		else co_enable_baud <= 0;
+	end
+end
+
 always @(posedge rx_clk) begin  // for induction, checks the relationship between Tx 'tx_state' and Rx 'rx_state'
 	if(first_clock_passed_tx && first_clock_passed_rx) begin
 	
 		if((rx_state == Rx_IDLE) && ($past(rx_state) == Rx_IDLE)) begin
-			if((($past(baud_clk)) && (serial_in == 0)) || ($past(serial_in) == 0))
+			if((($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH) == 0) && (($past(tx_state, INPUT_DATA_WIDTH+1) == NUMBER_OF_BITS) || ($past(tx_state, INPUT_DATA_WIDTH+1) == 0)))) && (serial_in == 0)) || ($past(serial_in) == 0))
 				assert(tx_state == 1);
 			else
 				assert(tx_state == 0);
 		end	
 		
 		else if((rx_state == Rx_IDLE) && ($past(rx_state) == Rx_STOP_BIT)) begin
-			if(had_been_enabled) begin
-				if(($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && ($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS))) && $past(had_been_enabled)) assert(tx_state == 1);
+			if(had_been_enabled && !co_enable_baud) begin // coincident 'enable' and 'baud_clk' signals will require another 'baud_clk' interval such that 'shift_reg' is assigned properly
+				if(($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH) == 0) && ($past(tx_state, INPUT_DATA_WIDTH+1) == NUMBER_OF_BITS))) && $past(had_been_enabled)) assert(tx_state == 1);
 
 				else assert(tx_state == 0);
 			end
@@ -321,7 +337,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else begin // (rx_state == Rx_STOP_BIT)
 			if(($past(rx_state) == Rx_STOP_BIT) && (tx_in_progress || !had_been_enabled)) begin
-				if($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == tx_state) && ($past(tx_state, INPUT_DATA_WIDTH) == (tx_state-1)))) begin
+				if($past(baud_clk) || (!baud_clk && ((($past(tx_state, INPUT_DATA_WIDTH) == 0) && ($past(tx_state, INPUT_DATA_WIDTH+1) == NUMBER_OF_BITS)) || (($past(tx_state, INPUT_DATA_WIDTH) == tx_state) && ($past(tx_state, INPUT_DATA_WIDTH+1) == (tx_state-1)))))) begin
 					if($past(had_been_enabled)) assert(tx_state == 1);
 
 					else assert((tx_state == rx_state + 1) || (tx_state == 0));
@@ -474,16 +490,14 @@ end
 	
 reg [INPUT_DATA_WIDTH-1:0] data_reg; // this variable stores the tx data for a particular tx transmission
 
-always @(tx_clk)
+always @($global_clock)
 begin
     if(reset_tx) begin
     	data_reg <= {INPUT_DATA_WIDTH{1'b1}};
-    	assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
     end
     
     else if(enable && (!had_been_enabled || (tx_in_progress && (tx_state == NUMBER_OF_BITS)))) begin
     	data_reg <= i_data;  // this is more realistic, we only want i_data whenever enable signal is asserted
-    	assert(data_reg == i_data);
     end
 end
 
@@ -639,13 +653,10 @@ begin
 			else begin // if(rx_state == Rx_STOP_BIT) begin  // end of one UART transaction (both transmitting and receiving)
 				assert(rx_state == Rx_STOP_BIT);
 				
-				if($past(baud_clk)) begin				
-					if(tx_state == 0) assert(serial_in == 0); // start bit, this is due to that Tx is ahead of Rx by exactly one bit
-
-					else begin 
-						assert(tx_state == NUMBER_OF_BITS);
-						assert(serial_in == 1); // stop bit
-					end
+				if($past(baud_clk)) begin
+					if(($past(tx_state) == 0) && had_been_enabled && !$past(enable)) assert(serial_in == 0); // start bit
+					
+					else assert(serial_in == 1); // stop bit
 				end
 
 				else assert(serial_in == $past(serial_in));
@@ -779,16 +790,16 @@ begin
     end
 end
 
-always @(posedge tx_clk)
+always @($global_clock)
 begin    
-    if(reset_tx)  assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
+    if($past(reset_tx))  assert(data_reg == {INPUT_DATA_WIDTH{1'b1}});
     
-    else if(enable)  assert(data_reg == i_data); // data_reg only changes when enable signal is asserted 
+    else if($past(enable) && first_clock_passed_global)  assert(data_reg == $past(i_data)); // data_reg only changes when enable signal is asserted 
 end
 
 always @($global_clock)
 begin
-	if(!reset_tx && !enable && !(first_clock_passed_tx && (!$past(first_clock_passed_tx)))) assert(data_reg == $past(data_reg)); 
+	if(first_clock_passed_global && !reset_tx && !enable && !(first_clock_passed_tx && (!$past(first_clock_passed_tx)))) assert(data_reg == $past(data_reg)); 
 end
 
 /*always @(posedge tx_clk)	
