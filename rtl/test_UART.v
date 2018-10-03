@@ -310,7 +310,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 	if(first_clock_passed_tx && first_clock_passed_rx) begin
 	
 		if((rx_state == Rx_IDLE) && ($past(rx_state) == Rx_IDLE)) begin
-			if((($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH) == 0) && (($past(tx_state, INPUT_DATA_WIDTH+1) == NUMBER_OF_BITS) || ($past(tx_state, INPUT_DATA_WIDTH+1) == 0)))) && (serial_in == 0)) || ($past(serial_in) == 0))
+			if((($past(baud_clk) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && (($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS) || ($past(tx_state, INPUT_DATA_WIDTH) == 0)))) && (serial_in == 0)) || ($past(serial_in) == 0))
 				assert(tx_state == 1);
 			else
 				assert(tx_state == 0);
@@ -318,7 +318,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		
 		else if((rx_state == Rx_IDLE) && ($past(rx_state) == Rx_STOP_BIT)) begin
 			if(had_been_enabled && !co_enable_baud) begin // coincident 'enable' and 'baud_clk' signals will require another 'baud_clk' interval such that 'shift_reg' is assigned properly
-				if(($past(baud_clk) || (!$past(baud_clk) && ($past(tx_state) == 1)) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && ($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS))) && $past(had_been_enabled)) assert(tx_state == 1);
+				if(($past(baud_clk) || (!$past(baud_clk) && ($past(tx_state) == 1)) || (!baud_clk && ($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && ($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS))) && ($past(had_been_enabled) || ($past(enable) && !co_enable_baud))) assert(tx_state == 1);
 
 				else assert(tx_state == 0);
 			end
@@ -338,7 +338,7 @@ always @(posedge rx_clk) begin  // for induction, checks the relationship betwee
 		else begin // (rx_state == Rx_STOP_BIT)
 			if(($past(rx_state) == Rx_STOP_BIT) && (tx_in_progress || !had_been_enabled)) begin
 				if($past(baud_clk) || (!baud_clk && ((($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && ($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS)) || (($past(tx_state, INPUT_DATA_WIDTH-1) == $past(tx_state)) && ($past(tx_state, INPUT_DATA_WIDTH) == ($past(tx_state)-1)))))) begin
-					if(!$past(had_been_enabled) && had_been_enabled && $past(enable)) assert(tx_state == 1);
+					if(($past(had_been_enabled) && !$past(enable)) || (!$past(had_been_enabled) && had_been_enabled && $past(enable) && !co_enable_baud)) assert(tx_state == 1);
 
 					else assert((tx_state == rx_state + 1) || (tx_state == 0));
 				end
@@ -654,7 +654,7 @@ begin
 				assert(rx_state == Rx_STOP_BIT);
 				
 				if($past(baud_clk) || (!baud_clk && (($past(tx_state, INPUT_DATA_WIDTH-1) == 0) && ($past(tx_state, INPUT_DATA_WIDTH) == NUMBER_OF_BITS)))) begin
-					if(($past(tx_state) == 0) && ((!$past(had_been_enabled) && had_been_enabled && $past(enable)) || (had_been_enabled && !$past(enable)))) assert(serial_in == 0); // start bit
+					if(($past(tx_state) == 0) && ((!$past(baud_clk) && !$past(had_been_enabled) && had_been_enabled && $past(enable)) || (had_been_enabled && !$past(enable))) && !co_enable_baud) assert(serial_in == 0); // start bit
 					
 					else assert(serial_in == 1); // stop bit
 				end
