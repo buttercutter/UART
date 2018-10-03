@@ -1,9 +1,12 @@
 TARGET=UART
 .PHONY: $(TARGET)
 RTLSRC=../rtl
-all: $(TARGET)
+all: sby
 
 DESIGN_FILES = $(wildcard $(RTLSRC)/*.v) $(wildcard $(RTLSRC)/*/*.v)
+
+sby: $(TARGET).sby
+	sby -f $(TARGET).sby
 
 induction: $(TARGET).smt2
 	yosys-smtbmc -s yices --presat --dump-vcd $(TARGET)_induction.vcd -i -t 26 $(TARGET).smt2	
@@ -31,4 +34,4 @@ iverilog: $(DESIGN_FILES)
 	vvp $(TARGET).vvp
 
 clean::
-	rm -rf *~ *.yslog *.smt2 *.vcd *.vvp
+	rm -rf $(TARGET) $(TARGET)_proof $(TARGET)_cover *~ *.yslog *.smt2 *.vcd *.vvp

@@ -1,0 +1,53 @@
+[tasks]
+proof
+cover
+
+[options]
+proof: mode prove
+proof: depth 350
+
+cover: mode cover
+cover: depth 20
+cover: append 20
+
+multiclock on
+
+[engines]
+smtbmc yices
+# smtbmc boolector
+# abc pdr
+# aiger avy
+# aiger suprove
+
+[script]
+read_verilog -formal test_UART.v
+read_verilog -formal UART.v
+read_verilog -formal Tx_top.v
+read_verilog -formal TxUART.v
+read_verilog -formal baud_generator.v
+read_verilog -formal Rx_top.v
+read_verilog -formal RxUART.v
+read_verilog -formal rx_state.v
+read_verilog -formal synchronizer.v
+read_verilog -formal check_parity.v
+read_verilog -formal detect_start_bit.v
+read_verilog -formal sampling_strobe_generator.v
+read_verilog -formal SIPO_shift_register.v
+
+prep -top test_UART
+opt_merge -share_all
+
+[files]
+../rtl/test_UART.v
+../rtl/UART.v
+../rtl/Tx/Tx_top.v
+../rtl/Tx/TxUART.v
+../rtl/Tx/baud_generator.v
+../rtl/Rx/Rx_top.v
+../rtl/Rx/RxUART.v
+../rtl/Rx/rx_state.v
+../rtl/Rx/synchronizer.v
+../rtl/Rx/check_parity.v
+../rtl/Rx/detect_start_bit.v
+../rtl/Rx/sampling_strobe_generator.v
+../rtl/Rx/SIPO_shift_register.v

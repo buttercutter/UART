@@ -70,24 +70,35 @@ begin
 	if(first_clock_passed) begin
 
 		assert((sampling_strobe & ($past(sampling_strobe))) == 0);  // sampling_strobe is only single pulse '1'
-			
-		if(!($past(start_detected))) begin
 		
-			if($past(reset)) assert(counter == 0);
-			
-			else assert((counter - $past(counter)) == 1'b1);  // to keep the increasing trend for	 induction test purpose such that sampling_strobe occurs at the correct period interval 
-		end
-	
-		else begin
-			assert(counter == (CLOCKS_PER_BIT >> 1) + 1);
-		end
-	
-		if((counter == 0) && ($past(counter) == (CLOCKS_PER_BIT-1)) && !($past(reset))) begin
-			assert(sampling_strobe); // sampling_strobe is HIGH at the right cycle, for induction check purpose
+		if($past(reset)) begin
+			assert(counter == 0);	
 		end
 		
 		else begin
+			if(!($past(start_detected))) begin
+				
+				assert((counter - $past(counter)) == 1'b1);  // to keep the increasing trend for	 induction test purpose such that sampling_strobe occurs at the correct period interval 
+			end
+		
+			else begin
+				assert(counter == (CLOCKS_PER_BIT >> 1) + 1);
+			end
+		end
+	
+	
+		if($past(reset)) begin
 			assert(!sampling_strobe);
+		end
+		
+		else begin
+			if((counter == 0) && ($past(counter) == (CLOCKS_PER_BIT-1))) begin
+				assert(sampling_strobe); // sampling_strobe is HIGH at the right cycle, for induction check purpose
+			end
+			
+			else begin
+				assert(!sampling_strobe);
+			end
 		end
 	end
 end

@@ -51,7 +51,7 @@ begin
 	first_clock_passed <= 1;
 end
 
-always @(posedge clk)
+always @($global_clock)
 begin
 	assert(parity_bit == ^i_data);  // for induction purpose
 	

@@ -1,6 +1,6 @@
-module synchronizer(clk, reset, serial_in, serial_in_synced, sampling_strobe);  // 3FF synchronizer
+module synchronizer(clk, reset, serial_in, serial_in_synced);  // 3FF synchronizer
 
-input clk, reset, serial_in, sampling_strobe;
+input clk, reset, serial_in;
 output reg serial_in_synced; // third FF
 
 reg serial_in_reg, serial_in_reg2;
@@ -32,7 +32,7 @@ parameter CLOCKS_PER_BIT = 8; // number of system clock in one UART bit, or equi
 
 reg first_clock_passed = 0;
 
-reg had_reset = 0;  // this signal is for checking if reset signal gets asserted in between two sampling_strobe pulses
+reg had_reset = 0;  
 
 always @(posedge clk)	first_clock_passed <= 1;
 
@@ -49,8 +49,8 @@ begin
 		assert(serial_in_synced == 1);
 	end
 	
-	else if(first_clock_passed && $past(sampling_strobe) && !($past(reset))) begin
-		if(!had_reset) begin // reset signal does not get asserted in between two most recent sampling_strobe pulses
+	else if(first_clock_passed && !($past(reset))) begin
+		if(!had_reset) begin 
 			// for induction
 			assert(serial_in_reg == $past(serial_in)); 
 	 		assert(serial_in_reg2 == $past(serial_in_reg));

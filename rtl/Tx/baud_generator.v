@@ -49,6 +49,12 @@ initial first_clock_passed = 0;
 always @(posedge clk)
 begin
 	first_clock_passed <= 1;
+	
+	if(first_clock_passed) begin
+		if($past(reset)) assert(cnt == 0);
+		
+		else assert((cnt - $past(cnt)) == 1'b1);  // to keep the increasing trend for induction test purpose such that baud_clk occurs at the correct period interval 
+	end
 end
 
 always @(posedge clk)
