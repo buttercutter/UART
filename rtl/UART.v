@@ -13,7 +13,7 @@ input reset_tx, reset_rx;
 // transmitter signals
 input enable;
 input [(INPUT_DATA_WIDTH-1):0] i_data;
-output reg o_busy;
+output o_busy;
 output serial_out;
 
 `ifdef FORMAL
@@ -22,9 +22,9 @@ output baud_clk;
 
 // receiver signals
 input serial_in;
-output reg data_is_valid;
-output reg rx_error;
-output reg [(INPUT_DATA_WIDTH-1):0] received_data;
+output data_is_valid;
+output rx_error;
+output [(INPUT_DATA_WIDTH-1):0] received_data;
 
 `ifdef FORMAL
 localparam NUMBER_OF_BITS = INPUT_DATA_WIDTH + 3;   // 1 start bit, 8 data bits, 1 parity bit, 1 stop bit
